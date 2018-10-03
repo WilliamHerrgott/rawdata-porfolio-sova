@@ -34,7 +34,7 @@ CREATE TABLE "SO_authors" (
 -- ----------------------------
 -- Table structure for answers
 -- ----------------------------
-DROP TABLE IF EXISTS answers;
+DROP TABLE IF EXISTS answers CASCADE;
 CREATE TABLE answers(
   id integer NOT NULL
 )
@@ -127,7 +127,7 @@ CREATE TABLE posts (
 -- ----------------------------
 -- Table structure for questions
 -- ----------------------------
-DROP TABLE IF EXISTS questions;
+DROP TABLE IF EXISTS questions CASCADE;
 CREATE TABLE questions (
   id integer NOT NULL,
 	accepted_answer_id integer,
@@ -241,6 +241,19 @@ ALTER TABLE author_comments ADD PRIMARY KEY (comment_id);
 -- Primary Key structure for table linked
 -- ----------------------------
 ALTER TABLE linked ADD PRIMARY KEY (question_id, linkpost_id);
+
+-- ----------------------------
+-- Foreign Key structure for table answers
+-- ----------------------------
+ALTER TABLE answers
+ADD FOREIGN KEY (id) REFERENCES posts(id);
+
+-- ----------------------------
+-- Foreign Key structure for table questions
+-- ----------------------------
+ALTER TABLE questions
+ADD FOREIGN KEY (id) REFERENCES posts(id);
+
 
 INSERT INTO posts
 SELECT DISTINCT id, creationdate, body, score
