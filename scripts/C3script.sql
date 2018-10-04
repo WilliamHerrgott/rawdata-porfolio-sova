@@ -12,7 +12,7 @@ CREATE TABLE "SOVA_users" (
 	email varchar(50) NOT NULL, 
   username varchar(50) NOT NULL,
   password varchar(50) NOT NULL,
-  location varchar(50) NOT NULL
+  location varchar(50)
 )
 ;
 
@@ -46,7 +46,7 @@ CREATE TABLE answers(
 DROP TABLE IF EXISTS author_comments;
 CREATE TABLE author_comments (
   comment_id integer,
-  author_id integer
+  author_id integer NOT NULL
 )
 ;
 
@@ -57,7 +57,7 @@ CREATE TABLE author_comments (
 DROP TABLE IF EXISTS author_posts;
 CREATE TABLE author_posts (
 	post_id integer,
-	author_id integer
+	author_id integer NOT NULL
 )
 ;
 
@@ -106,6 +106,7 @@ CREATE TABLE marks (
   user_id integer NOT NULL,
   post_id integer NOT NULL,
   marked_creationdate timestamp NOT NULL,
+	annotation_creationdate timestamp,
   text_annotation text
 )
 ;
@@ -114,7 +115,7 @@ CREATE TABLE marks (
 -- ----------------------------
 -- Table structure for posts
 -- ----------------------------
-DROP TABLE IF EXISTS posts;
+DROP TABLE IF EXISTS posts CASCADE;
 CREATE TABLE posts (
   id integer NOT NULL,
   creation_date timestamp,
@@ -305,4 +306,7 @@ SELECT DISTINCT authorid, authordisplayname, authorcreationdate, authorlocation,
 FROM comments_universal 
 WHERE authorid NOT IN (SELECT DISTINCT ownerid
 											 FROM posts_universal);
+
+DROP TABLE posts_universal;
+DROP TABLE comments_universal; 
 											 
