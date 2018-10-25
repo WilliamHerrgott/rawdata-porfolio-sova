@@ -11,3 +11,13 @@ annotation
 in, such as ranked lists of most frequent words
 8) Provide visualizations of search results and subsets of the database by means of word
 clouds and word graphs showing significant words and their relations
+
+Collaborators:
+
+- Ana Pecini
+
+- Valter Da Silva Abreu
+
+- Boris Le Meec
+
+- William Herrgott
