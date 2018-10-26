@@ -1,5 +1,5 @@
   <h1 class="display-3">Repository for the Portfolio project for RAWDATA course.  
-See PDF attached to this repository.</h1> 
+See PDF attached to this repository in the subjects folder.</h1> 
 
 <div>
   <h1 class="display-3">
@@ -13,16 +13,16 @@ See PDF attached to this repository.</h1>
   <p>
     <ul>
         <li>
-            <a href="https://github.com/annapecini" title="Ana">Ana Pecini</a>
+            <a href="https://github.com/annapecini" title="annapecini">Ana Pecini</a>
         </li>
         <li>
-            <a href="https://github.com/vaabreu95" title="Valter">Valter Da Silva Abreu</a>
+            <a href="https://github.com/vaabreu95" title="vaabreu95">Valter Da Silva Abreu</a>
         </li>
         <li>
-            <a href="https://github.com/BorisLeMeec" title="Boris">Boris Le Méec</a>
+            <a href="https://github.com/BorisLeMeec" title="BorisLeMeec">Boris Le Méec</a>
         </li>
         <li>
-            <a href="https://github.com/WilliamHerrgott" title="William">William Herrgott</a>
+            <a href="https://github.com/WilliamHerrgott" title="WilliamHerrgott">William Herrgott</a>
         </li>
     </ul>
   </p>
