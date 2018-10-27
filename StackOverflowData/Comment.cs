@@ -3,15 +3,18 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using StackOverflowData.Relationships;
 
 namespace StackOverflowData
 {
-    class Comment
+    public class Comment
     {
-        public int Id { get; set; }
-        public int Score { get; set; }
-        public string Body { get; set; }
-        public DateTime CreationDate { get; set; }
+        public int Id { get; private set; }
+        public int Score { get; private set; }
+        public string Body { get; private set; }
+        public DateTime CreationDate { get; private set; }
+        public Author Author { get; private set; }
+        public Post Post { get; private set; }
     }
 
     class CommentConfiguration : IEntityTypeConfiguration<Comment>
