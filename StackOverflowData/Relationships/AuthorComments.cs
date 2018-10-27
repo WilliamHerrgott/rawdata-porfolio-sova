@@ -22,6 +22,10 @@ namespace StackOverflowData.Relationships
             builder.ToTable("author_comments");
             builder.Property(x => x.CommentId).HasColumnName("comment_id");
             builder.Property(x => x.AuthorId).HasColumnName("author_id");
+            builder.HasOne(ac => ac.Author)
+                   .WithMany(a => a.Comments);
+            builder.HasOne(ac => ac.Comment)
+                   .WithOne(c => c.Author);
         }
     }
 }

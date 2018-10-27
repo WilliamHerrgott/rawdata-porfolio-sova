@@ -21,7 +21,11 @@ namespace StackOverflowData.Relationships
         {
             builder.ToTable("commented_on");
             builder.Property(x => x.CommentId).HasColumnName("comment_id");
-            builder.Property(x => x.PostId).HasColumnName("post_id");            
+            builder.Property(x => x.PostId).HasColumnName("post_id");
+            builder.HasOne(co => co.Post)
+                   .WithMany(p => p.Comments);
+            builder.HasOne(co => co.Comment)
+                   .WithOne(p => p.Post);
         }
     }
 }

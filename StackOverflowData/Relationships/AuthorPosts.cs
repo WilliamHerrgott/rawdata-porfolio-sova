@@ -8,11 +8,11 @@ namespace StackOverflowData.Relationships
 {
     public class AuthorPosts
     {
-        public int PostId { get; set; }
-        public Post Post { get; set; }
+        public int PostId { get; private set; }
+        public Post Post { get; private set; }
 
-        public int AuthorId { get; set; }
-        public Author Author { get; set; }
+        public int AuthorId { get; private set; }
+        public Author Author { get; private set; }
     }
 
     class AuthorPostsConfiguration : IEntityTypeConfiguration<AuthorPosts>
@@ -22,6 +22,10 @@ namespace StackOverflowData.Relationships
             builder.ToTable("author_posts");
             builder.Property(x => x.PostId).HasColumnName("post_id");
             builder.Property(x => x.AuthorId).HasColumnName("question_id");
+            builder.HasOne(ap => ap.Author)
+                   .WithMany(a => a.Posts);
+            builder.HasOne(ap => ap.Post)
+                   .WithOne(p => p.Author);
         }
     }
 }

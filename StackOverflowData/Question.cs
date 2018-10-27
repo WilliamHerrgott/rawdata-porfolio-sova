@@ -7,15 +7,15 @@ using StackOverflowData.Relationships;
 
 namespace StackOverflowData
 {
-    public class Question
+    public class Question : Post
     {
-        public int Id { get; set; }
-        public int AcceptedAnswerId { get; set; }
-        public DateTime? ClosedDate { get; set; }
-        public string Title { get; set; }
-        public string Tags { get; set; }
-        public List<QuestionsAnswers> Answers { get; set; }
-        public List<Linked> Linkposts { get; set; }
+        //public int Id { get; private set; }
+        public int AcceptedAnswerId { get; private set; }
+        public DateTime? ClosedDate { get; private set; }
+        public string Title { get; private set; }
+        public string Tags { get; private set; }
+        public List<QuestionsAnswers> Answers { get; private set; }
+        public List<Linked> Linkposts { get; private set; }
     }
 
     class QuestionConfiguration : IEntityTypeConfiguration<Question>
@@ -23,7 +23,8 @@ namespace StackOverflowData
         public void Configure(EntityTypeBuilder<Question> builder)
         {
             builder.ToTable("questions");
-            builder.Property(x => x.Id).HasColumnName("id");
+            //builder.Property(x => x.Id).HasColumnName("id");
+            builder.HasBaseType<Post>();
             builder.Property(x => x.AcceptedAnswerId).HasColumnName("accepted_answer_id");
             builder.Property(x => x.ClosedDate).HasColumnName("closed_date");
             builder.Property(x => x.Title).HasColumnName("title");

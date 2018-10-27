@@ -9,17 +9,17 @@ namespace StackOverflowData
 {
     class StackOverflowContext : DbContext
     {
-        public DbSet<Answer> Answers { get; set; }
-        public DbSet<Author> Authors { get; set; }
-        public DbSet<Comment> Comments { get; set; }
-        public DbSet<Post> Posts { get; set; }
-        public DbSet<Question> Questions { get; set; }
-        public DbSet<AuthorComments> AuthorComments { get; set; }
-        public DbSet<AuthorPosts> AuthorPosts { get; set; }
-        public DbSet<CommentedOn> PostComments { get; set; }
-        public DbSet<Linked> Links { get; set; }
-        public DbSet<QuestionsAnswers> QuestionsAnswers { get; set; }
-        public DbQuery<GetPostResult> GetPostResults { get; set; }
+        public DbSet<Answer> Answers { get; private set; }
+        public DbSet<Author> Authors { get; private set; }
+        public DbSet<Comment> Comments { get; private set; }
+        public DbSet<Post> Posts { get; private set; }
+        public DbSet<Question> Questions { get; private set; }
+        public DbSet<AuthorComments> AuthorComments { get; private set; }
+        public DbSet<AuthorPosts> AuthorPosts { get; private set; }
+        public DbSet<CommentedOn> PostComments { get; private set; }
+        public DbSet<Linked> Links { get; private set; }
+        public DbSet<QuestionsAnswers> QuestionsAnswers { get; private set; }
+        public DbQuery<GetPostResult> GetPostResults { get; private set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -44,24 +44,7 @@ namespace StackOverflowData
             //modelBuilder.HasSequence<int>("OrderNumbers")
             //    .StartsAt(99999)
             //    .IncrementsBy(1);
-            modelBuilder.Entity<QuestionsAnswers>()
-                .HasOne(qa => qa.Question)
-                .WithMany(q => q.Answers);
-            modelBuilder.Entity<AuthorPosts>()
-                .HasOne(ap => ap.Author)
-                .WithMany(p => p.Posts);
-            modelBuilder.Entity<AuthorComments>()
-                .HasOne(ac => ac.Author)
-                .WithMany(c => c.Comments);
-            modelBuilder.Entity<CommentedOn>()
-                .HasOne(co => co.Post)
-                .WithMany(p => p.Comments);
-            modelBuilder.Entity<Linked>()
-                .HasOne(l => l.Question)
-                .WithMany(p => p.Linkposts);
-            modelBuilder.Entity<Linked>()
-                .HasOne(l => l.Linkpost)
-                .WithMany(p => p.Linkposts);
+
             modelBuilder.ApplyConfiguration(new AnswerConfiguration());
             modelBuilder.ApplyConfiguration(new AuthorConfiguration());
             modelBuilder.ApplyConfiguration(new CommentConfiguration());

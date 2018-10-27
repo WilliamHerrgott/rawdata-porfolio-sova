@@ -5,18 +5,19 @@ using StackOverflowData.Relationships;
 
 namespace StackOverflowData
 {
-    public class Answer
+    public class Answer : Post
     {
-        public int Id { get; private set; }
-        public Question Question { get; private set; }
+        //public int Id { get; private set; }
+        public QuestionsAnswers Question { get; private set; }
     }
 
     class AnswerConfiguration : IEntityTypeConfiguration<Answer>
     {
         public void Configure(EntityTypeBuilder<Answer> builder)
         {
-            builder.ToTable("answers");
-            builder.Property(x => x.Id).HasColumnName("id");
+            //builder.ToTable("answers");
+            builder.HasBaseType<Post>();
+            //builder.Property(x => x.Id).HasColumnName("id");
         }
     }
 }
