@@ -11,7 +11,7 @@ namespace StackOverflowData
     {
         public int Id { get; set; }
         public int AcceptedAnswerId { get; set; }
-        public DateTime ClosedDate { get; set; }
+        public DateTime? ClosedDate { get; set; }
         public string Title { get; set; }
         public string Tags { get; set; }
         public List<QuestionsAnswers> Answers { get; set; }

@@ -4,7 +4,7 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace StackOverflowData
+namespace StackOverflowData.Relationships
 {
     public class AuthorPosts
     {

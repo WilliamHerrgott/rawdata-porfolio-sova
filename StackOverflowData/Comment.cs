@@ -12,7 +12,7 @@ namespace StackOverflowData
         public int Id { get; private set; }
         public int Score { get; private set; }
         public string Body { get; private set; }
-        public DateTime CreationDate { get; private set; }
+        public DateTime? CreationDate { get; private set; }
         public Author Author { get; private set; }
         public Post Post { get; private set; }
     }
