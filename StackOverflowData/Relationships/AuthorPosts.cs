@@ -23,9 +23,11 @@ namespace StackOverflowData.Relationships
             builder.Property(x => x.PostId).HasColumnName("post_id");
             builder.Property(x => x.AuthorId).HasColumnName("question_id");
             builder.HasOne(ap => ap.Author)
-                   .WithMany(a => a.Posts);
+                   .WithMany(a => a.Posts)
+                   .HasForeignKey(ap => ap.AuthorId);
             builder.HasOne(ap => ap.Post)
-                   .WithOne(p => p.Author);
+                   .WithOne(p => p.Author)
+                   .HasForeignKey<AuthorPosts>(ap => ap.PostId);
         }
     }
 }
