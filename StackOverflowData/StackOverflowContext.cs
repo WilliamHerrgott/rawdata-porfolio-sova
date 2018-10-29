@@ -1,14 +1,11 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
-using StackOverflowData.Relationships;
 using StackOverflowData.Functions;
+using StackOverflowData.Relationships;
 
-namespace StackOverflowData
-{
-    class StackOverflowContext : DbContext
-    {
+namespace StackOverflowData {
+    class StackOverflowContext : DbContext {
         public DbSet<Answer> Answers { get; private set; }
         public DbSet<Author> Authors { get; private set; }
         public DbSet<Comment> Comments { get; private set; }
@@ -21,8 +18,7 @@ namespace StackOverflowData
         public DbSet<QuestionsAnswers> QuestionsAnswers { get; private set; }
         public DbQuery<GetPostResult> GetPostResults { get; private set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
             base.OnConfiguring(optionsBuilder);
             optionsBuilder.UseNpgsql("");
             // you only need this if you want to see the SQL statments created
@@ -38,8 +34,7 @@ namespace StackOverflowData
                        && level == LogLevel.Information, true)
             });
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
+        protected override void OnModelCreating(ModelBuilder modelBuilder) {
             base.OnModelCreating(modelBuilder);
             //modelBuilder.HasSequence<int>("OrderNumbers")
             //    .StartsAt(99999)

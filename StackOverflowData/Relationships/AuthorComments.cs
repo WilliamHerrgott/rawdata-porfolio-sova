@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace StackOverflowData.Relationships
-{
-    public class AuthorComments
-    {
+namespace StackOverflowData.Relationships {
+    public class AuthorComments {
         public int CommentId { get; set; }
         public Comment Comment { get; set; }
 
@@ -15,19 +10,17 @@ namespace StackOverflowData.Relationships
         public Author Author { get; set; }
     }
 
-    class AuthorCommentsConfiguration : IEntityTypeConfiguration<AuthorComments>
-    {
-        public void Configure(EntityTypeBuilder<AuthorComments> builder)
-        {
+    class AuthorCommentsConfiguration : IEntityTypeConfiguration<AuthorComments> {
+        public void Configure(EntityTypeBuilder<AuthorComments> builder) {
             builder.ToTable("author_comments");
             builder.Property(x => x.CommentId).HasColumnName("comment_id");
             builder.Property(x => x.AuthorId).HasColumnName("author_id");
             builder.HasOne(ac => ac.Author)
-                   .WithMany(a => a.Comments)
-                   .HasForeignKey(ac => ac.AuthorId);
+                .WithMany(a => a.Comments)
+                .HasForeignKey(ac => ac.AuthorId);
             builder.HasOne(ac => ac.Comment)
-                   .WithOne(c => c.Author)
-                   .HasForeignKey<AuthorComments>(ac => ac.CommentId);
+                .WithOne(c => c.Author)
+                .HasForeignKey<AuthorComments>(ac => ac.CommentId);
         }
     }
 }

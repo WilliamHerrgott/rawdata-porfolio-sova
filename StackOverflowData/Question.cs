@@ -1,27 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using StackOverflowData.Relationships;
 
-namespace StackOverflowData
-{
-    public class Question : Post
-    {
+namespace StackOverflowData {
+    public class Question : Post {
         //public int Id { get; private set; }
         public int AcceptedAnswerId { get; private set; }
-        public DateTime? ClosedDate { get; private set; }
+        public DateTime ClosedDate { get; private set; }
         public string Title { get; private set; }
         public string Tags { get; private set; }
         public List<QuestionsAnswers> Answers { get; private set; }
         public List<Linked> Linkposts { get; private set; }
     }
 
-    class QuestionConfiguration : IEntityTypeConfiguration<Question>
-    {
-        public void Configure(EntityTypeBuilder<Question> builder)
-        {
+    class QuestionConfiguration : IEntityTypeConfiguration<Question> {
+        public void Configure(EntityTypeBuilder<Question> builder) {
             builder.ToTable("questions");
             //builder.Property(x => x.Id).HasColumnName("id");
             builder.HasBaseType<Post>();
