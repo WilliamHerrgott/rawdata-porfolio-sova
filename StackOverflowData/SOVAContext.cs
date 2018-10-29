@@ -1,21 +1,16 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
-using StackOverflowData.Functions;
 
-namespace StackOverflowData
-{
-    class SOVAContext : DbContext
-    {
+namespace StackOverflowData {
+    class SOVAContext : DbContext {
         public DbSet<SOVAUser> Users { get; set; }
         public DbSet<History> History { get; set; }
 
         public DbSet<Marks> Marks { get; set; }
         public DbSet<Searched> Searchs { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
             base.OnConfiguring(optionsBuilder);
             optionsBuilder.UseNpgsql("");
             // you only need this if you want to see the SQL statments created
@@ -31,8 +26,7 @@ namespace StackOverflowData
                        && level == LogLevel.Information, true)
             });
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
+        protected override void OnModelCreating(ModelBuilder modelBuilder) {
             base.OnModelCreating(modelBuilder);
             //modelBuilder.HasSequence<int>("OrderNumbers")
             //    .StartsAt(99999)
@@ -40,10 +34,9 @@ namespace StackOverflowData
 
             modelBuilder.ApplyConfiguration(new SOVAUserConfiguration());
             modelBuilder.ApplyConfiguration(new HistoryConfiguration());
-            
+
             modelBuilder.ApplyConfiguration(new MarksConfiguration());
             modelBuilder.ApplyConfiguration(new SearchedConfiguration());
-            
         }
     }
 }

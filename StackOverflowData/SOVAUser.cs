@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace StackOverflowData
-{
-    public class SOVAUser
-    {
+namespace StackOverflowData {
+    public class SOVAUser {
         public int Id { get; set; }
         public string Email { get; set; }
         public string Username { get; set; }
@@ -17,10 +13,8 @@ namespace StackOverflowData
         public List<Marks> Marks { get; set; }
     }
 
-    class SOVAUserConfiguration : IEntityTypeConfiguration<SOVAUser>
-    {
-        public void Configure(EntityTypeBuilder<SOVAUser> builder)
-        {
+    class SOVAUserConfiguration : IEntityTypeConfiguration<SOVAUser> {
+        public void Configure(EntityTypeBuilder<SOVAUser> builder) {
             builder.ToTable("SOVA_users");
             builder.Property(x => x.Id).HasColumnName("id");
             builder.Property(x => x.Email).HasColumnName("email");
