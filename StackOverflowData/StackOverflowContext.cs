@@ -11,11 +11,13 @@ namespace StackOverflowData {
         public DbSet<Comment> Comments { get; private set; }
         public DbSet<Post> Posts { get; private set; }
         public DbSet<Question> Questions { get; private set; }
+
         public DbSet<AuthorComments> AuthorComments { get; private set; }
         public DbSet<AuthorPosts> AuthorPosts { get; private set; }
         public DbSet<CommentedOn> PostComments { get; private set; }
         public DbSet<Linked> Links { get; private set; }
         public DbSet<QuestionsAnswers> QuestionsAnswers { get; private set; }
+
         public DbQuery<GetPostResult> GetPostResults { get; private set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {

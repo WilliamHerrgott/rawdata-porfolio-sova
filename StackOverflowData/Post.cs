@@ -12,6 +12,7 @@ namespace StackOverflowData {
         public int Score { get; private set; }
         public AuthorPosts Author { get; private set; }
         public List<CommentedOn> Comments { get; private set; }
+        public List<Marks> ByUser { get; set; }
     }
 
     class PostConfiguration : IEntityTypeConfiguration<Post> {
