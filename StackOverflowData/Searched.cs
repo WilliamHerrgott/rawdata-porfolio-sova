@@ -10,7 +10,7 @@ namespace StackOverflowData {
         public SOVAUser User { get; set; }
     }
 
-    class SearchedConfiguration : IEntityTypeConfiguration<Searched> {
+    internal class SearchedConfiguration : IEntityTypeConfiguration<Searched> {
         public void Configure(EntityTypeBuilder<Searched> builder) {
             builder.ToTable("searched");
             builder.Property(x => x.HistoryId).HasColumnName("history_id");

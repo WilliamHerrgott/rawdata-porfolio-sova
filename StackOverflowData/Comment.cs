@@ -13,7 +13,7 @@ namespace StackOverflowData {
         public CommentedOn Post { get; private set; }
     }
 
-    class CommentConfiguration : IEntityTypeConfiguration<Comment> {
+    internal class CommentConfiguration : IEntityTypeConfiguration<Comment> {
         public void Configure(EntityTypeBuilder<Comment> builder) {
             builder.ToTable("comments");
             builder.Property(x => x.Id).HasColumnName("id");

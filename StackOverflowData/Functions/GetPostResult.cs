@@ -9,7 +9,7 @@ namespace StackOverflowData.Functions {
         public DateTime CreationDate { get; set; }
     }
 
-    class GetPostResultConfiguration : IQueryTypeConfiguration<GetPostResult> {
+    internal class GetPostResultConfiguration : IQueryTypeConfiguration<GetPostResult> {
         public void Configure(QueryTypeBuilder<GetPostResult> builder) {
             builder.Property(x => new {x.Body, x.Score, x.CreationDate}).HasColumnName("id");
         }

@@ -10,7 +10,7 @@ namespace StackOverflowData.Relationships {
         public Author Author { get; private set; }
     }
 
-    class AuthorPostsConfiguration : IEntityTypeConfiguration<AuthorPosts> {
+    internal class AuthorPostsConfiguration : IEntityTypeConfiguration<AuthorPosts> {
         public void Configure(EntityTypeBuilder<AuthorPosts> builder) {
             builder.ToTable("author_posts");
             builder.Property(x => x.PostId).HasColumnName("post_id");

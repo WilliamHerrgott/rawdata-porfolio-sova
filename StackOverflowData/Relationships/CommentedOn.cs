@@ -10,7 +10,7 @@ namespace StackOverflowData.Relationships {
         public Post Post { get; set; }
     }
 
-    class CommentedOnConfiguration : IEntityTypeConfiguration<CommentedOn> {
+    internal class CommentedOnConfiguration : IEntityTypeConfiguration<CommentedOn> {
         public void Configure(EntityTypeBuilder<CommentedOn> builder) {
             builder.ToTable("commented_on");
             builder.Property(x => x.CommentId).HasColumnName("comment_id");

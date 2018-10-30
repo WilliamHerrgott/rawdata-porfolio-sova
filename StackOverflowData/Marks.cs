@@ -15,7 +15,7 @@ namespace StackOverflowData {
         public string AnnotationText { get; set; }
     }
 
-    class MarksConfiguration : IEntityTypeConfiguration<Marks> {
+    internal class MarksConfiguration : IEntityTypeConfiguration<Marks> {
         public void Configure(EntityTypeBuilder<Marks> builder) {
             builder.ToTable("marks");
             builder.Property(x => x.UserId).HasColumnName("user_id");

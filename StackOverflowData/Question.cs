@@ -15,7 +15,7 @@ namespace StackOverflowData {
         public List<Linked> Linkposts { get; private set; }
     }
 
-    class QuestionConfiguration : IEntityTypeConfiguration<Question> {
+    internal class QuestionConfiguration : IEntityTypeConfiguration<Question> {
         public void Configure(EntityTypeBuilder<Question> builder) {
             builder.ToTable("questions");
             //builder.Property(x => x.Id).HasColumnName("id");

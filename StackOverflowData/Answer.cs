@@ -8,7 +8,7 @@ namespace StackOverflowData {
         public QuestionsAnswers Question { get; private set; }
     }
 
-    class AnswerConfiguration : IEntityTypeConfiguration<Answer> {
+    internal class AnswerConfiguration : IEntityTypeConfiguration<Answer> {
         public void Configure(EntityTypeBuilder<Answer> builder) {
             //builder.ToTable("answers");
             builder.HasBaseType<Post>();

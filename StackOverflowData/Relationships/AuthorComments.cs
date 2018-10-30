@@ -10,7 +10,7 @@ namespace StackOverflowData.Relationships {
         public Author Author { get; set; }
     }
 
-    class AuthorCommentsConfiguration : IEntityTypeConfiguration<AuthorComments> {
+    internal class AuthorCommentsConfiguration : IEntityTypeConfiguration<AuthorComments> {
         public void Configure(EntityTypeBuilder<AuthorComments> builder) {
             builder.ToTable("author_comments");
             builder.Property(x => x.CommentId).HasColumnName("comment_id");

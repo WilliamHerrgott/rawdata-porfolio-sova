@@ -10,7 +10,7 @@ namespace StackOverflowData {
         public Searched ByUser { get; set; }
     }
 
-    class HistoryConfiguration : IEntityTypeConfiguration<History> {
+    internal class HistoryConfiguration : IEntityTypeConfiguration<History> {
         public void Configure(EntityTypeBuilder<History> builder) {
             builder.ToTable("history");
             builder.Property(x => x.Id).HasColumnName("id");

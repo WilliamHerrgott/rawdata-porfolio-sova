@@ -10,7 +10,7 @@ namespace StackOverflowData.Relationships {
         public Question Question { get; set; }
     }
 
-    class QuestionsAnswersConfiguration : IEntityTypeConfiguration<QuestionsAnswers> {
+    internal class QuestionsAnswersConfiguration : IEntityTypeConfiguration<QuestionsAnswers> {
         public void Configure(EntityTypeBuilder<QuestionsAnswers> builder) {
             builder.ToTable("questions_answers");
             builder.Property(x => x.AnswerId).HasColumnName("answer_id");

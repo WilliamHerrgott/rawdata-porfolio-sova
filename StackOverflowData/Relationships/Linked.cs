@@ -10,7 +10,7 @@ namespace StackOverflowData.Relationships {
         public Question Linkpost { get; private set; }
     }
 
-    class LinkedConfiguration : IEntityTypeConfiguration<Linked> {
+    internal class LinkedConfiguration : IEntityTypeConfiguration<Linked> {
         public void Configure(EntityTypeBuilder<Linked> builder) {
             builder.ToTable("linked");
             builder.Property(x => x.QuestionId).HasColumnName("question_id");

@@ -15,7 +15,7 @@ namespace StackOverflowData {
         public List<Marks> ByUser { get; set; }
     }
 
-    class PostConfiguration : IEntityTypeConfiguration<Post> {
+    internal class PostConfiguration : IEntityTypeConfiguration<Post> {
         public void Configure(EntityTypeBuilder<Post> builder) {
             builder.ToTable("posts");
             builder.Property(x => x.Id).HasColumnName("id");
