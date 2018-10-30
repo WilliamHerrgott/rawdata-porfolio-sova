@@ -14,7 +14,7 @@ namespace StackOverflowData.SOVAEntities {
         public List<Marks> Marks { get; set; }
     }
 
-    class SOVAUserConfiguration : IEntityTypeConfiguration<SOVAUser> {
+    internal class SOVAUserConfiguration : IEntityTypeConfiguration<SOVAUser> {
         public void Configure(EntityTypeBuilder<SOVAUser> builder) {
             builder.ToTable("SOVA_users");
             builder.Property(x => x.Id).HasColumnName("id");

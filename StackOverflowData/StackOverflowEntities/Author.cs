@@ -15,7 +15,7 @@ namespace StackOverflowData.StackOverflowEntities
         public List<Comment> Comments { get; set; }
     }
 
-    class AuthorConfiguration : IEntityTypeConfiguration<Author> {
+    internal class AuthorConfiguration : IEntityTypeConfiguration<Author> {
         public void Configure(EntityTypeBuilder<Author> builder) {
             builder.ToTable("SO_authors");
             builder.Property(x => x.Id).HasColumnName("id");

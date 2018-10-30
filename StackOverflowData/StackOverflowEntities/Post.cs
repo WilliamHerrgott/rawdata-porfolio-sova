@@ -22,7 +22,7 @@ namespace StackOverflowData.StackOverflowEntities
 
     }
 
-    class PostConfiguration : IEntityTypeConfiguration<Post> {
+    internal class PostConfiguration : IEntityTypeConfiguration<Post> {
         public void Configure(EntityTypeBuilder<Post> builder) {
             builder.ToTable("posts");
             builder.Property(x => x.Id).HasColumnName("id");
