@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using StackOverflowData.StackOverflowEntities;
 
 namespace StackOverflowData.Relationships {
     public class Linked {

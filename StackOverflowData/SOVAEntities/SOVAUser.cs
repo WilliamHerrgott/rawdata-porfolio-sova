@@ -1,15 +1,16 @@
 ﻿using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using StackOverflowData.Relationships;
 
-namespace StackOverflowData {
+namespace StackOverflowData.SOVAEntities {
     public class SOVAUser {
         public int Id { get; set; }
         public string Email { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
         public string Location { get; set; }
-        public List<Searched> Searched { get; set; }
+        public List<History> Searched { get; set; }
         public List<Marks> Marks { get; set; }
     }
 

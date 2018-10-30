@@ -1,8 +1,10 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using StackOverflowData.SOVAEntities;
+using StackOverflowData.StackOverflowEntities;
 
-namespace StackOverflowData {
+namespace StackOverflowData.Relationships {
     public class Marks {
         public int UserId { get; set; }
         public SOVAUser User { get; set; }

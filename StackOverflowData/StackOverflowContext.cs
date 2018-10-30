@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
 using StackOverflowData.Functions;
 using StackOverflowData.Relationships;
+using StackOverflowData.StackOverflowEntities;
 
 namespace StackOverflowData {
     class StackOverflowContext : DbContext {
@@ -12,13 +13,9 @@ namespace StackOverflowData {
         public DbSet<Post> Posts { get; private set; }
         public DbSet<Question> Questions { get; private set; }
 
-        public DbSet<AuthorComments> AuthorComments { get; private set; }
-        public DbSet<AuthorPosts> AuthorPosts { get; private set; }
-        public DbSet<CommentedOn> PostComments { get; private set; }
         public DbSet<Linked> Links { get; private set; }
-        public DbSet<QuestionsAnswers> QuestionsAnswers { get; private set; }
 
-        public DbQuery<GetPostResult> GetPostResults { get; private set; }
+        public DbQuery<GetPostOrCommentResult> GetPostResults { get; private set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
             base.OnConfiguring(optionsBuilder);
@@ -48,13 +45,10 @@ namespace StackOverflowData {
             modelBuilder.ApplyConfiguration(new PostConfiguration());
             modelBuilder.ApplyConfiguration(new QuestionConfiguration());
 
-            modelBuilder.ApplyConfiguration(new AuthorCommentsConfiguration());
-            modelBuilder.ApplyConfiguration(new AuthorPostsConfiguration());
-            modelBuilder.ApplyConfiguration(new CommentedOnConfiguration());
             modelBuilder.ApplyConfiguration(new LinkedConfiguration());
-            modelBuilder.ApplyConfiguration(new QuestionsAnswersConfiguration());
+            
+            modelBuilder.ApplyConfiguration(new GetPostOrCommentResultConfiguration());
 
-            modelBuilder.ApplyConfiguration(new GetPostResultConfiguration());
         }
     }
 }
