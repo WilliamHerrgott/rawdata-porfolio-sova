@@ -1,13 +1,29 @@
-RAWDATA Portfolio project - General requirements
-1) Search for posts and comments in Stack Overflow
-2) Present search results by lists of items that link to (or can be unfold for) details
-3) Keep track of search history
-4) Provide a marking option for posts of special interest among posts presented in the search
-result and allow optional annotation to marked posts
-5) Support multiple users such that each user only has access to own history, markings and
-annotation
-6) Deal with relevance of objects to queries and use this to provide better answers
-7) Present search results with focus on words frequencies rather than on the texts they occur
-in, such as ranked lists of most frequent words
-8) Provide visualizations of search results and subsets of the database by means of word
-clouds and word graphs showing significant words and their relations
+  <h1 class="display-3">Repository for the Portfolio project for RAWDATA course.  
+See PDF attached to this repository in the subjects folder.</h1> 
+
+<div>
+  <h1 class="display-3">
+    Stack<b>Overflow</b> Viewer Application
+  </h1>
+  <p class="lead">
+      This application is an evaluated project for our 1<sup>st</sup> master year.
+  </p>
+
+  <h2 class="display-5">Contributors:</h2>
+  <p>
+    <ul>
+        <li>
+            <a href="https://github.com/annapecini" title="annapecini">Ana Pecini</a>
+        </li>
+        <li>
+            <a href="https://github.com/vaabreu95" title="vaabreu95">Valter Da Silva Abreu</a>
+        </li>
+        <li>
+            <a href="https://github.com/BorisLeMeec" title="BorisLeMeec">Boris Le Méec</a>
+        </li>
+        <li>
+            <a href="https://github.com/WilliamHerrgott" title="WilliamHerrgott">William Herrgott</a>
+        </li>
+    </ul>
+  </p>
+ </div>
