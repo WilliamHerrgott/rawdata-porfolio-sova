@@ -1,11 +1,20 @@
 -- ----------------------------
 -- Function for creating a new user
 -- ----------------------------
-
-CREATE OR REPLACE FUNCTION create_user(this_email varchar(50), this_username varchar(50), this_password varchar(50), this_location varchar(50))
-RETURNS void AS $$ 
+DROP FUNCTION IF EXISTS create_user;
+CREATE FUNCTION create_user(this_email varchar(50), this_username varchar(50), this_password varchar(50), this_location varchar(50))
+RETURNS integer AS $$ 
+Declare x integer;
 	BEGIN
-		INSERT INTO "SOVA_users"(email, username, password, location) VALUES (this_email, this_username, this_password, this_location);
+		IF(this_email IN(SELECT email FROM "SOVA_users") and this_username IN(SELECT username FROM "SOVA_users")) THEN
+			RAISE EXCEPTION 'User already created';
+		ELSE 
+			INSERT INTO "SOVA_users"(email, username, password, location) VALUES (this_email, this_username, this_password, this_location);
+			SELECT u.id into x
+			FROM "SOVA_users" u
+			WHERE u.username = this_username and u.password = this_password;
+			return x;		
+		END IF;
 	END; $$
 LANGUAGE plpgsql;
 
@@ -17,22 +26,33 @@ LANGUAGE plpgsql;
 -- ----------------------------
 
 DROP TRIGGER IF EXISTS user_deletion ON "SOVA_users";
-CREATE OR REPLACE FUNCTION delete_user(this_user_id integer)
-RETURNS void AS $$ 
+DROP FUNCTION IF EXISTS delete_user;
+CREATE FUNCTION delete_user(this_user_id integer)
+RETURNS BOOLEAN AS $$ 
 	BEGIN
+		IF(this_user_id  IN(SELECT ID FROM "SOVA_users")) THEN 
 		DELETE FROM "SOVA_users"
 		WHERE id = this_user_id;
-	END; $$
+			IF(this_user_id  IN(SELECT ID FROM "SOVA_users")) THEN 
+					RETURN FALSE; 
+			ELSE RETURN TRUE;
+			END IF;
+		ELSE 
+			RAISE EXCEPTION 'User not found';
+		END IF;
+		END; $$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION users_mark_and_history_deletion()
+
+DROP FUNCTION IF EXISTS users_mark_and_history_deletion;
+CREATE FUNCTION users_mark_and_history_deletion()
 RETURNS TRIGGER AS $$
 	BEGIN
 			DELETE FROM marks m
 			WHERE m.user_id = old.id;
 			
-			DELETE FROM searched s
-			WHERE s.user_id = old.id;
+			DELETE FROM history h
+			WHERE h.user_id = old.id;
 			
 			RETURN NULL;
 	END; $$
@@ -46,13 +66,18 @@ FOR EACH ROW EXECUTE PROCEDURE users_mark_and_history_deletion();
 -- Function for updating the email of a user 
 -- ----------------------------
 
-
-CREATE OR REPLACE FUNCTION update_email(this_user_id integer, var_email varchar(50))
-RETURNS VOID AS $$
+DROP FUNCTION IF EXISTS update_email;
+CREATE FUNCTION update_email(this_user_id integer, var_email varchar(50))
+RETURNS BOOLEAN AS $$
 BEGIN
-	UPDATE "SOVA_users" s
-	SET email = var_email
-	WHERE s.id = this_user_id;					
+	IF(this_user_id  IN(SELECT ID FROM "SOVA_users")) THEN 
+		UPDATE "SOVA_users" s
+		SET email = var_email
+		WHERE s.id = this_user_id;
+		RETURN TRUE;
+	ELSE
+		RETURN FALSE;
+	END IF;
 END; $$
 LANGUAGE plpgsql;
 
@@ -60,8 +85,8 @@ LANGUAGE plpgsql;
 -- Function for login a user 
 
 -- ----------------------------
-
-CREATE OR REPLACE FUNCTION get_user(login varchar, password_var varchar)
+DROP FUNCTION IF EXISTS get_user;
+CREATE FUNCTION get_user(login varchar, password_var varchar)
 RETURNS integer AS $$
 Declare x integer;
 BEGIN		
@@ -76,12 +101,18 @@ LANGUAGE plpgsql;
 -- Function for updating the username of a user 
 -- ----------------------------
 
-CREATE OR REPLACE FUNCTION update_username(this_user_id integer, var_username varchar(50))
-RETURNS VOID AS $$
+DROP FUNCTION IF EXISTS update_username;
+CREATE FUNCTION update_username(this_user_id integer, var_username varchar(50))
+RETURNS BOOLEAN AS $$
 BEGIN
-	UPDATE "SOVA_users" s
-	SET username = var_username
-	WHERE s.id = this_user_id;						
+	IF(this_user_id  IN(SELECT ID FROM "SOVA_users")) THEN 
+		UPDATE "SOVA_users" s
+		SET username = var_username
+		WHERE s.id = this_user_id;
+		RETURN TRUE;
+	ELSE 
+		RETURN FALSE;
+	END IF;
 END; $$
 LANGUAGE plpgsql;
 
@@ -89,13 +120,18 @@ LANGUAGE plpgsql;
 -- Function for updating the password of a user 
 -- ----------------------------
 
-CREATE OR REPLACE FUNCTION update_password(this_user_id integer, var_password varchar(20))
-RETURNS VOID AS $$
+DROP FUNCTION IF EXISTS update_password;
+CREATE FUNCTION update_password(this_user_id integer, var_password varchar(20))
+RETURNS BOOLEAN AS $$
 BEGIN
-	UPDATE "SOVA_users" s
-	SET password = var_password
-	WHERE s.id = this_user_id;
-				
+	IF(this_user_id  IN(SELECT ID FROM "SOVA_users")) THEN 
+		UPDATE "SOVA_users" s
+		SET password = var_password
+		WHERE s.id = this_user_id;
+		RETURN TRUE;
+	ELSE 	
+		RETURN FALSE;
+	END IF;
 END; $$
 LANGUAGE plpgsql;
 	
@@ -103,12 +139,18 @@ LANGUAGE plpgsql;
 -- Function for updating the location of a user 
 -- ----------------------------
 
-CREATE OR REPLACE FUNCTION update_location(this_user_id INTEGER, var_location VARCHAR(20))
-RETURNS VOID AS $$
+DROP FUNCTION IF EXISTS update_location;
+CREATE FUNCTION update_location(this_user_id INTEGER, var_location VARCHAR(20))
+RETURNS BOOLEAN AS $$
 BEGIN
-	UPDATE "SOVA_users" s
-	SET location = var_location
-	WHERE s.id = this_user_id;
+	IF(this_user_id  IN(SELECT ID FROM "SOVA_users")) THEN 
+		UPDATE "SOVA_users" s
+		SET location = var_location
+		WHERE s.id = this_user_id;
+		RETURN TRUE;
+	ELSE
+		RETURN FALSE;
+	END IF;
 END; $$
 LANGUAGE plpgsql;
 
@@ -117,13 +159,18 @@ LANGUAGE plpgsql;
 -- of a post by specified by post id
 -- ----------------------------
 
-CREATE OR REPLACE FUNCTION get_post(this_post_id integer)
+DROP FUNCTION IF EXISTS get_post;
+CREATE FUNCTION get_post(this_post_id integer)
 RETURNS table (body text, score integer, creation_date timestamp) AS $$
 BEGIN		
-	RETURN QUERY
-	SELECT p.body, p.score, p.creation_date
-	FROM posts p
-	WHERE p.id = this_post_id;
+	IF (this_post_id IN (SELECT id FROM posts)) THEN
+		RETURN QUERY
+		SELECT p.body, p.score, p.creation_date
+		FROM posts p
+		WHERE p.id = this_post_id;
+	ELSE 
+		RAISE 'Post not found';
+	END IF;
 END; $$
 LANGUAGE plpgsql;
 
@@ -131,15 +178,20 @@ LANGUAGE plpgsql;
 -- Function for getting all answers to a question
 -- ----------------------------
 
-CREATE OR REPLACE FUNCTION get_answers(this_question_id integer)
+DROP FUNCTION IF EXISTS get_answers;
+CREATE FUNCTION get_answers(this_question_id integer)
 RETURNS table (body text, score integer, creation_date timestamp) AS $$
 BEGIN		
-	RETURN QUERY
-	SELECT p.body, p.score, p.creation_date
-	FROM posts p, questions_answers qa
-	WHERE this_question_id = qa.question_id 
-	AND qa.answer_id = p.id
-	ORDER BY creation_date desc;
+	IF (this_question_id IN (SELECT question_id FROM answers)) THEN
+		RETURN QUERY
+		SELECT p.body, p.score, p.creation_date
+		FROM posts p, answers a
+		WHERE this_question_id = a.question_id 
+		AND a.id = p.id
+		ORDER BY creation_date desc;
+	ELSE
+		RAISE EXCEPTION 'This question has no answers';
+	END IF;
 	END; $$
 LANGUAGE plpgsql;
 
@@ -147,15 +199,19 @@ LANGUAGE plpgsql;
 -- Function for getting all the comments to a post 
 -- ----------------------------
 
-CREATE OR REPLACE FUNCTION get_comments(this_post_id integer)
+DROP FUNCTION IF EXISTS get_comments;
+CREATE FUNCTION get_comments(this_post_id integer)
 RETURNS table (body text, score integer, creation_date timestamp) AS $$
-BEGIN		
-	RETURN QUERY
-	SELECT c.body, c.score, c.creation_date
-	FROM comments c, commented_on r
-	WHERE r.post_id = this_post_id
-	AND r.comment_id = c.id
-	ORDER BY creation_date desc;
+BEGIN	
+	IF (this_post_id IN (SELECT post_id FROM comments)) THEN
+		RETURN QUERY
+		SELECT c.body, c.score, c.creation_date
+		FROM comments c
+		WHERE c.post_id = this_post_id
+		ORDER BY creation_date desc;
+	ELSE
+		RAISE EXCEPTION 'This post has no comments';
+	END IF;
 END; $$
 LANGUAGE plpgsql;
 
@@ -163,14 +219,15 @@ LANGUAGE plpgsql;
 -- Function for making a new marking
 -- ----------------------------
 
-CREATE OR REPLACE FUNCTION mark(this_user_id integer, this_post_id integer)
-RETURNS void AS $$
+DROP FUNCTION IF EXISTS mark;
+CREATE FUNCTION mark(this_user_id integer, this_post_id integer)
+RETURNS BOOLEAN AS $$
 BEGIN
 	IF (this_user_id IN (SELECT id FROM "SOVA_users")) THEN
-		INSERT INTO marks(user_id, post_id, marked_creationdate, text_annotation)
-		VALUES (this_user_id, this_post_id, date_trunc('second', LOCALTIMESTAMP), '');
+		INSERT INTO marks VALUES (this_user_id, this_post_id, date_trunc('second', LOCALTIMESTAMP), '');
+		RETURN TRUE;
 	ELSE 
-		RAISE NOTICE 'User id is unknown';
+		RAISE EXCEPTION 'User id is unknown';
 	END IF;
 END; $$
 LANGUAGE plpgsql;
@@ -179,16 +236,21 @@ LANGUAGE plpgsql;
 -- Function for deleting a marked post
 -- ----------------------------
 
-CREATE OR REPLACE FUNCTION delete_mark(this_user_id integer, this_post_id integer DEFAULT NULL)
-RETURNS void AS $$
+DROP FUNCTION IF EXISTS delete_mark;
+CREATE FUNCTION delete_mark(this_user_id integer, this_post_id integer DEFAULT NULL)
+RETURNS BOOLEAN AS $$
 BEGIN
-		IF this_post_id IS NULL THEN
+		IF this_post_id IS NULL AND this_user_id IN(SELECT USER_ID FROM marks) THEN
 			DELETE FROM marks m
 			WHERE m.user_id = this_user_id;
-		ELSE
+			RETURN TRUE;
+		ELSIF this_post_id IS NOT NULL AND this_user_id IN(SELECT USER_ID FROM marks) THEN
 			DELETE FROM marks
 			WHERE user_id = this_user_id
 			AND post_id = this_post_id;
+			RETURN TRUE;
+		ELSE 
+			RETURN FALSE;
 		END IF;
 	END; $$
 LANGUAGE plpgsql;
@@ -197,14 +259,16 @@ LANGUAGE plpgsql;
 -- Function for making a new annotation
 -- ----------------------------
 
-CREATE OR REPLACE FUNCTION make_annotation(this_user_id integer, this_post_id integer, this_text text)
-RETURNS void AS $$
+DROP FUNCTION IF EXISTS make_annotation;
+CREATE FUNCTION make_annotation(this_user_id integer, this_post_id integer, this_text text)
+RETURNS BOOLEAN AS $$
 BEGIN
-	IF (this_user_id IN (SELECT id FROM "SOVA_users")) THEN
-		UPDATE marks SET annotation_creationdate = date_trunc('second', LOCALTIMESTAMP), TEXT_ANNOTATION = this_text
+	IF (this_user_id IN (SELECT id FROM "SOVA_users") AND this_user_id IN (SELECT USER_ID FROM MARKS)) THEN
+		UPDATE "marks" SET annotation_creationdate = date_trunc('second', LOCALTIMESTAMP), TEXT_ANNOTATION = this_text
 		where user_id = this_user_id and post_id = this_post_id;
+		RETURN TRUE;
 	ELSE 
-		RAISE NOTICE 'User id is unknown';
+		RAISE EXCEPTION 'User id is unknown or the post is not marked by the user';
 	END IF;
 	END; $$
 LANGUAGE plpgsql;
@@ -213,14 +277,19 @@ LANGUAGE plpgsql;
 -- Function for making changes to an annotation
 -- ----------------------------
 
-CREATE OR REPLACE FUNCTION update_annotation(this_user_id integer, this_post_id integer, new_text text)
-RETURNS void AS $$
+DROP FUNCTION IF EXISTS update_annotation;
+CREATE FUNCTION update_annotation(this_user_id integer, this_post_id integer, new_text text)
+RETURNS BOOLEAN AS $$
 BEGIN
-	UPDATE marks m 
-	SET text_annotation = new_text
-	WHERE m.user_id = this_user_id 
-	AND m.post_id = this_post_id;
-	RETURN;
+	IF(this_user_id IN (SELECT ID FROM "SOVA_users") AND this_user_id IN (SELECT USER_ID FROM MARKS)) THEN
+		UPDATE marks m 
+		SET text_annotation = new_text, annotation_creationdate = date_trunc('second', LOCALTIMESTAMP)
+		WHERE m.user_id = this_user_id 
+		AND m.post_id = this_post_id;
+		RETURN TRUE;
+	ELSE
+		RAISE EXCEPTION 'User id is unknown or the post is not marked by the user';
+	END IF;
 END; $$
 LANGUAGE plpgsql;
 
@@ -228,13 +297,19 @@ LANGUAGE plpgsql;
 -- Function for deleting an annotation
 -- ----------------------------
 
-CREATE OR REPLACE FUNCTION delete_annotation(this_user_id integer, this_post_id integer)
-RETURNS void AS $$
+DROP FUNCTION IF EXISTS delete_annotation;
+CREATE FUNCTION delete_annotation(this_user_id integer, this_post_id integer)
+RETURNS BOOLEAN AS $$
 BEGIN
+	IF(this_user_id IN (SELECT ID FROM "SOVA_users") AND this_user_id IN (SELECT USER_ID FROM MARKS)) THEN
 		UPDATE marks
 		SET text_annotation = '', annotation_creationdate = NULL
 		WHERE user_id = this_user_id
 		AND post_id = this_post_id;
+		RETURN TRUE;
+	ELSE
+			RAISE EXCEPTION 'User id is unknown or the post is not marked by the user';
+	END IF;
 	END; $$
 LANGUAGE plpgsql;
 
@@ -242,15 +317,15 @@ LANGUAGE plpgsql;
 -- Function for getting posts marked by a user, 10 at a time 
 -- ----------------------------
 
-CREATE OR REPLACE FUNCTION get_marked(this_user_id integer, this_limit integer DEFAULT 10, this_offset integer DEFAULT NULL)
+DROP FUNCTION IF EXISTS get_marked;
+CREATE FUNCTION get_marked(this_user_id integer)
 RETURNS table (post_id integer, text_annotation text, marked_creationdate timestamp) AS $$
 BEGIN		
 	RETURN QUERY
 	SELECT m.post_id, m.text_annotation, m.marked_creationdate
 	FROM marks m
 	WHERE m.user_id = this_user_id
-	ORDER BY marked_creationdate desc 
-	LIMIT this_limit OFFSET this_offset;
+	ORDER BY marked_creationdate desc;
 END; $$
 LANGUAGE plpgsql;
 
@@ -259,17 +334,20 @@ LANGUAGE plpgsql;
 -- 10 at a time starting from the most recent one
 -- ----------------------------
 
-CREATE OR REPLACE FUNCTION get_history(id_user integer, this_limit integer DEFAULT 10, this_offset integer DEFAULT NULL)
+DROP FUNCTION IF EXISTS get_history;
+CREATE FUNCTION get_history(id_user integer)
 	RETURNS TABLE(search_text varchar(255),  date timestamp) 
 	AS $$
 		BEGIN
-		RETURN QUERY
-			SELECT h.search_text, h.date
-			FROM history h, searched s
-			WHERE s.user_id = id_user 
-			AND s.history_id = h.id
-			ORDER BY date desc 
-			LIMIT this_limit OFFSET this_offset;
+		IF id_user IN (SELECT USER_ID FROM history) THEN
+			RETURN QUERY
+				SELECT h.search_text, h.date
+				FROM history h
+				WHERE h.user_id = id_user 
+				ORDER BY date desc;
+			ELSE
+				RAISE EXCEPTION 'User not found';
+			END IF;
 	END;	$$
 LANGUAGE plpgsql;
 
@@ -278,25 +356,21 @@ LANGUAGE plpgsql;
 -- typed by the user and adding this search to his history.
 -- ----------------------------
 
-CREATE OR REPLACE FUNCTION search_sova(this_searched_text varchar(50), this_user_id integer, response_limit integer default 20, response_offset integer default 0)
+DROP FUNCTION IF EXISTS search_sova;
+CREATE FUNCTION search_sova(this_searched_text varchar(50), this_user_id integer)
 RETURNS TABLE (id integer) AS $$
 BEGIN
 	RETURN QUERY
 		SELECT q.id
 		FROM questions q
 			JOIN posts p ON p.id = q.id
-		WHERE to_tsvector(q.title || '. ' || p.body || replace(q.tags, '::', ' ')) @@ plainto_tsquery(this_searched_text)
-		limit response_limit
-		offset response_offset;
+		WHERE to_tsvector(q.title || '. ' || p.body || replace(q.tags, '::', ' ')) @@ plainto_tsquery(this_searched_text);
 		
-	WITH x AS (
-		INSERT INTO history (search_text, date)
-		VALUES(this_searched_text, date_trunc('second', LOCALTIMESTAMP))
-		RETURNING history.id
-	)
-	INSERT INTO searched (history_id, user_id)
-	SELECT X.id, this_user_id
-	FROM X;
+
+		INSERT INTO history (search_text, date, user_id)
+		VALUES(this_searched_text, date_trunc('second', LOCALTIMESTAMP), this_user_id);
+		
+	
 END; $$
 LANGUAGE plpgsql;
 
@@ -307,25 +381,18 @@ LANGUAGE plpgsql;
 -- history table.
 -- ----------------------------
 
-DROP TRIGGER IF EXISTS delete_history_content ON searched;
-CREATE OR REPLACE FUNCTION delete_history(user_id_to integer)
-RETURNS void AS $$
+
+DROP FUNCTION IF EXISTS delete_history;
+CREATE FUNCTION delete_history(user_id_to integer)
+RETURNS BOOLEAN AS $$
 	BEGIN
-		DELETE FROM searched 
-		WHERE searched.user_id = user_id_to;
-		RETURN;
+		IF(user_id_to IN (SELECT ID FROM "SOVA_users") AND user_id_to IN (SELECT USER_ID FROM history)) THEN
+			DELETE FROM history
+			WHERE history.user_id = user_id_to;
+			RETURN TRUE;
+		ELSE 
+			RAISE EXCEPTION 'User id is unknown or there is no search history for this user';
+		END IF;
 	END; $$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION delete_history_content()
-RETURNS TRIGGER AS $$
-	BEGIN
-		DELETE FROM history s 
-		WHERE s.id = old.history_id;
-		RETURN NULL;
-	END; $$
-LANGUAGE plpgsql;
-
-CREATE TRIGGER delete_history_content
-   AFTER DELETE ON searched FOR EACH ROW
-   EXECUTE PROCEDURE delete_history_content();
