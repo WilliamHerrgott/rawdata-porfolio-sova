@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using StackOverflowData.Functions;
 
 namespace StackOverflowData {
-    class DataService {
+    public class DataService {
         public static IQueryable<GetPostOrCommentResult> GetPost(int id)
         {
             using (var db = new StackOverflowContext())
