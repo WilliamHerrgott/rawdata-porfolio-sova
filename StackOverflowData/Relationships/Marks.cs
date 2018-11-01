@@ -24,12 +24,12 @@ namespace StackOverflowData.Relationships {
             builder.Property(x => x.PostId).HasColumnName("post_id");
             builder.Property(x => x.MarkCreationDate).HasColumnName("marked_creationdate");
             builder.Property(x => x.AnnotationCreationDate).HasColumnName("annotation_creationdate");
-            builder.HasOne(s => s.User)
+            builder.HasOne(m => m.User)
                 .WithMany(u => u.Marks)
-                .HasForeignKey(qa => qa.UserId);
-            builder.HasOne(s => s.Post)
-                .WithMany(h => h.ByUser)
-                .HasForeignKey(s => s.PostId);
+                .HasForeignKey(m => m.UserId);
+            builder.HasOne(m => m.Post)
+                .WithMany(p => p.ByUser)
+                .HasForeignKey(m => m.PostId);
         }
     }
 }

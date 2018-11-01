@@ -43,20 +43,22 @@ namespace StackOverflowData {
             }
         }
 
-        public static void CreateUser(string email, string username, string password, string location)
+        public static int CreateUser(string email, string username, string password, string location)
         {
             using (var db = new SOVAContext())
             {
-                db.Database.ExecuteSqlCommand("EXEC create_user({0},{1},{2},{3})", 
+                var userId = db.Database.ExecuteSqlCommand("EXEC create_user({0},{1},{2},{3})", 
                     email, username, password, location);
+                return userId;
             }
         }
 
-        public static void DeleteUser(int userId)
+        public static bool DeleteUser(int userId)
         {
             using (var db = new SOVAContext())
             {
-                db.Database.ExecuteSqlCommand("EXEC delete_user({0})", userId);
+                var success = db.Database.ExecuteSqlCommand("EXEC delete_user({0})", userId);
+                return success;
             }
         }
 
