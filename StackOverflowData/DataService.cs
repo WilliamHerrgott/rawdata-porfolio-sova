@@ -6,21 +6,16 @@ using StackOverflowData.Functions;
 
 namespace StackOverflowData {
     public class DataService {
+        
+        /***********************************
+         *  StackOverflowContext Functions  *
+         ***********************************/
+        
         public IQueryable<GetPostOrCommentResult> GetPost(int id)
         {
             using (var db = new StackOverflowContext())
             {
                 var result = db.GetPostResults.FromSql("select * from get_post({0})", id);
-                return result;
-            }
-        }
-
-        public IQueryable<GetUserResult> GetUser(string username, string password)
-        {
-            using (var db = new SOVAContext())
-            {
-                var result = db.GetUserResult.FromSql("select * from get_user({0},{1})", username,
-                    password);
                 return result;
             }
         }
@@ -43,6 +38,20 @@ namespace StackOverflowData {
             }
         }
 
+         /**************************
+         *  SOVAContext Functions  *
+         **************************/
+        
+        public IQueryable<GetUserResult> GetUser(string username, string password)
+        {
+            using (var db = new SOVAContext())
+            {
+                var result = db.GetUserResult.FromSql("select * from get_user({0},{1})", username,
+                    password);
+                return result;
+            }
+        }
+        
         public int CreateUser(string email, string username, string password, string location)
         {
             using (var db = new SOVAContext())

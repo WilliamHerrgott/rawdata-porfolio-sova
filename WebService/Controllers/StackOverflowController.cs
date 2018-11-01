@@ -11,7 +11,7 @@ namespace WebService.Controllers {
             _dataService = dataService;
         }
         
-        [HttpGet]
+        [HttpGet("{questionId}")]
         public IActionResult GetAnswer(int questionId) {
             var answer = _dataService.GetAnswers(questionId);
 
@@ -22,7 +22,7 @@ namespace WebService.Controllers {
             return Ok(answer);
         }
 
-        [HttpGet]
+        [HttpGet("{postId}")]
         public IActionResult GetComment(int postId) {
             var comment = _dataService.GetComments(postId);
 
@@ -31,6 +31,17 @@ namespace WebService.Controllers {
             }
 
             return Ok(comment);
+        }
+
+        [HttpGet("{id}")]
+        public IActionResult GetPost(int id) {
+            var post = _dataService.GetPost(id);
+
+            if (post == null) {
+                return NotFound();
+            }
+
+            return Ok(post);
         }
     }
 }
