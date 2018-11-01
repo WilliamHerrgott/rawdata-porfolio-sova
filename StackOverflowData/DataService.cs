@@ -6,112 +6,123 @@ using StackOverflowData.Functions;
 
 namespace StackOverflowData {
     class DataService {
-        public static IQueryable<GetPostOrCommentResult> GetPost(int id)
+        public List<GetPostOrCommentResult> GetPost(int id)
         {
             using (var db = new StackOverflowContext())
             {
-                var result = db.GetPostResults.FromSql("select * from get_post({0})", id);
+                var result = db.GetPostResults.FromSql("select * from get_post({0})", id).ToList();
                 return result;
             }
         }
 
-        public static IQueryable<GetUserResult> GetUser(string username, string password)
+        public int GetUser(string username, string password)
         {
             using (var db = new SOVAContext())
             {
                 var result = db.GetUserResult.FromSql("select * from get_user({0},{1})", username,
-                    password);
+                    password).FirstOrDefault().Id;
                 return result;
             }
         }
 
-        public static IQueryable<GetPostOrCommentResult> GetAnswers(int questionId)
+        public List<GetPostOrCommentResult> GetAnswers(int questionId)
         { 
             using (var db = new StackOverflowContext())
             {
-                var result = db.GetPostResults.FromSql("select * from get_answers({0})", questionId);
+                var result = db.GetPostResults.FromSql("select * from get_answers({0})", questionId).ToList();
                 return result;
             }
         }
 
-        public static IQueryable<GetPostOrCommentResult> GetComments(int postId)
+        public List<GetPostOrCommentResult> GetComments(int postId)
         {
             using (var db = new StackOverflowContext())
             {
-                var result = db.GetPostResults.FromSql("select * from get_comments({0})", postId);
+                var result = db.GetPostResults.FromSql("select * from get_comments({0})", postId).ToList();
                 return result;
             }
         }
 
-        public static int CreateUser(string email, string username, string password, string location)
+        public int CreateUser(string email, string username, string password, string location)
         {
             using (var db = new SOVAContext())
             {
-                var userId = db.Database.ExecuteSqlCommand("EXEC create_user({0},{1},{2},{3})", 
-                    email, username, password, location);
-                return userId;
+                return db.GetUserResult.FromSql("SELECT create_user({0},{1},{2},{3})", 
+                    email, username, password, location).FirstOrDefault().Id;
             }
         }
 
-        public static bool DeleteUser(int userId)
+        public bool DeleteUser(int userId)
         {
             using (var db = new SOVAContext())
             {
-                var success = db.Database.ExecuteSqlCommand("EXEC delete_user({0})", userId);
-                return success;
+                var deleted = db.BooleanResult.FromSql("SELECT delete_user({0})", userId)
+                    .FirstOrDefault().Successful;
+                return deleted;
             }
         }
 
-        public static void UpdateEmail(int id, string email)
+        public bool UpdateEmail(int id, string email)
         {
             using (var db = new SOVAContext())
             {
-                db.Database.ExecuteSqlCommand("EXEC update_email({0},{1})", id, email);
+                var updated = db.BooleanResult.FromSql("SELECT update_email({0},{1})", id, email)
+                    .FirstOrDefault().Successful;
+                return updated;
             }
         }
 
-        public static void UpdateUsername(int id, string username)
+        public bool UpdateUsername(int id, string username)
         {
             using (var db = new SOVAContext())
             {
-                db.Database.ExecuteSqlCommand("EXEC update_username({0},{1})", id, username);
+                var updated = db.BooleanResult.FromSql("SELECT update_username({0},{1})", id, username)
+                    .FirstOrDefault().Successful;
+                return updated;
             }
         }
 
-        public static void UpdatePassword(int id, string password)
+        public bool UpdatePassword(int id, string password)
         {
             using (var db = new SOVAContext())
             {
-                db.Database.ExecuteSqlCommand("EXEC update_password({0},{1})", id, password);
+                var updated = db.BooleanResult.FromSql("SELECT update_password({0},{1})", id, password)
+                    .FirstOrDefault().Successful;
+                return updated;
             }
         }
 
-        public static void UpdateLocation(int id, string location)
+        public bool UpdateLocation(int id, string location)
         {
             using (var db = new SOVAContext())
             {
-                db.Database.ExecuteSqlCommand("EXEC update_location({0},{1})", id, location);
+                var updated = db.BooleanResult.FromSql("SELECT update_location({0},{1})", id, location)
+                    .FirstOrDefault().Successful;
+                return updated;
             }
         }
 
-        public static void Mark(int userId, int postId)
+        public bool Mark(int userId, int postId)
         {
             using (var db = new SOVAContext())
             {
-                db.Database.ExecuteSqlCommand("EXEC mark({0},{1})", userId, postId);
+                var marked = db.BooleanResult.FromSql("SELECT mark({0},{1})", userId, postId)
+                    .FirstOrDefault().Successful;
+                return marked;
             }
         }
 
-        public static void DeleteMark(int userId, string postId = null)
+        public bool DeleteMark(int userId, string postId = null)
         {
             using (var db = new SOVAContext())
             {
-                int id;
-                db.Database.ExecuteSqlCommand("EXEC delete_mark({0},{1})", userId, int.TryParse(postId, out id));
+                var deleted = db.BooleanResult.FromSql("SELECT delete_mark({0},{1})", userId, int.TryParse(postId, out int id))
+                    .FirstOrDefault().Successful;
+                return deleted;
             }
         }
 
-        public static void MakeAnnotation(int userId, int postId, string text)
+        public void MakeAnnotation(int userId, int postId, string text)
         {
             using (var db = new SOVAContext())
             {
@@ -119,7 +130,7 @@ namespace StackOverflowData {
             }
         }
 
-        public static void UpdateAnnotation(int userId, int postId, string newText)
+        public void UpdateAnnotation(int userId, int postId, string newText)
         {
             using (var db = new SOVAContext())
             {
@@ -127,7 +138,7 @@ namespace StackOverflowData {
             }
         }
 
-        public static void DeleteAnnotation(int userId, int postId)
+        public void DeleteAnnotation(int userId, int postId)
         {
             using (var db = new SOVAContext())
             {
@@ -135,7 +146,7 @@ namespace StackOverflowData {
             }
         }
 
-        public static void DeleteHistory(int userId)
+        public void DeleteHistory(int userId)
         {
             using (var db = new SOVAContext())
             {

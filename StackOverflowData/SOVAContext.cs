@@ -15,6 +15,7 @@ namespace StackOverflowData
         public DbSet<Marks> Marks { get; set; }
 
         public DbQuery<GetUserResult> GetUserResult { get; set; }
+        public DbQuery<BooleanResult> BooleanResult { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -42,6 +43,7 @@ namespace StackOverflowData
             modelBuilder.ApplyConfiguration(new MarksConfiguration());
 
             modelBuilder.ApplyConfiguration(new GetUserResultConfiguration());
+            modelBuilder.ApplyConfiguration(new BooleanResultConfiguration());
         }
     }
 }
