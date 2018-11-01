@@ -1,5 +1,5 @@
-using StackOverflowData;
 using Microsoft.AspNetCore.Mvc;
+using StackOverflowData;
 
 namespace WebService.Controllers {
     [Route("api/StackOverflow")]
@@ -10,7 +10,7 @@ namespace WebService.Controllers {
         public StackOverflowController(DataService dataService) {
             _dataService = dataService;
         }
-        
+
         [HttpGet("{questionId}")]
         public IActionResult GetAnswer(int questionId) {
             var answer = _dataService.GetAnswers(questionId);
@@ -18,7 +18,7 @@ namespace WebService.Controllers {
             if (answer == null) {
                 return NotFound();
             }
-            
+
             return Ok(answer);
         }
 

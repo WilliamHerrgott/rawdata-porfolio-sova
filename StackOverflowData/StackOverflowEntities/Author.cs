@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace StackOverflowData.StackOverflowEntities
-{
+namespace StackOverflowData.StackOverflowEntities {
     public class Author {
         public int Id { get; set; }
         public string Name { get; set; }

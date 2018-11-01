@@ -2,8 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace StackOverflowData.StackOverflowEntities
-{
+namespace StackOverflowData.StackOverflowEntities {
     public class Comment {
         public int Id { get; private set; }
         public int Score { get; private set; }

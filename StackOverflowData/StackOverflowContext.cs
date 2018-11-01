@@ -46,9 +46,8 @@ namespace StackOverflowData {
             modelBuilder.ApplyConfiguration(new QuestionConfiguration());
 
             modelBuilder.ApplyConfiguration(new LinkedConfiguration());
-            
-            modelBuilder.ApplyConfiguration(new GetPostOrCommentResultConfiguration());
 
+            modelBuilder.ApplyConfiguration(new GetPostOrCommentResultConfiguration());
         }
     }
 }
