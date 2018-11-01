@@ -6,7 +6,7 @@ using StackOverflowData.Functions;
 
 namespace StackOverflowData {
     public class DataService {
-        public static IQueryable<GetPostOrCommentResult> GetPost(int id)
+        public IQueryable<GetPostOrCommentResult> GetPost(int id)
         {
             using (var db = new StackOverflowContext())
             {
@@ -15,7 +15,7 @@ namespace StackOverflowData {
             }
         }
 
-        public static IQueryable<GetUserResult> GetUser(string username, string password)
+        public IQueryable<GetUserResult> GetUser(string username, string password)
         {
             using (var db = new SOVAContext())
             {
@@ -25,7 +25,7 @@ namespace StackOverflowData {
             }
         }
 
-        public static IQueryable<GetPostOrCommentResult> GetAnswers(int questionId)
+        public IQueryable<GetPostOrCommentResult> GetAnswers(int questionId)
         { 
             using (var db = new StackOverflowContext())
             {
@@ -34,7 +34,7 @@ namespace StackOverflowData {
             }
         }
 
-        public static IQueryable<GetPostOrCommentResult> GetComments(int postId)
+        public IQueryable<GetPostOrCommentResult> GetComments(int postId)
         {
             using (var db = new StackOverflowContext())
             {
@@ -43,7 +43,7 @@ namespace StackOverflowData {
             }
         }
 
-        public static int CreateUser(string email, string username, string password, string location)
+        public int CreateUser(string email, string username, string password, string location)
         {
             using (var db = new SOVAContext())
             {
@@ -53,7 +53,7 @@ namespace StackOverflowData {
             }
         }
 
-        public static bool DeleteUser(int userId)
+        public bool DeleteUser(int userId)
         {
             using (var db = new SOVAContext())
             {
@@ -62,7 +62,7 @@ namespace StackOverflowData {
             }
         }
 
-        public static void UpdateEmail(int id, string email)
+        public void UpdateEmail(int id, string email)
         {
             using (var db = new SOVAContext())
             {
@@ -70,7 +70,7 @@ namespace StackOverflowData {
             }
         }
 
-        public static void UpdateUsername(int id, string username)
+        public void UpdateUsername(int id, string username)
         {
             using (var db = new SOVAContext())
             {
@@ -78,7 +78,7 @@ namespace StackOverflowData {
             }
         }
 
-        public static void UpdatePassword(int id, string password)
+        public void UpdatePassword(int id, string password)
         {
             using (var db = new SOVAContext())
             {
@@ -86,7 +86,7 @@ namespace StackOverflowData {
             }
         }
 
-        public static void UpdateLocation(int id, string location)
+        public void UpdateLocation(int id, string location)
         {
             using (var db = new SOVAContext())
             {
@@ -94,7 +94,7 @@ namespace StackOverflowData {
             }
         }
 
-        public static void Mark(int userId, int postId)
+        public void Mark(int userId, int postId)
         {
             using (var db = new SOVAContext())
             {
@@ -102,7 +102,7 @@ namespace StackOverflowData {
             }
         }
 
-        public static void DeleteMark(int userId, string postId = null)
+        public void DeleteMark(int userId, string postId = null)
         {
             using (var db = new SOVAContext())
             {
@@ -111,7 +111,7 @@ namespace StackOverflowData {
             }
         }
 
-        public static void MakeAnnotation(int userId, int postId, string text)
+        public void MakeAnnotation(int userId, int postId, string text)
         {
             using (var db = new SOVAContext())
             {
@@ -119,7 +119,7 @@ namespace StackOverflowData {
             }
         }
 
-        public static void UpdateAnnotation(int userId, int postId, string newText)
+        public void UpdateAnnotation(int userId, int postId, string newText)
         {
             using (var db = new SOVAContext())
             {
@@ -127,7 +127,7 @@ namespace StackOverflowData {
             }
         }
 
-        public static void DeleteAnnotation(int userId, int postId)
+        public void DeleteAnnotation(int userId, int postId)
         {
             using (var db = new SOVAContext())
             {
@@ -135,7 +135,7 @@ namespace StackOverflowData {
             }
         }
 
-        public static void DeleteHistory(int userId)
+        public void DeleteHistory(int userId)
         {
             using (var db = new SOVAContext())
             {
