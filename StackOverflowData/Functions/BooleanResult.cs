@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace StackOverflowData.Functions
 {
-    class BooleanResult
+    public class BooleanResult
     {
-        public bool Successful;
+        public bool Successful { get; set; }
     }
 
     class BooleanResultConfiguration : IQueryTypeConfiguration<BooleanResult>

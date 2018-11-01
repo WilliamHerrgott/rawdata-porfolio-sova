@@ -1,9 +1,10 @@
 ﻿using System.Linq;
+using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using StackOverflowData.Functions;
 
 namespace StackOverflowData {
-    class DataService {
+    public class DataService {
         public List<GetPostOrCommentResult> GetPost(int id)
         {
             using (var db = new StackOverflowContext())
@@ -120,27 +121,61 @@ namespace StackOverflowData {
             }
         }
 
-        public void MakeAnnotation(int userId, int postId, string text) {
+        public bool MakeAnnotation(int userId, int postId, string text) {
             using (var db = new SOVAContext()) {
-                db.Database.ExecuteSqlCommand("EXEC make_annotation({0},{1},{2})", userId, postId, text);
+                var successful = db.BooleanResult.FromSql("SELECT make_annotation({0},{1},{2})", userId, postId, text)
+                    .FirstOrDefault().Successful;
+                return successful;
             }
         }
 
-        public void UpdateAnnotation(int userId, int postId, string newText) {
+        public bool UpdateAnnotation(int userId, int postId, string newText) {
             using (var db = new SOVAContext()) {
-                db.Database.ExecuteSqlCommand("EXEC update_annotation({0},{1},{2})", userId, postId, newText);
+                var updated = db.BooleanResult.FromSql("SELECT update_annotation({0},{1},{2})", userId, postId, newText)
+                    .FirstOrDefault().Successful;
+                return updated;
             }
         }
 
-        public void DeleteAnnotation(int userId, int postId) {
+        public bool DeleteAnnotation(int userId, int postId) {
             using (var db = new SOVAContext()) {
-                db.Database.ExecuteSqlCommand("EXEC delete_annotation({0},{1})", userId, postId);
+                var deleted = db.BooleanResult.FromSql("SELECT delete_annotation({0},{1})", userId, postId)
+                    .FirstOrDefault().Successful;
+                return deleted;
             }
         }
 
-        public void DeleteHistory(int userId) {
+        public bool DeleteHistory(int userId) {
             using (var db = new SOVAContext()) {
-                db.Database.ExecuteSqlCommand("EXEC delete_history({0})", userId);
+                var deleted = db.BooleanResult.FromSql("SELECT delete_history({0})", userId)
+                    .FirstOrDefault().Successful;
+                return deleted;
+            }
+        }
+
+        public List<GetPostOrCommentResult> Search(string text, int userId){
+            using (var db = new StackOverflowContext()){
+                var result = db.GetPostResults.FromSql("SELECT search_sova({0},{1})", text, userId)
+                    .ToList();
+                return result;
+            }
+        }
+
+        public List<GetHistoryResult> GetHistory(int userId) {
+            using (var db = new SOVAContext()) {
+                var result = db.GetHistoryResult.FromSql("SELECT get_history({0})", userId).
+                    ToList();
+                return result;
+            }
+        }
+
+        public List<GetMarkedResult> GetMarked(int userId)
+        {
+            using (var db = new SOVAContext())
+            {
+                var result = db.GetMarkedResult.FromSql("SELECT get_marked({0})", userId).
+                    ToList();
+                return result;
             }
         }
     }
