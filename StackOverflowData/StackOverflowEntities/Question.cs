@@ -4,8 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using StackOverflowData.Relationships;
 
-namespace StackOverflowData.StackOverflowEntities
-{
+namespace StackOverflowData.StackOverflowEntities {
     public class Question {
         public int Id { get; private set; }
         public int AcceptedAnswerId { get; private set; }
@@ -22,7 +21,7 @@ namespace StackOverflowData.StackOverflowEntities
     internal class QuestionConfiguration : IEntityTypeConfiguration<Question> {
         public void Configure(EntityTypeBuilder<Question> builder) {
             builder.ToTable("questions");
-            builder.Property(x => x.Id).HasColumnName("id");            
+            builder.Property(x => x.Id).HasColumnName("id");
             builder.Property(x => x.AcceptedAnswerId).HasColumnName("accepted_answer_id");
             builder.Property(x => x.ClosedDate).HasColumnName("closed_date");
             builder.Property(x => x.Title).HasColumnName("title");

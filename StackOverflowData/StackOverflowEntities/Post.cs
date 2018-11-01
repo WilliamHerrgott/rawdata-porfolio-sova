@@ -4,8 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using StackOverflowData.Relationships;
 
-namespace StackOverflowData.StackOverflowEntities
-{
+namespace StackOverflowData.StackOverflowEntities {
     public class Post {
         public int Id { get; private set; }
         public DateTime CreationDate { get; private set; }
@@ -19,7 +18,6 @@ namespace StackOverflowData.StackOverflowEntities
 
         public Question Question { get; set; }
         public Answer Answer { get; set; }
-
     }
 
     internal class PostConfiguration : IEntityTypeConfiguration<Post> {

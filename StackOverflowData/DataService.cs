@@ -1,7 +1,5 @@
-﻿using System;
+﻿using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
-using System.Collections.Generic;
 using StackOverflowData.Functions;
 
 namespace StackOverflowData {
@@ -122,34 +120,26 @@ namespace StackOverflowData {
             }
         }
 
-        public void MakeAnnotation(int userId, int postId, string text)
-        {
-            using (var db = new SOVAContext())
-            {
+        public void MakeAnnotation(int userId, int postId, string text) {
+            using (var db = new SOVAContext()) {
                 db.Database.ExecuteSqlCommand("EXEC make_annotation({0},{1},{2})", userId, postId, text);
             }
         }
 
-        public void UpdateAnnotation(int userId, int postId, string newText)
-        {
-            using (var db = new SOVAContext())
-            {
+        public void UpdateAnnotation(int userId, int postId, string newText) {
+            using (var db = new SOVAContext()) {
                 db.Database.ExecuteSqlCommand("EXEC update_annotation({0},{1},{2})", userId, postId, newText);
             }
         }
 
-        public void DeleteAnnotation(int userId, int postId)
-        {
-            using (var db = new SOVAContext())
-            {
+        public void DeleteAnnotation(int userId, int postId) {
+            using (var db = new SOVAContext()) {
                 db.Database.ExecuteSqlCommand("EXEC delete_annotation({0},{1})", userId, postId);
             }
         }
 
-        public void DeleteHistory(int userId)
-        {
-            using (var db = new SOVAContext())
-            {
+        public void DeleteHistory(int userId) {
+            using (var db = new SOVAContext()) {
                 db.Database.ExecuteSqlCommand("EXEC delete_history({0})", userId);
             }
         }

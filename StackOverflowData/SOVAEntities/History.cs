@@ -8,7 +8,7 @@ namespace StackOverflowData.SOVAEntities {
         public string SearchText { get; set; }
         public DateTime Date { get; set; }
         public int UserId { get; set; }
-            
+
         public SOVAUser ByUser { get; set; }
     }
 

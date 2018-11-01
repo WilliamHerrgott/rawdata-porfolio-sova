@@ -3,7 +3,6 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace StackOverflowData.StackOverflowEntities {
     public class Answer {
-        
         public int Id { get; private set; }
         public int ParentId { get; private set; }
 
