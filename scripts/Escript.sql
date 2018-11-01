@@ -12,7 +12,7 @@ SElECT * FROM "SOVA_users";
 -- Deleting a user
 ----------------------------------------------------------------
 
-SELECT delete_user(3);
+SELECT delete_user(2);
 
 SELECT * FROM "SOVA_users";
 
@@ -35,6 +35,7 @@ SELECT mark(3,713);
 SELECT mark(4,718);
 
 SELECT * FROM marks;
+
 
 ----------------------------------------------------------------
 -- Storing an annotation made by the user on a marked post
@@ -70,7 +71,7 @@ SELECT * FROM marks;
 -- Deleting a marked post from a given user and post
 ----------------------------------------------------------------
 
-SELECT delete_mark(3,709);
+SELECT delete_mark(1,718);
 
 SELECT * FROM marks;
 
@@ -90,17 +91,9 @@ SELECT delete_annotation(1,713);
 
 SELECT * FROM marks;
 
-----------------------------------------------------------------
--- Getting a subset of marked posts with a given offset
-----------------------------------------------------------------
-
-SELECT get_marked(1,3,0);
-
-SELECT * FROM marks;
-
-----------------------------------------------------------------
--- Getting a subset of marked posts without offset or limit(default 10)
-----------------------------------------------------------------
+-----------------------------------
+-- Getting a subset of marked posts 
+-----------------------------------
 
 SELECT get_marked(1);
 
@@ -109,9 +102,6 @@ SELECT * FROM marks;
 ----------------------------------------------------------------
 -- Getting posts for a given search text
 ----------------------------------------------------------------
-
-SELECT * 
-FROM searched;
 
 SELECT * 
 FROM history;
@@ -123,9 +113,6 @@ SELECT search_sova('Python', 1);
 SELECT * 
 FROM POSTS 
 WHERE ID = 48211;
-
-SELECT * 
-FROM searched;
 
 SELECT * 
 FROM history;
@@ -143,9 +130,6 @@ SELECT get_history(1);
 ----------------------------------------------------------------
 
 SELECT delete_history(1);
-
-SELECT * 
-FROM searched;
 
 SELECT * 
 FROM history;
@@ -168,8 +152,8 @@ WHERE ID = 798;
 SELECT get_answers(5131954);
 
 SELECT  P.BODY
-FROM POSTS P, QUESTIONS_ANSWERS Q, ANSWERS A
-WHERE P.ID = Q.ANSWER_ID AND Q.ANSWER_ID = A.ID AND QUESTION_ID = 5131954;
+FROM POSTS P, ANSWERS A
+WHERE P.ID = A.ID AND  A.PARENT_ID = 5131954;
 
 ----------------------------------------------------------------
 -- Retrieving comments for a given post
@@ -178,8 +162,8 @@ WHERE P.ID = Q.ANSWER_ID AND Q.ANSWER_ID = A.ID AND QUESTION_ID = 5131954;
 SELECT get_comments(13649012);
 
 SELECT C.BODY
-FROM COMMENTS C, COMMENTED_ON C1, POSTS P
-WHERE C.ID = C1.COMMENT_ID AND C1.POST_ID = P.ID AND P.ID = 13649012;
+FROM COMMENTS C, POSTS P
+WHERE C.POST_ID = P.ID AND P.ID = 13649012;
 
 ----------------------------------------------------------------
 -- Update user's enail, displayname, password or location
@@ -203,11 +187,11 @@ SELECT * FROM "SOVA_users";
 -- Update user's enail, displayname, password or location
 ----------------------------------------------------------------
 
-SELECT get_user('vsilva','asd123');
+SELECT get_user('vsilva','1995');
 
 SELECT ID
 FROM "SOVA_users"
-WHERE USERNAME = 'vsilva' AND PASSWORD = 'asd123';
+WHERE USERNAME = 'vsilva' AND PASSWORD = '1995';
 
 
 ----------------------------------------------------------------
@@ -225,12 +209,8 @@ FROM MARKS
 WHERE USER_ID = 1;
 
 SELECT *
-FROM SEARCHED 
-WHERE USER_ID = 1;
-
-SELECT *
 FROM HISTORY
-WHERE ID = 3;
+WHERE USER_ID = 1;
 
 SELECT delete_user(1);
 
@@ -240,10 +220,6 @@ WHERE ID = 1;
 
 SELECT *
 FROM MARKS
-WHERE USER_ID = 1;
-
-SELECT *
-FROM SEARCHED 
 WHERE USER_ID = 1;
 
 SELECT *
