@@ -16,6 +16,7 @@ namespace StackOverflowData {
         public DbSet<Linked> Links { get; private set; }
 
         public DbQuery<GetPostOrCommentResult> GetPostResults { get; private set; }
+        public DbQuery<SearchResult> SearchResults { get; private set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
             base.OnConfiguring(optionsBuilder);
@@ -48,6 +49,7 @@ namespace StackOverflowData {
             modelBuilder.ApplyConfiguration(new LinkedConfiguration());
 
             modelBuilder.ApplyConfiguration(new GetPostOrCommentResultConfiguration());
+            modelBuilder.ApplyConfiguration(new SearchResultConfiguration());
         }
     }
 }
