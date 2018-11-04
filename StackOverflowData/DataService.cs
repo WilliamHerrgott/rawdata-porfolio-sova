@@ -1,11 +1,10 @@
-﻿using System.Linq;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using StackOverflowData.Functions;
 
 namespace StackOverflowData {
-    public interface IDataService
-    {
+    public interface IDataService {
         GetPostOrCommentResult GetPost(int id);
         int GetUser(string username, string password);
         List<GetPostOrCommentResult> GetAnswers(int questionId, int page, int pageSize);
@@ -27,31 +26,25 @@ namespace StackOverflowData {
         List<GetMarkedResult> GetMarked(int userId, int page, int pageSize);
     }
 
-    public class DataService : IDataService{
-        public GetPostOrCommentResult GetPost(int id)
-        {
-            using (var db = new StackOverflowContext())
-            {
+    public class DataService : IDataService {
+        public GetPostOrCommentResult GetPost(int id) {
+            using (var db = new StackOverflowContext()) {
                 var result = db.GetPostResults.FromSql("select * from get_post({0})", id)
                     .FirstOrDefault();
                 return result;
             }
         }
 
-        public int GetUser(string username, string password)
-        {
-            using (var db = new StackOverflowContext())
-            {
+        public int GetUser(string username, string password) {
+            using (var db = new StackOverflowContext()) {
                 var result = db.GetUserResult.FromSql("select * from get_user({0},{1})", username,
                     password).FirstOrDefault().Id;
                 return result;
             }
         }
 
-        public List<GetPostOrCommentResult> GetAnswers(int questionId, int page, int pageSize)
-        { 
-            using (var db = new StackOverflowContext())
-            {
+        public List<GetPostOrCommentResult> GetAnswers(int questionId, int page, int pageSize) {
+            using (var db = new StackOverflowContext()) {
                 var result = db.GetPostResults.FromSql("select * from get_answers({0})", questionId)
                     .Skip(page * pageSize)
                     .Take(pageSize)
@@ -60,10 +53,8 @@ namespace StackOverflowData {
             }
         }
 
-        public List<GetPostOrCommentResult> GetComments(int postId, int page, int pageSize)
-        {
-            using (var db = new StackOverflowContext())
-            {
+        public List<GetPostOrCommentResult> GetComments(int postId, int page, int pageSize) {
+            using (var db = new StackOverflowContext()) {
                 var result = db.GetPostResults.FromSql("select * from get_comments({0})", postId)
                     .Skip(page * pageSize)
                     .Take(pageSize)
@@ -72,11 +63,9 @@ namespace StackOverflowData {
             }
         }
 
-        public int CreateUser(string email, string username, string password, string location)
-        {
-            using (var db = new StackOverflowContext())
-            {
-                int result =  db.GetUserResult.FromSql("SELECT * FROM create_user({0},{1},{2},{3})", 
+        public int CreateUser(string email, string username, string password, string location) {
+            using (var db = new StackOverflowContext()) {
+                int result = db.GetUserResult.FromSql("SELECT * FROM create_user({0},{1},{2},{3})",
                     email, username, password, location).FirstOrDefault().Id;
 
                 db.SaveChanges();
@@ -84,10 +73,8 @@ namespace StackOverflowData {
             }
         }
 
-        public bool DeleteUser(int userId)
-        {
-            using (var db = new StackOverflowContext())
-            {
+        public bool DeleteUser(int userId) {
+            using (var db = new StackOverflowContext()) {
                 var deleted = db.BooleanResult.FromSql("SELECT * FROM delete_user({0})", userId)
                     .FirstOrDefault().Successful;
 
@@ -96,10 +83,8 @@ namespace StackOverflowData {
             }
         }
 
-        public bool UpdateEmail(int id, string email)
-        {
-            using (var db = new StackOverflowContext())
-            {
+        public bool UpdateEmail(int id, string email) {
+            using (var db = new StackOverflowContext()) {
                 var updated = db.BooleanResult.FromSql("SELECT * FROM update_email({0},{1})", id, email)
                     .FirstOrDefault().Successful;
                 db.SaveChanges();
@@ -107,10 +92,8 @@ namespace StackOverflowData {
             }
         }
 
-        public bool UpdateUsername(int id, string username)
-        {
-            using (var db = new StackOverflowContext())
-            {
+        public bool UpdateUsername(int id, string username) {
+            using (var db = new StackOverflowContext()) {
                 var updated = db.BooleanResult.FromSql("SELECT * FROM update_username({0},{1})", id, username)
                     .FirstOrDefault().Successful;
                 db.SaveChanges();
@@ -118,10 +101,8 @@ namespace StackOverflowData {
             }
         }
 
-        public bool UpdatePassword(int id, string password)
-        {
-            using (var db = new StackOverflowContext())
-            {
+        public bool UpdatePassword(int id, string password) {
+            using (var db = new StackOverflowContext()) {
                 var updated = db.BooleanResult.FromSql("SELECT * FROM update_password({0},{1})", id, password)
                     .FirstOrDefault().Successful;
                 db.SaveChanges();
@@ -129,10 +110,8 @@ namespace StackOverflowData {
             }
         }
 
-        public bool UpdateLocation(int id, string location)
-        {
-            using (var db = new StackOverflowContext())
-            {
+        public bool UpdateLocation(int id, string location) {
+            using (var db = new StackOverflowContext()) {
                 var updated = db.BooleanResult.FromSql("SELECT * FROM update_location({0},{1})", id, location)
                     .FirstOrDefault().Successful;
                 db.SaveChanges();
@@ -140,10 +119,8 @@ namespace StackOverflowData {
             }
         }
 
-        public bool CreateMark(int userId, int postId)
-        {
-            using (var db = new StackOverflowContext())
-            {
+        public bool CreateMark(int userId, int postId) {
+            using (var db = new StackOverflowContext()) {
                 var marked = db.BooleanResult.FromSql("SELECT * FROM mark({0},{1})", userId, postId)
                     .FirstOrDefault().Successful;
                 db.SaveChanges();
@@ -151,10 +128,8 @@ namespace StackOverflowData {
             }
         }
 
-        public bool DeleteMark(int userId, int postId)
-        {
-            using (var db = new StackOverflowContext())
-            {
+        public bool DeleteMark(int userId, int postId) {
+            using (var db = new StackOverflowContext()) {
                 var deleted = db.BooleanResult.FromSql("SELECT * FROM delete_mark({0},{1})", userId, postId)
                     .FirstOrDefault().Successful;
                 db.SaveChanges();
@@ -162,10 +137,8 @@ namespace StackOverflowData {
             }
         }
 
-        public bool DeleteMark(int userId)
-        {
-            using (var db = new StackOverflowContext())
-            {
+        public bool DeleteMark(int userId) {
+            using (var db = new StackOverflowContext()) {
                 var deleted = db.BooleanResult.FromSql("SELECT * FROM delete_mark({0})", userId)
                     .FirstOrDefault().Successful;
                 db.SaveChanges();
@@ -175,7 +148,8 @@ namespace StackOverflowData {
 
         public bool MakeOrUpdateAnnotation(int userId, int postId, string text) {
             using (var db = new StackOverflowContext()) {
-                var successful = db.BooleanResult.FromSql("SELECT * FROM make_annotation({0},{1},{2})", userId, postId, text)
+                var successful = db.BooleanResult
+                    .FromSql("SELECT * FROM make_annotation({0},{1},{2})", userId, postId, text)
                     .FirstOrDefault().Successful;
                 db.SaveChanges();
                 return successful;
@@ -201,9 +175,8 @@ namespace StackOverflowData {
             }
         }
 
-        public List<SearchResult> Search(string text, int userId, int page, int pageSize)
-        {
-            using (var db = new StackOverflowContext()){
+        public List<SearchResult> Search(string text, int userId, int page, int pageSize) {
+            using (var db = new StackOverflowContext()) {
                 var result = db.SearchResults.FromSql("SELECT * FROM search_sova({0},{1})", text, userId)
                     .Skip(page * pageSize)
                     .Take(pageSize)
@@ -223,10 +196,8 @@ namespace StackOverflowData {
             }
         }
 
-        public List<GetMarkedResult> GetMarked(int userId, int page, int pageSize)
-        {
-            using (var db = new StackOverflowContext())
-            {
+        public List<GetMarkedResult> GetMarked(int userId, int page, int pageSize) {
+            using (var db = new StackOverflowContext()) {
                 var result = db.GetMarkedResult.FromSql("SELECT * FROM get_marked({0})", userId)
                     .Skip(page * pageSize)
                     .Take(pageSize)

@@ -1,9 +1,8 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using StackOverflowData;
-using AutoMapper;
 using StackOverflowData.Functions;
 using WebService.Models;
 
@@ -20,8 +19,7 @@ namespace WebService {
         public void Configure(IApplicationBuilder app, IHostingEnvironment env) {
             MapperConfig();
 
-            if (env.IsDevelopment())
-            {
+            if (env.IsDevelopment()) {
                 app.UseDeveloperExceptionPage();
             }
 
@@ -30,10 +28,8 @@ namespace WebService {
             //app.Run(async (context) => { await context.Response.WriteAsync("Hello World!"); });
         }
 
-        private void MapperConfig()
-        {
-            Mapper.Initialize(cfg =>
-            {
+        private void MapperConfig() {
+            Mapper.Initialize(cfg => {
                 cfg.CreateMap<GetHistoryResult, HistoryModel>();
                 cfg.CreateMap<GetPostOrCommentResult, PostOrCommentModel>();
                 cfg.CreateMap<GetMarkedResult, MarkModel>();

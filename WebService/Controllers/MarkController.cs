@@ -1,10 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using System.Linq;
+using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using StackOverflowData;
 using StackOverflowData.Functions;
-using AutoMapper;
 using WebService.Models;
-using System;
-using System.Linq;
 
 namespace WebService.Controllers {
     [Route("api/marks")]
@@ -12,8 +12,7 @@ namespace WebService.Controllers {
     public class MarkController : Controller {
         private readonly IDataService _dataService;
 
-        public MarkController(IDataService dataService)
-        {
+        public MarkController(IDataService dataService) {
             _dataService = dataService;
         }
 
@@ -25,7 +24,7 @@ namespace WebService.Controllers {
                 return BadRequest();
             }
 
-            return Created("", new { userId, postId });
+            return Created("", new {userId, postId});
         }
 
         [HttpDelete("{userId}")]
@@ -40,12 +39,10 @@ namespace WebService.Controllers {
         }
 
         [HttpDelete("{userId}")]
-        public IActionResult DeleteMarksOfUser(int userId)
-        {
+        public IActionResult DeleteMarksOfUser(int userId) {
             var deleted = _dataService.DeleteMark(userId);
 
-            if (deleted == false)
-            {
+            if (deleted == false) {
                 return NotFound();
             }
 
@@ -53,12 +50,10 @@ namespace WebService.Controllers {
         }
 
         [HttpDelete("{userId}/{postId}")]
-        public IActionResult DeleteMark(int userId, int postId)
-        {
+        public IActionResult DeleteMark(int userId, int postId) {
             var deleted = _dataService.DeleteMark(userId, postId);
 
-            if (deleted == false)
-            {
+            if (deleted == false) {
                 return NotFound();
             }
 
@@ -66,12 +61,10 @@ namespace WebService.Controllers {
         }
 
         [HttpPut("{userId}/{postId}")]
-        public IActionResult MakeOrUpdateAnnotation(int userId, int postId, string text)
-        {
+        public IActionResult MakeOrUpdateAnnotation(int userId, int postId, string text) {
             var successful = _dataService.MakeOrUpdateAnnotation(userId, postId, text);
 
-            if (successful == false)
-            {
+            if (successful == false) {
                 return NotFound();
             }
 
@@ -79,12 +72,10 @@ namespace WebService.Controllers {
         }
 
         [HttpDelete("annotation/{userId}/{postId}")]
-        public IActionResult DeleteAnnotation(int userId, int postId)
-        {
+        public IActionResult DeleteAnnotation(int userId, int postId) {
             var deleted = _dataService.DeleteAnnotation(userId, postId);
 
-            if (deleted == false)
-            {
+            if (deleted == false) {
                 return NotFound();
             }
 
@@ -92,8 +83,7 @@ namespace WebService.Controllers {
         }
 
         [HttpGet("{userId}", Name = nameof(GetMarked))]
-        public IActionResult GetMarked(int userId, int page = 0, int pageSize = 10)
-        {
+        public IActionResult GetMarked(int userId, int page = 0, int pageSize = 10) {
             var marks = _dataService.GetMarked(userId, page, pageSize)
                 .Select(CreateMarkModel);
             //if (marks == null)
@@ -104,8 +94,7 @@ namespace WebService.Controllers {
             var numberOfItems = marks.Count();
             var numberOfPages = ComputeNumberOfPages(pageSize, numberOfItems);
 
-            var result = new
-            {
+            var result = new {
                 NumberOfItems = numberOfItems,
                 NumberOfPages = numberOfPages,
                 First = CreateLink(0, pageSize),
@@ -117,36 +106,31 @@ namespace WebService.Controllers {
             return Ok(result);
         }
 
-        private MarkModel CreateMarkModel(GetMarkedResult marks)
-        {
+        private MarkModel CreateMarkModel(GetMarkedResult marks) {
             var model = Mapper.Map<MarkModel>(marks);
-            model.Url = Url.Link(nameof(GetMarked), new { userId = marks.UserId, postId = marks.PostId });
+            model.Url = Url.Link(nameof(GetMarked), new {userId = marks.UserId, postId = marks.PostId});
             return model;
         }
 
         //Helper functions for paging
-        private string CreateLinkToNextPage(int page, int pageSize, int numberOfPages)
-        {
+        private string CreateLinkToNextPage(int page, int pageSize, int numberOfPages) {
             return page >= numberOfPages - 1
                 ? null
                 : CreateLink(page = page + 1, pageSize);
         }
 
-        private string CreateLinkToPrevPage(int page, int pageSize)
-        {
+        private string CreateLinkToPrevPage(int page, int pageSize) {
             return page == 0
                 ? null
                 : CreateLink(page - 1, pageSize);
         }
 
-        private static int ComputeNumberOfPages(int pageSize, int numberOfItems)
-        {
-            return (int)Math.Ceiling((double)numberOfItems / pageSize);
+        private static int ComputeNumberOfPages(int pageSize, int numberOfItems) {
+            return (int) Math.Ceiling((double) numberOfItems / pageSize);
         }
 
-        private string CreateLink(int page, int pageSize)
-        {
-            return Url.Link(nameof(GetMarked), new { page, pageSize });
+        private string CreateLink(int page, int pageSize) {
+            return Url.Link(nameof(GetMarked), new {page, pageSize});
         }
     }
 }

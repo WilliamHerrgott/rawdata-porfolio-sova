@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using StackOverflowData;
-using AutoMapper;
 
 namespace WebService.Controllers {
     [Route("api/users")]
@@ -19,6 +18,7 @@ namespace WebService.Controllers {
             if (userId == -1) {
                 return NotFound();
             }
+
             return Ok(userId);
         }
 

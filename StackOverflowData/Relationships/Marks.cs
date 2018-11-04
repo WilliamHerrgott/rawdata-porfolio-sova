@@ -24,7 +24,7 @@ namespace StackOverflowData.Relationships {
             builder.Property(x => x.PostId).HasColumnName("post_id");
             builder.Property(x => x.MarkCreationDate).HasColumnName("marked_creationdate");
             builder.Property(x => x.AnnotationCreationDate).HasColumnName("annotation_creationdate");
-            builder.HasKey(m => new { m.UserId, m.PostId });
+            builder.HasKey(m => new {m.UserId, m.PostId});
             builder.HasOne(m => m.User)
                 .WithMany(u => u.Marks)
                 .HasForeignKey(m => m.UserId);

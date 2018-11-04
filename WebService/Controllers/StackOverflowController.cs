@@ -1,10 +1,10 @@
+using System;
+using System.Linq;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using StackOverflowData;
 using StackOverflowData.Functions;
-using AutoMapper;
 using WebService.Models;
-using System;
-using System.Linq;
 
 namespace WebService.Controllers {
     [Route("api/StackOverflow")]
@@ -27,13 +27,12 @@ namespace WebService.Controllers {
             var numberOfItems = answers.Count();
             var numberOfPages = ComputeNumberOfPages(pageSize, numberOfItems);
 
-            var result = new
-            {
+            var result = new {
                 NumberOfItems = numberOfItems,
                 NumberOfPages = numberOfPages,
                 First = CreateAnswersLink(0, pageSize),
-                Prev = (page == 0 ? null : CreateAnswersLink(page - 1, pageSize)),
-                Next = (page >= numberOfPages - 1 ? null : CreateAnswersLink(page = page + 1, pageSize)),
+                Prev = page == 0 ? null : CreateAnswersLink(page - 1, pageSize),
+                Next = page >= numberOfPages - 1 ? null : CreateAnswersLink(page = page + 1, pageSize),
                 Last = CreateAnswersLink(numberOfPages - 1, pageSize),
                 Items = answers
             };
@@ -41,10 +40,9 @@ namespace WebService.Controllers {
             return Ok(result);
         }
 
-        private PostOrCommentModel CreateAnswersModel(GetPostOrCommentResult answers)
-        {
+        private PostOrCommentModel CreateAnswersModel(GetPostOrCommentResult answers) {
             var model = Mapper.Map<PostOrCommentModel>(answers);
-            model.Url = Url.Link(nameof(GetAnswers), new { answers.Id });
+            model.Url = Url.Link(nameof(GetAnswers), new {answers.Id});
             return model;
         }
 
@@ -59,13 +57,12 @@ namespace WebService.Controllers {
             var numberOfItems = comments.Count();
             var numberOfPages = ComputeNumberOfPages(pageSize, numberOfItems);
 
-            var result = new
-            {
+            var result = new {
                 NumberOfItems = numberOfItems,
                 NumberOfPages = numberOfPages,
                 First = CreateCommentsLink(0, pageSize),
-                Prev = (page == 0 ? null : CreateCommentsLink(page - 1, pageSize)),
-                Next = (page >= numberOfPages - 1 ? null : CreateCommentsLink(page = page + 1, pageSize)),
+                Prev = page == 0 ? null : CreateCommentsLink(page - 1, pageSize),
+                Next = page >= numberOfPages - 1 ? null : CreateCommentsLink(page = page + 1, pageSize),
                 Last = CreateCommentsLink(numberOfPages - 1, pageSize),
                 Items = comments
             };
@@ -73,10 +70,9 @@ namespace WebService.Controllers {
             return Ok(result);
         }
 
-        private PostOrCommentModel CreateCommentsModel(GetPostOrCommentResult comments)
-        {
+        private PostOrCommentModel CreateCommentsModel(GetPostOrCommentResult comments) {
             var model = Mapper.Map<PostOrCommentModel>(comments);
-            model.Url = Url.Link(nameof(GetComments), new { comments.Id });
+            model.Url = Url.Link(nameof(GetComments), new {comments.Id});
             return model;
         }
 
@@ -87,14 +83,14 @@ namespace WebService.Controllers {
             if (post == null) {
                 return NotFound();
             }
+
             var model = Mapper.Map<PostOrCommentModel>(post);
-            model.Url = Url.Link(nameof(GetPost), new { id = post.Id });
+            model.Url = Url.Link(nameof(GetPost), new {id = post.Id});
             return Ok(post);
         }
 
         [HttpGet("{userId}/{text}", Name = nameof(Search))]
-        public IActionResult Search(string text, int userId, int page = 0, int pageSize = 10)
-        {
+        public IActionResult Search(string text, int userId, int page = 0, int pageSize = 10) {
             var searchResult = _dataService.Search(text, userId, page, pageSize)
                 .Select(CreateSearchModel);
             //if (searchResult == null)
@@ -104,45 +100,39 @@ namespace WebService.Controllers {
             var numberOfItems = searchResult.Count();
             var numberOfPages = ComputeNumberOfPages(pageSize, numberOfItems);
 
-            var result = new
-            {
+            var result = new {
                 NumberOfItems = numberOfItems,
                 NumberOfPages = numberOfPages,
                 First = CreateCommentsLink(0, pageSize),
-                Prev = (page == 0 ? null : CreateCommentsLink(page - 1, pageSize)),
-                Next = (page >= numberOfPages - 1 ? null : CreateSearchedLink(page = page + 1, pageSize)),
+                Prev = page == 0 ? null : CreateCommentsLink(page - 1, pageSize),
+                Next = page >= numberOfPages - 1 ? null : CreateSearchedLink(page = page + 1, pageSize),
                 Last = CreateSearchedLink(numberOfPages - 1, pageSize),
                 Items = searchResult
             };
             return Ok(result);
         }
 
-        private SearchModel CreateSearchModel(SearchResult search)
-        {
+        private SearchModel CreateSearchModel(SearchResult search) {
             var model = Mapper.Map<SearchModel>(search);
-            model.Url = Url.Link(nameof(Search), new { search.Id });
+            model.Url = Url.Link(nameof(Search), new {search.Id});
             return model;
         }
 
         //helper functions
-        private static int ComputeNumberOfPages(int pageSize, int numberOfItems)
-        {
-            return (int)Math.Ceiling((double)numberOfItems / pageSize);
+        private static int ComputeNumberOfPages(int pageSize, int numberOfItems) {
+            return (int) Math.Ceiling((double) numberOfItems / pageSize);
         }
 
-        private string CreateAnswersLink(int page, int pageSize)
-        {
-            return Url.Link(nameof(GetAnswers), new { page, pageSize });
+        private string CreateAnswersLink(int page, int pageSize) {
+            return Url.Link(nameof(GetAnswers), new {page, pageSize});
         }
 
-        private string CreateCommentsLink(int page, int pageSize)
-        {
-            return Url.Link(nameof(GetComments), new { page, pageSize });
+        private string CreateCommentsLink(int page, int pageSize) {
+            return Url.Link(nameof(GetComments), new {page, pageSize});
         }
 
-        private string CreateSearchedLink(int page, int pageSize)
-        {
-            return Url.Link(nameof(Search), new { page, pageSize});
+        private string CreateSearchedLink(int page, int pageSize) {
+            return Url.Link(nameof(Search), new {page, pageSize});
         }
     }
 }

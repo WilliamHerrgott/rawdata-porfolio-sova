@@ -3,8 +3,8 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
 using StackOverflowData.Functions;
 using StackOverflowData.Relationships;
-using StackOverflowData.StackOverflowEntities;
 using StackOverflowData.SOVAEntities;
+using StackOverflowData.StackOverflowEntities;
 
 namespace StackOverflowData {
     class StackOverflowContext : DbContext {
