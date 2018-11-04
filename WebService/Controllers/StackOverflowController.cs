@@ -10,9 +10,9 @@ namespace WebService.Controllers {
     [Route("api/StackOverflow")]
     [ApiController]
     public class StackOverflowController : Controller {
-        private readonly DataService _dataService;
+        private readonly IDataService _dataService;
 
-        public StackOverflowController(DataService dataService) {
+        public StackOverflowController(IDataService dataService) {
             _dataService = dataService;
         }
 
@@ -44,7 +44,7 @@ namespace WebService.Controllers {
         private PostOrCommentModel CreateAnswersModel(GetPostOrCommentResult answers)
         {
             var model = Mapper.Map<PostOrCommentModel>(answers);
-            model.Url = Url.Link(nameof(GetAnswers), new { id = answers.Id });
+            model.Url = Url.Link(nameof(GetAnswers), new { answers.Id });
             return model;
         }
 
@@ -76,7 +76,7 @@ namespace WebService.Controllers {
         private PostOrCommentModel CreateCommentsModel(GetPostOrCommentResult comments)
         {
             var model = Mapper.Map<PostOrCommentModel>(comments);
-            model.Url = Url.Link(nameof(GetComments), new { id = comments.Id });
+            model.Url = Url.Link(nameof(GetComments), new { comments.Id });
             return model;
         }
 
@@ -95,12 +95,33 @@ namespace WebService.Controllers {
         [HttpGet("{userId}/{text}", Name = nameof(Search))]
         public IActionResult Search(string text, int userId, int page = 0, int pageSize = 10)
         {
-            var searchResult = _dataService.Search(text, userId, page, pageSize);
+            var searchResult = _dataService.Search(text, userId, page, pageSize)
+                .Select(CreateSearchModel);
             //if (searchResult == null)
             //{
             //    return NotFound();
             //}
-            return Ok(searchResult);
+            var numberOfItems = searchResult.Count();
+            var numberOfPages = ComputeNumberOfPages(pageSize, numberOfItems);
+
+            var result = new
+            {
+                NumberOfItems = numberOfItems,
+                NumberOfPages = numberOfPages,
+                First = CreateCommentsLink(0, pageSize),
+                Prev = (page == 0 ? null : CreateCommentsLink(page - 1, pageSize)),
+                Next = (page >= numberOfPages - 1 ? null : CreateSearchedLink(page = page + 1, pageSize)),
+                Last = CreateSearchedLink(numberOfPages - 1, pageSize),
+                Items = searchResult
+            };
+            return Ok(result);
+        }
+
+        private SearchModel CreateSearchModel(SearchResult search)
+        {
+            var model = Mapper.Map<SearchModel>(search);
+            model.Url = Url.Link(nameof(Search), new { search.Id });
+            return model;
         }
 
         //helper functions
@@ -117,6 +138,11 @@ namespace WebService.Controllers {
         private string CreateCommentsLink(int page, int pageSize)
         {
             return Url.Link(nameof(GetComments), new { page, pageSize });
+        }
+
+        private string CreateSearchedLink(int page, int pageSize)
+        {
+            return Url.Link(nameof(Search), new { page, pageSize});
         }
     }
 }

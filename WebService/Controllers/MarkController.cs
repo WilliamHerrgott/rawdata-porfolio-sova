@@ -10,9 +10,9 @@ namespace WebService.Controllers {
     [Route("api/marks")]
     [ApiController]
     public class MarkController : Controller {
-        private readonly DataService _dataService;
+        private readonly IDataService _dataService;
 
-        public MarkController(DataService dataService)
+        public MarkController(IDataService dataService)
         {
             _dataService = dataService;
         }
@@ -120,7 +120,7 @@ namespace WebService.Controllers {
         private MarkModel CreateMarkModel(GetMarkedResult marks)
         {
             var model = Mapper.Map<MarkModel>(marks);
-            model.Url = Url.Link(nameof(GetMarked), new { postId = marks.PostId });
+            model.Url = Url.Link(nameof(GetMarked), new { userId = marks.UserId, postId = marks.PostId });
             return model;
         }
 

@@ -6,16 +6,17 @@ using StackOverflowData.Relationships;
 
 namespace StackOverflowData.StackOverflowEntities {
     public class Question {
-        public int Id { get; private set; }
-        public int AcceptedAnswerId { get; private set; }
-        public DateTime ClosedDate { get; private set; }
-        public string Title { get; private set; }
-        public string Tags { get; private set; }
+        public int Id { get; set; }
+        public int AcceptedAnswerId { get; set; }
+        public DateTime ClosedDate { get; set; }
+        public string Title { get; set; }
+        public string Tags { get; set; }
 
-        public List<Answer> Answers { get; private set; }
-        public List<Linked> Linkposts { get; private set; }
+        public List<Answer> Answers { get; set; }
+        public List<Linked> QuestionLinkpost { get; set; }
+        public List<Linked> LinkpostQuestion { get; set; }
 
-        public Post Post { get; private set; }
+        public Post Post { get; set; }
     }
 
     internal class QuestionConfiguration : IEntityTypeConfiguration<Question> {

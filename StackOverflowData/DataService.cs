@@ -40,7 +40,7 @@ namespace StackOverflowData {
 
         public int GetUser(string username, string password)
         {
-            using (var db = new SOVAContext())
+            using (var db = new StackOverflowContext())
             {
                 var result = db.GetUserResult.FromSql("select * from get_user({0},{1})", username,
                     password).FirstOrDefault().Id;
@@ -74,9 +74,9 @@ namespace StackOverflowData {
 
         public int CreateUser(string email, string username, string password, string location)
         {
-            using (var db = new SOVAContext())
+            using (var db = new StackOverflowContext())
             {
-                int result =  db.GetUserResult.FromSql("SELECT create_user({0},{1},{2},{3})", 
+                int result =  db.GetUserResult.FromSql("SELECT * FROM create_user({0},{1},{2},{3})", 
                     email, username, password, location).FirstOrDefault().Id;
 
                 db.SaveChanges();
@@ -86,9 +86,9 @@ namespace StackOverflowData {
 
         public bool DeleteUser(int userId)
         {
-            using (var db = new SOVAContext())
+            using (var db = new StackOverflowContext())
             {
-                var deleted = db.BooleanResult.FromSql("SELECT delete_user({0})", userId)
+                var deleted = db.BooleanResult.FromSql("SELECT * FROM delete_user({0})", userId)
                     .FirstOrDefault().Successful;
 
                 db.SaveChanges();
@@ -98,9 +98,9 @@ namespace StackOverflowData {
 
         public bool UpdateEmail(int id, string email)
         {
-            using (var db = new SOVAContext())
+            using (var db = new StackOverflowContext())
             {
-                var updated = db.BooleanResult.FromSql("SELECT update_email({0},{1})", id, email)
+                var updated = db.BooleanResult.FromSql("SELECT * FROM update_email({0},{1})", id, email)
                     .FirstOrDefault().Successful;
                 db.SaveChanges();
                 return updated;
@@ -109,9 +109,9 @@ namespace StackOverflowData {
 
         public bool UpdateUsername(int id, string username)
         {
-            using (var db = new SOVAContext())
+            using (var db = new StackOverflowContext())
             {
-                var updated = db.BooleanResult.FromSql("SELECT update_username({0},{1})", id, username)
+                var updated = db.BooleanResult.FromSql("SELECT * FROM update_username({0},{1})", id, username)
                     .FirstOrDefault().Successful;
                 db.SaveChanges();
                 return updated;
@@ -120,9 +120,9 @@ namespace StackOverflowData {
 
         public bool UpdatePassword(int id, string password)
         {
-            using (var db = new SOVAContext())
+            using (var db = new StackOverflowContext())
             {
-                var updated = db.BooleanResult.FromSql("SELECT update_password({0},{1})", id, password)
+                var updated = db.BooleanResult.FromSql("SELECT * FROM update_password({0},{1})", id, password)
                     .FirstOrDefault().Successful;
                 db.SaveChanges();
                 return updated;
@@ -131,9 +131,9 @@ namespace StackOverflowData {
 
         public bool UpdateLocation(int id, string location)
         {
-            using (var db = new SOVAContext())
+            using (var db = new StackOverflowContext())
             {
-                var updated = db.BooleanResult.FromSql("SELECT update_location({0},{1})", id, location)
+                var updated = db.BooleanResult.FromSql("SELECT * FROM update_location({0},{1})", id, location)
                     .FirstOrDefault().Successful;
                 db.SaveChanges();
                 return updated;
@@ -142,9 +142,9 @@ namespace StackOverflowData {
 
         public bool CreateMark(int userId, int postId)
         {
-            using (var db = new SOVAContext())
+            using (var db = new StackOverflowContext())
             {
-                var marked = db.BooleanResult.FromSql("SELECT mark({0},{1})", userId, postId)
+                var marked = db.BooleanResult.FromSql("SELECT * FROM mark({0},{1})", userId, postId)
                     .FirstOrDefault().Successful;
                 db.SaveChanges();
                 return marked;
@@ -153,9 +153,9 @@ namespace StackOverflowData {
 
         public bool DeleteMark(int userId, int postId)
         {
-            using (var db = new SOVAContext())
+            using (var db = new StackOverflowContext())
             {
-                var deleted = db.BooleanResult.FromSql("SELECT delete_mark({0},{1})", userId, postId)
+                var deleted = db.BooleanResult.FromSql("SELECT * FROM delete_mark({0},{1})", userId, postId)
                     .FirstOrDefault().Successful;
                 db.SaveChanges();
                 return deleted;
@@ -164,9 +164,9 @@ namespace StackOverflowData {
 
         public bool DeleteMark(int userId)
         {
-            using (var db = new SOVAContext())
+            using (var db = new StackOverflowContext())
             {
-                var deleted = db.BooleanResult.FromSql("SELECT delete_mark({0})", userId)
+                var deleted = db.BooleanResult.FromSql("SELECT * FROM delete_mark({0})", userId)
                     .FirstOrDefault().Successful;
                 db.SaveChanges();
                 return deleted;
@@ -174,8 +174,8 @@ namespace StackOverflowData {
         }
 
         public bool MakeOrUpdateAnnotation(int userId, int postId, string text) {
-            using (var db = new SOVAContext()) {
-                var successful = db.BooleanResult.FromSql("SELECT make_annotation({0},{1},{2})", userId, postId, text)
+            using (var db = new StackOverflowContext()) {
+                var successful = db.BooleanResult.FromSql("SELECT * FROM make_annotation({0},{1},{2})", userId, postId, text)
                     .FirstOrDefault().Successful;
                 db.SaveChanges();
                 return successful;
@@ -184,8 +184,8 @@ namespace StackOverflowData {
 
 
         public bool DeleteAnnotation(int userId, int postId) {
-            using (var db = new SOVAContext()) {
-                var deleted = db.BooleanResult.FromSql("SELECT delete_annotation({0},{1})", userId, postId)
+            using (var db = new StackOverflowContext()) {
+                var deleted = db.BooleanResult.FromSql("SELECT * FROM delete_annotation({0},{1})", userId, postId)
                     .FirstOrDefault().Successful;
                 db.SaveChanges();
                 return deleted;
@@ -193,8 +193,8 @@ namespace StackOverflowData {
         }
 
         public bool DeleteHistory(int userId) {
-            using (var db = new SOVAContext()) {
-                var deleted = db.BooleanResult.FromSql("SELECT delete_history({0})", userId)
+            using (var db = new StackOverflowContext()) {
+                var deleted = db.BooleanResult.FromSql("SELECT * FROM delete_history({0})", userId)
                     .FirstOrDefault().Successful;
                 db.SaveChanges();
                 return deleted;
@@ -204,7 +204,7 @@ namespace StackOverflowData {
         public List<SearchResult> Search(string text, int userId, int page, int pageSize)
         {
             using (var db = new StackOverflowContext()){
-                var result = db.SearchResults.FromSql("SELECT search_sova({0},{1})", text, userId)
+                var result = db.SearchResults.FromSql("SELECT * FROM search_sova({0},{1})", text, userId)
                     .Skip(page * pageSize)
                     .Take(pageSize)
                     .ToList();
@@ -214,8 +214,8 @@ namespace StackOverflowData {
         }
 
         public List<GetHistoryResult> GetHistory(int userId, int page, int pageSize) {
-            using (var db = new SOVAContext()) {
-                var result = db.GetHistoryResult.FromSql("SELECT get_history({0})", userId)
+            using (var db = new StackOverflowContext()) {
+                var result = db.GetHistoryResult.FromSql("SELECT * FROM get_history({0})", userId)
                     .Skip(page * pageSize)
                     .Take(pageSize)
                     .ToList();
@@ -225,9 +225,9 @@ namespace StackOverflowData {
 
         public List<GetMarkedResult> GetMarked(int userId, int page, int pageSize)
         {
-            using (var db = new SOVAContext())
+            using (var db = new StackOverflowContext())
             {
-                var result = db.GetMarkedResult.FromSql("SELECT get_marked({0})", userId)
+                var result = db.GetMarkedResult.FromSql("SELECT * FROM get_marked({0})", userId)
                     .Skip(page * pageSize)
                     .Take(pageSize)
                     .ToList();

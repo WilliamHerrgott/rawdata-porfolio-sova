@@ -6,14 +6,14 @@ using StackOverflowData.Relationships;
 
 namespace StackOverflowData.StackOverflowEntities {
     public class Post {
-        public int Id { get; private set; }
-        public DateTime CreationDate { get; private set; }
-        public string Body { get; private set; }
-        public int Score { get; private set; }
-        public int AuthorId { get; private set; }
+        public int Id { get; set; }
+        public DateTime CreationDate { get; set; }
+        public string Body { get; set; }
+        public int Score { get; set; }
+        public int AuthorId { get; set; }
 
-        public Author Author { get; private set; }
-        public List<Comment> Comments { get; private set; }
+        public Author Author { get; set; }
+        public List<Comment> Comments { get; set; }
         public List<Marks> ByUser { get; set; }
 
         public Question Question { get; set; }
@@ -28,6 +28,7 @@ namespace StackOverflowData.StackOverflowEntities {
             builder.Property(x => x.Body).HasColumnName("body");
             builder.Property(x => x.Score).HasColumnName("score");
             builder.Property(x => x.AuthorId).HasColumnName("author_id");
+            builder.HasKey(x => x.Id);
             builder.HasOne(p => p.Author)
                 .WithMany(a => a.Posts)
                 .HasForeignKey(p => p.AuthorId);

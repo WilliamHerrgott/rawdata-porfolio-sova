@@ -12,9 +12,9 @@ namespace WebService.Controllers
     [ApiController]
     public class HistoryController : Controller
     {
-        private readonly DataService _dataService;
+        private readonly IDataService _dataService;
 
-        public HistoryController(DataService dataService)
+        public HistoryController(IDataService dataService)
         {
             _dataService = dataService;
         }
@@ -62,7 +62,7 @@ namespace WebService.Controllers
         private HistoryModel CreateHistoryModel(GetHistoryResult history)
         {
             var model = Mapper.Map<HistoryModel>(history);
-            model.Url = Url.Link(nameof(GetHistory), new { id = history.Id });
+            model.Url = Url.Link(nameof(GetHistory), new { history.Id });
             return model;
         }
 

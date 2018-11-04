@@ -1,24 +1,24 @@
 using Microsoft.AspNetCore.Mvc;
 using StackOverflowData;
+using AutoMapper;
 
 namespace WebService.Controllers {
     [Route("api/users")]
     [ApiController]
     public class UserController : Controller {
-        private readonly DataService _dataService;
+        private readonly IDataService _dataService;
 
-        public UserController(DataService dataService) {
+        public UserController(IDataService dataService) {
             _dataService = dataService;
         }
 
-        [HttpGet]
+        [HttpGet("{username}/{password}")]
         public IActionResult GetUser(string username, string password) {
             var userId = _dataService.GetUser(username, password);
 
             if (userId == -1) {
                 return NotFound();
             }
-
             return Ok(userId);
         }
 

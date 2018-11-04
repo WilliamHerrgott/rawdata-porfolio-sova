@@ -19,6 +19,7 @@ namespace StackOverflowData.SOVAEntities {
             builder.Property(x => x.SearchText).HasColumnName("search_text");
             builder.Property(x => x.Date).HasColumnName("date");
             builder.Property(x => x.UserId).HasColumnName("user_id");
+            builder.HasKey(h => h.Id);
             builder.HasOne(h => h.ByUser)
                 .WithMany(u => u.Searched)
                 .HasForeignKey(h => h.UserId);

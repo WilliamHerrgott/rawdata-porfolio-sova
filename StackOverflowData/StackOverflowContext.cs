@@ -4,19 +4,32 @@ using Microsoft.Extensions.Logging.Console;
 using StackOverflowData.Functions;
 using StackOverflowData.Relationships;
 using StackOverflowData.StackOverflowEntities;
+using StackOverflowData.SOVAEntities;
 
 namespace StackOverflowData {
     class StackOverflowContext : DbContext {
-        public DbSet<Answer> Answers { get; private set; }
-        public DbSet<Author> Authors { get; private set; }
-        public DbSet<Comment> Comments { get; private set; }
-        public DbSet<Post> Posts { get; private set; }
-        public DbSet<Question> Questions { get; private set; }
+        public DbSet<Answer> Answers { get; set; }
+        public DbSet<Author> Authors { get; set; }
+        public DbSet<Comment> Comments { get; set; }
+        public DbSet<Post> Posts { get; set; }
+        public DbSet<Question> Questions { get; set; }
 
-        public DbSet<Linked> Links { get; private set; }
+        public DbSet<Linked> Links { get; set; }
 
-        public DbQuery<GetPostOrCommentResult> GetPostResults { get; private set; }
-        public DbQuery<SearchResult> SearchResults { get; private set; }
+        public DbQuery<GetPostOrCommentResult> GetPostResults { get; set; }
+        public DbQuery<SearchResult> SearchResults { get; set; }
+
+        //SOVA DbSets
+
+        public DbSet<SOVAUser> Users { get; set; }
+        public DbSet<History> History { get; set; }
+
+        public DbSet<Marks> Marks { get; set; }
+
+        public DbQuery<GetUserResult> GetUserResult { get; set; }
+        public DbQuery<BooleanResult> BooleanResult { get; set; }
+        public DbQuery<GetHistoryResult> GetHistoryResult { get; set; }
+        public DbQuery<GetMarkedResult> GetMarkedResult { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
             base.OnConfiguring(optionsBuilder);
@@ -50,6 +63,17 @@ namespace StackOverflowData {
 
             modelBuilder.ApplyConfiguration(new GetPostOrCommentResultConfiguration());
             modelBuilder.ApplyConfiguration(new SearchResultConfiguration());
+
+            //SOVA configurations
+            modelBuilder.ApplyConfiguration(new SOVAUserConfiguration());
+            modelBuilder.ApplyConfiguration(new HistoryConfiguration());
+
+            modelBuilder.ApplyConfiguration(new MarksConfiguration());
+
+            modelBuilder.ApplyConfiguration(new GetUserResultConfiguration());
+            modelBuilder.ApplyConfiguration(new BooleanResultConfiguration());
+            modelBuilder.ApplyConfiguration(new GetHistoryResultConfiguration());
+            modelBuilder.ApplyConfiguration(new GetMarkedResultConfiguration());
         }
     }
 }

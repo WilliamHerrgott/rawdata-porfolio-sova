@@ -22,6 +22,7 @@ namespace StackOverflowData.StackOverflowEntities {
             builder.Property(x => x.CreatedDate).HasColumnName("created_date");
             builder.Property(x => x.Location).HasColumnName("location");
             builder.Property(x => x.Age).HasColumnName("age");
+            builder.HasKey(x => x.Id);
         }
     }
 }
