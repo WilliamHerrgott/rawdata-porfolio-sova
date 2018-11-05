@@ -152,10 +152,10 @@ LANGUAGE plpgsql;
 
 DROP FUNCTION IF EXISTS get_post;
 CREATE FUNCTION get_post(this_post_id integer)
-RETURNS table (id integer, body text, score integer, creation_date timestamp) AS $$
+RETURNS table (id integer, body text, score integer, creation_date timestamp, author_id integer) AS $$
 BEGIN		
 	RETURN QUERY
-		SELECT p.id, p.body, p.score, p.creation_date
+		SELECT p.id, p.body, p.score, p.creation_date, p.author_id
 		FROM posts p
 		WHERE p.id = this_post_id;
 END; $$
@@ -167,10 +167,10 @@ LANGUAGE plpgsql;
 
 DROP FUNCTION IF EXISTS get_answers;
 CREATE FUNCTION get_answers(this_question_id integer)
-RETURNS table (id integer, body text, score integer, creation_date timestamp) AS $$
+RETURNS table (id integer, body text, score integer, creation_date timestamp, author_id integer) AS $$
 BEGIN		
 	RETURN QUERY
-		SELECT p.id, p.body, p.score, p.creation_date
+		SELECT p.id, p.body, p.score, p.creation_date, p.author_id
 		FROM posts p, answers a
 		WHERE this_question_id = a.parent_id 
 		AND a.id = p.id
@@ -184,10 +184,10 @@ LANGUAGE plpgsql;
 
 DROP FUNCTION IF EXISTS get_comments;
 CREATE FUNCTION get_comments(this_post_id integer)
-RETURNS table (id integer, body text, score integer, creation_date timestamp) AS $$
+RETURNS table (id integer, body text, score integer, creation_date timestamp, author_id integer) AS $$
 BEGIN	
 	RETURN QUERY
-		SELECT c.id, c.body, c.score, c.creation_date
+		SELECT c.id, c.body, c.score, c.creation_date, c.author_id
 		FROM comments c
 		WHERE c.post_id = this_post_id
 		ORDER BY creation_date desc;
@@ -297,12 +297,12 @@ LANGUAGE plpgsql;
 
 DROP FUNCTION IF EXISTS get_history;
 CREATE FUNCTION get_history(id_user integer)
-	RETURNS TABLE(id integer, search_text varchar(255), date timestamp) 
+	RETURNS TABLE(id integer, search_text varchar(255), date timestamp, user_id integer) 
 	AS $$
 		BEGIN
-		IF id_user IN (SELECT USER_ID FROM history) THEN
+		IF id_user IN (SELECT "SOVA_users".id FROM "SOVA_users") THEN
 			RETURN QUERY
-				SELECT h.id, h.search_text, h.date
+				SELECT h.id, h.search_text, h.date, h.user_id
 				FROM history h
 				WHERE h.user_id = id_user 
 				ORDER BY date desc;
@@ -317,12 +317,12 @@ LANGUAGE plpgsql;
 
 DROP FUNCTION IF EXISTS search_sova;
 CREATE FUNCTION search_sova(this_searched_text varchar(50), this_user_id integer)
-RETURNS TABLE (id integer) AS $$
+RETURNS TABLE (id integer, body text) AS $$
 BEGIN
 	RETURN QUERY
-		SELECT q.id
-		FROM questions q
-			JOIN posts p ON p.id = q.id
+		SELECT p.id, p.body
+		FROM posts p
+			JOIN questions q ON p.id = q.id
 		WHERE to_tsvector(q.title || '. ' || p.body || replace(q.tags, '::', ' ')) @@ plainto_tsquery(this_searched_text);
 		
 
@@ -330,6 +330,19 @@ BEGIN
 		VALUES(this_searched_text, date_trunc('second', LOCALTIMESTAMP), this_user_id);
 		
 	
+END; $$
+LANGUAGE plpgsql;
+
+DROP FUNCTION IF EXISTS search_posts;
+CREATE FUNCTION search_posts(this_searched_text varchar(50))
+RETURNS TABLE (id integer, body text) AS $$
+BEGIN
+	RETURN QUERY
+		SELECT p.id, p.body
+		FROM posts p
+			JOIN questions q ON p.id = q.id
+		WHERE to_tsvector(q.title || '. ' || p.body || replace(q.tags, '::', ' ')) @@ plainto_tsquery(this_searched_text);
+
 END; $$
 LANGUAGE plpgsql;
 
@@ -356,3 +369,26 @@ RETURNS BOOLEAN AS $$
 LANGUAGE plpgsql;
 
 
+DROP FUNCTION IF EXISTS get_author_of_post;
+CREATE FUNCTION get_author_of_post(this_post_id integer)
+RETURNS TABLE (id integer, name text, created_date timestamp, location text, age integer) AS $$
+	BEGIN
+	RETURN QUERY
+		SELECT a.id, a.name, a.created_date, a.location, a.age
+		FROM "SO_authors" a, posts p
+		WHERE a.id = p.author_id
+		AND p.id = this_post_id;
+	END; $$
+LANGUAGE plpgsql;
+
+DROP FUNCTION IF EXISTS get_author_of_comment;
+CREATE FUNCTION get_author_of_comment(this_comment_id integer)
+RETURNS TABLE (id integer, name text, created_date timestamp, location text, age integer) AS $$
+	BEGIN
+	RETURN QUERY
+		SELECT a.id, a.name, a.created_date, a.location, a.age
+		FROM "SO_authors" a, comments c
+		WHERE a.id = c.author_id
+		AND c.id = this_comment_id;
+	END; $$
+LANGUAGE plpgsql;
