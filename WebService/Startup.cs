@@ -35,7 +35,9 @@ namespace WebService {
             Mapper.Initialize(cfg =>
             {
                 cfg.CreateMap<GetHistoryResult, HistoryModel>();
-                cfg.CreateMap<GetPostOrCommentResult, PostOrCommentModel>();
+                cfg.CreateMap<GetPostOrCommentResult, AnswerModel>();
+                cfg.CreateMap<GetPostOrCommentResult, CommentModel>();
+                cfg.CreateMap<GetPostOrCommentResult, PostModel>();
                 cfg.CreateMap<GetMarkedResult, MarkModel>();
                 cfg.CreateMap<SearchResult, SearchModel>();
                 //.ForMember(dest => dest.Category, opt => opt.MapFrom(src => src.Category.Name));

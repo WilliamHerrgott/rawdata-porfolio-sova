@@ -32,8 +32,8 @@ namespace WebService.Controllers
             return Ok();
         }
 
-        [HttpGet("{userId}", Name = nameof(GetHistory))]
-        public IActionResult GetHistory(int userId, int page = 0, int pageSize = 10)
+        [HttpGet("{userId}", Name = nameof(GetAllHistoryOfUser))]
+        public IActionResult GetAllHistoryOfUser(int userId, int page = 0, int pageSize = 10)
         {
             var history = _dataService.GetHistory(userId, page, pageSize)
                 .Select(CreateHistoryModel);
@@ -43,7 +43,7 @@ namespace WebService.Controllers
             //    return NotFound();
             //}
 
-            var numberOfItems = history.Count();
+            var numberOfItems = _dataService.GetHistoryCount(userId);
             var numberOfPages = ComputeNumberOfPages(pageSize, numberOfItems);
 
             var result = new
@@ -53,7 +53,7 @@ namespace WebService.Controllers
                 First = CreateLink(0, pageSize),
                 Prev = CreateLinkToPrevPage(page, pageSize),
                 Next = CreateLinkToNextPage(page, pageSize, numberOfPages),
-                Last = CreateLink(numberOfPages - 1, pageSize),
+                Last = (numberOfPages == 0) ? null : CreateLink(numberOfPages - 1, pageSize),
                 Items = history
             };
             return Ok(result);
@@ -62,7 +62,8 @@ namespace WebService.Controllers
         private HistoryModel CreateHistoryModel(GetHistoryResult history)
         {
             var model = Mapper.Map<HistoryModel>(history);
-            model.Url = Url.Link(nameof(GetHistory), new { history.Id });
+            model.Url = Url.Link(nameof(StackOverflowController.Search),
+                new { text = history.SearchedText, userId = history.UserId, });
             return model;
         }
 
@@ -88,7 +89,7 @@ namespace WebService.Controllers
 
         private string CreateLink(int page, int pageSize)
         {
-            return Url.Link(nameof(GetHistory), new { page, pageSize });
+            return Url.Link(nameof(GetAllHistoryOfUser), new { page, pageSize });
         }
     }
 }

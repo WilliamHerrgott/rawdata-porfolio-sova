@@ -18,6 +18,7 @@ namespace StackOverflowData {
 
         public DbQuery<GetPostOrCommentResult> GetPostResults { get; set; }
         public DbQuery<SearchResult> SearchResults { get; set; }
+        public DbQuery<GetAuthorResult> GetAuthorResult { get; set; }
 
         //SOVA DbSets
 
@@ -33,7 +34,7 @@ namespace StackOverflowData {
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
             base.OnConfiguring(optionsBuilder);
-            optionsBuilder.UseNpgsql("");
+            optionsBuilder.UseNpgsql("host=localhost;db=stackoverflow;uid=postgres;pwd=asdpoi098");
             // you only need this if you want to see the SQL statments created
             // by EF
             optionsBuilder.UseLoggerFactory(MyLoggerFactory)
@@ -63,6 +64,7 @@ namespace StackOverflowData {
 
             modelBuilder.ApplyConfiguration(new GetPostOrCommentResultConfiguration());
             modelBuilder.ApplyConfiguration(new SearchResultConfiguration());
+            modelBuilder.ApplyConfiguration(new GetAuthorResultConfiguration());
 
             //SOVA configurations
             modelBuilder.ApplyConfiguration(new SOVAUserConfiguration());
@@ -74,6 +76,7 @@ namespace StackOverflowData {
             modelBuilder.ApplyConfiguration(new BooleanResultConfiguration());
             modelBuilder.ApplyConfiguration(new GetHistoryResultConfiguration());
             modelBuilder.ApplyConfiguration(new GetMarkedResultConfiguration());
+
         }
     }
 }

@@ -5,17 +5,14 @@
 -- ----------------------------
 DROP FUNCTION IF EXISTS create_user;
 CREATE FUNCTION create_user(this_email varchar(50), this_username varchar(50), this_password varchar(50), this_location varchar(50))
-RETURNS integer AS $$ 
-Declare x integer;
+RETURNS TABLE (id integer, email text, username text, password text, location text) AS $$ 
 	BEGIN
-		IF(this_email IN(SELECT email FROM "SOVA_users") and this_username IN(SELECT username FROM "SOVA_users")) THEN
-			RETURN -1;
-		ELSE 
-			INSERT INTO "SOVA_users"(email, username, password, location) VALUES (this_email, this_username, this_password, this_location);
-			SELECT u.id into x
+		IF(this_email NOT IN(SELECT email FROM "SOVA_users") and this_username NOT IN(SELECT username FROM "SOVA_users")) THEN
+		INSERT INTO "SOVA_users"(email, username, password, location) VALUES (this_email, this_username, this_password, this_location);
+		RETURN QUERY
+			SELECT *
 			FROM "SOVA_users" u
 			WHERE u.username = this_username and u.password = this_password;
-			return x;		
 		END IF;
 	END; $$
 LANGUAGE plpgsql;
@@ -78,13 +75,11 @@ LANGUAGE plpgsql;
 -- ----------------------------
 DROP FUNCTION IF EXISTS get_user;
 CREATE FUNCTION get_user(login varchar, password_var varchar)
-RETURNS integer AS $$
-Declare x integer;
-BEGIN		
-	SELECT u.id into x
+RETURNS TABLE (id integer, email text, username text, password text, location text) AS $$
+BEGIN	RETURN QUERY
+	SELECT *
 	FROM "SOVA_users" u
 	WHERE u.username = login and u.password = password_var;
-	return x;
 	END; $$			
 LANGUAGE plpgsql;
 
@@ -152,14 +147,12 @@ LANGUAGE plpgsql;
 
 DROP FUNCTION IF EXISTS get_post;
 CREATE FUNCTION get_post(this_post_id integer)
-RETURNS table (body text, score integer, creation_date timestamp) AS $$
+RETURNS table (id integer, body text, score integer, creation_date timestamp, author_id integer) AS $$
 BEGIN		
-	IF (this_post_id IN (SELECT id FROM posts)) THEN
-		RETURN QUERY
-		SELECT p.body, p.score, p.creation_date
+	RETURN QUERY
+		SELECT p.id, p.body, p.score, p.creation_date, p.author_id
 		FROM posts p
 		WHERE p.id = this_post_id;
-	END IF;
 END; $$
 LANGUAGE plpgsql;
 
@@ -169,16 +162,14 @@ LANGUAGE plpgsql;
 
 DROP FUNCTION IF EXISTS get_answers;
 CREATE FUNCTION get_answers(this_question_id integer)
-RETURNS table (body text, score integer, creation_date timestamp) AS $$
+RETURNS table (id integer, body text, score integer, creation_date timestamp, author_id integer) AS $$
 BEGIN		
-	IF (this_question_id IN (SELECT parent_id FROM answers)) THEN
-		RETURN QUERY
-		SELECT p.body, p.score, p.creation_date
+	RETURN QUERY
+		SELECT p.id, p.body, p.score, p.creation_date, p.author_id
 		FROM posts p, answers a
 		WHERE this_question_id = a.parent_id 
 		AND a.id = p.id
 		ORDER BY creation_date desc;
-	END IF;
 END; $$
 LANGUAGE plpgsql;
 
@@ -188,15 +179,13 @@ LANGUAGE plpgsql;
 
 DROP FUNCTION IF EXISTS get_comments;
 CREATE FUNCTION get_comments(this_post_id integer)
-RETURNS table (body text, score integer, creation_date timestamp) AS $$
+RETURNS table (id integer, body text, score integer, creation_date timestamp, author_id integer) AS $$
 BEGIN	
-	IF (this_post_id IN (SELECT post_id FROM comments)) THEN
-		RETURN QUERY
-		SELECT c.body, c.score, c.creation_date
+	RETURN QUERY
+		SELECT c.id, c.body, c.score, c.creation_date, c.author_id
 		FROM comments c
 		WHERE c.post_id = this_post_id
 		ORDER BY creation_date desc;
-	END IF;
 END; $$
 LANGUAGE plpgsql;
 
@@ -245,25 +234,7 @@ LANGUAGE plpgsql;
 -- ----------------------------
 
 DROP FUNCTION IF EXISTS make_annotation;
-CREATE FUNCTION make_annotation(this_user_id integer, this_post_id integer, this_text text)
-RETURNS BOOLEAN AS $$
-BEGIN
-	IF (this_user_id IN (SELECT id FROM "SOVA_users") AND this_user_id IN (SELECT USER_ID FROM MARKS)) THEN
-		UPDATE "marks" SET annotation_creationdate = date_trunc('second', LOCALTIMESTAMP), TEXT_ANNOTATION = this_text
-		WHERE user_id = this_user_id and post_id = this_post_id;
-		RETURN TRUE;
-	ELSE 
-		RETURN FALSE;
-	END IF;
-END; $$
-LANGUAGE plpgsql;
-
--- ----------------------------
--- Function for making changes to an annotation
--- ----------------------------
-
-DROP FUNCTION IF EXISTS update_annotation;
-CREATE FUNCTION update_annotation(this_user_id integer, this_post_id integer, new_text text)
+CREATE FUNCTION make_annotation(this_user_id integer, this_post_id integer, new_text text)
 RETURNS BOOLEAN AS $$
 BEGIN
 	IF(this_user_id IN (SELECT ID FROM "SOVA_users") AND this_user_id IN (SELECT USER_ID FROM MARKS)) THEN
@@ -299,15 +270,15 @@ BEGIN
 LANGUAGE plpgsql;
 
 -- ----------------------------
--- Function for getting posts marked by a user, 10 at a time 
+-- Function for getting posts marked by a user 
 -- ----------------------------
 
 DROP FUNCTION IF EXISTS get_marked;
 CREATE FUNCTION get_marked(this_user_id integer)
-RETURNS table (post_id integer, text_annotation text, marked_creationdate timestamp) AS $$
+RETURNS table (user_id integer, post_id integer, marked_creationdate timestamp, annotation_creationdate timestamp, text_annotation text) AS $$
 BEGIN		
 	RETURN QUERY
-	SELECT m.post_id, m.text_annotation, m.marked_creationdate
+	SELECT *
 	FROM marks m
 	WHERE m.user_id = this_user_id
 	ORDER BY marked_creationdate desc;
@@ -321,12 +292,12 @@ LANGUAGE plpgsql;
 
 DROP FUNCTION IF EXISTS get_history;
 CREATE FUNCTION get_history(id_user integer)
-	RETURNS TABLE(search_text varchar(255), date timestamp) 
+	RETURNS TABLE(id integer, search_text varchar(255), date timestamp, user_id integer) 
 	AS $$
 		BEGIN
-		IF id_user IN (SELECT USER_ID FROM history) THEN
+		IF id_user IN (SELECT "SOVA_users".id FROM "SOVA_users") THEN
 			RETURN QUERY
-				SELECT h.search_text, h.date
+				SELECT h.id, h.search_text, h.date, h.user_id
 				FROM history h
 				WHERE h.user_id = id_user 
 				ORDER BY date desc;
@@ -341,12 +312,12 @@ LANGUAGE plpgsql;
 
 DROP FUNCTION IF EXISTS search_sova;
 CREATE FUNCTION search_sova(this_searched_text varchar(50), this_user_id integer)
-RETURNS TABLE (id integer) AS $$
+RETURNS TABLE (id integer, body text) AS $$
 BEGIN
 	RETURN QUERY
-		SELECT q.id
-		FROM questions q
-			JOIN posts p ON p.id = q.id
+		SELECT p.id, p.body
+		FROM posts p
+			JOIN questions q ON p.id = q.id
 		WHERE to_tsvector(q.title || '. ' || p.body || replace(q.tags, '::', ' ')) @@ plainto_tsquery(this_searched_text);
 		
 
@@ -354,6 +325,19 @@ BEGIN
 		VALUES(this_searched_text, date_trunc('second', LOCALTIMESTAMP), this_user_id);
 		
 	
+END; $$
+LANGUAGE plpgsql;
+
+DROP FUNCTION IF EXISTS search_posts;
+CREATE FUNCTION search_posts(this_searched_text varchar(50))
+RETURNS TABLE (id integer, body text) AS $$
+BEGIN
+	RETURN QUERY
+		SELECT p.id, p.body
+		FROM posts p
+			JOIN questions q ON p.id = q.id
+		WHERE to_tsvector(q.title || '. ' || p.body || replace(q.tags, '::', ' ')) @@ plainto_tsquery(this_searched_text);
+
 END; $$
 LANGUAGE plpgsql;
 
@@ -380,3 +364,27 @@ RETURNS BOOLEAN AS $$
 LANGUAGE plpgsql;
 
 
+DROP FUNCTION IF EXISTS get_author_of_post;
+CREATE FUNCTION get_author_of_post(this_post_id integer)
+RETURNS TABLE (id integer, name varchar(255), created_date timestamp, location varchar(255), age integer) AS $$
+	BEGIN
+	RETURN QUERY
+		SELECT a.id, a.name, a.created_date, a.location, a.age
+		FROM "SO_authors" a, posts p
+		WHERE a.id = p.author_id
+		AND p.id = this_post_id;
+	END; $$
+LANGUAGE plpgsql;
+
+DROP FUNCTION IF EXISTS get_author_of_comment;
+CREATE FUNCTION get_author_of_comment(this_comment_id integer)
+RETURNS TABLE (id integer, name varchar(255), created_date timestamp, location varchar(255), age integer) AS $$
+	BEGIN
+	RETURN QUERY
+		SELECT a.id, a.name, a.created_date, a.location, a.age
+		FROM "SO_authors" a, comments c
+		WHERE a.id = c.author_id
+		AND c.id = this_comment_id;
+	END; $$
+LANGUAGE plpgsql;
+adsff

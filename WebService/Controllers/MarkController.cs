@@ -101,7 +101,7 @@ namespace WebService.Controllers {
             //    return NotFound();
             //}
 
-            var numberOfItems = marks.Count();
+            var numberOfItems = _dataService.GetNoOfMarks(userId);
             var numberOfPages = ComputeNumberOfPages(pageSize, numberOfItems);
 
             var result = new
@@ -120,7 +120,7 @@ namespace WebService.Controllers {
         private MarkModel CreateMarkModel(GetMarkedResult marks)
         {
             var model = Mapper.Map<MarkModel>(marks);
-            model.Url = Url.Link(nameof(GetMarked), new { userId = marks.UserId, postId = marks.PostId });
+            model.Post = Url.Link(nameof(StackOverflowController.GetPost), new { id = marks.PostId });
             return model;
         }
 

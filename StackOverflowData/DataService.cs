@@ -25,14 +25,21 @@ namespace StackOverflowData {
         List<SearchResult> Search(string text, int userId, int page, int pageSize);
         List<GetHistoryResult> GetHistory(int userId, int page, int pageSize);
         List<GetMarkedResult> GetMarked(int userId, int page, int pageSize);
+        int GetHistoryCount(int userId);
+        int GetSearchedCount(string text);
+        int GetNoOfAnswers(int postId);
+        int GetNoOfComments(int postId);
+        int GetNoOfMarks(int userId);
+        GetAuthorResult GetAuthorOfComment(int commentId);
+        GetAuthorResult GetAuthorOfPost(int postId);
     }
 
     public class DataService : IDataService{
-        public GetPostOrCommentResult GetPost(int id)
+        public GetPostOrCommentResult GetPost(int postId)
         {
             using (var db = new StackOverflowContext())
             {
-                var result = db.GetPostResults.FromSql("select * from get_post({0})", id)
+                var result = db.GetPostResults.FromSql("select * from get_post({0})", postId)
                     .FirstOrDefault();
                 return result;
             }
@@ -60,6 +67,16 @@ namespace StackOverflowData {
             }
         }
 
+        public int GetNoOfAnswers(int questionId)
+        {
+            using (var db = new StackOverflowContext())
+            {
+                var result = db.GetPostResults.FromSql("select * from get_answers({0})", questionId)
+                    .Count();
+                return result;
+            }
+        }
+
         public List<GetPostOrCommentResult> GetComments(int postId, int page, int pageSize)
         {
             using (var db = new StackOverflowContext())
@@ -68,6 +85,17 @@ namespace StackOverflowData {
                     .Skip(page * pageSize)
                     .Take(pageSize)
                     .ToList();
+                return result;
+            }
+        }
+
+        public int GetNoOfComments(int postId)
+        {
+            using (var db = new StackOverflowContext())
+            {
+                var result = db.GetPostResults.FromSql("select * from get_comments({0})", postId)
+                    .Count();
+
                 return result;
             }
         }
@@ -213,6 +241,16 @@ namespace StackOverflowData {
             }
         }
 
+        public int GetSearchedCount(string text)
+        {
+            using (var db = new StackOverflowContext())
+            {
+                var count = db.SearchResults.FromSql("SELECT * FROM search_posts({0})", text)
+                    .Count();
+                return count;
+            }
+        }
+
         public List<GetHistoryResult> GetHistory(int userId, int page, int pageSize) {
             using (var db = new StackOverflowContext()) {
                 var result = db.GetHistoryResult.FromSql("SELECT * FROM get_history({0})", userId)
@@ -220,6 +258,16 @@ namespace StackOverflowData {
                     .Take(pageSize)
                     .ToList();
                 return result;
+            }
+        }
+
+        public int GetHistoryCount(int userId)
+        {
+            using (var db = new StackOverflowContext())
+            {
+                var count = db.GetHistoryResult.FromSql("SELECT * FROM get_history({0})", userId)
+                    .Count();
+                return count;
             }
         }
 
@@ -231,6 +279,36 @@ namespace StackOverflowData {
                     .Skip(page * pageSize)
                     .Take(pageSize)
                     .ToList();
+                return result;
+            }
+        }
+
+        public int GetNoOfMarks(int userId)
+        {
+            using (var db = new StackOverflowContext())
+            {
+                var result = db.GetMarkedResult.FromSql("SELECT * FROM get_marked({0})", userId)
+                    .Count();
+                return result;
+            }
+        }
+
+        public GetAuthorResult GetAuthorOfPost(int postId)
+        {
+            using (var db = new StackOverflowContext())
+            {
+                var result = db.GetAuthorResult.FromSql("SELECT * FROM get_author_of_post({0})", postId)
+                    .FirstOrDefault();
+                return result;
+            }
+        }
+
+        public GetAuthorResult GetAuthorOfComment(int commentId)
+        {
+            using (var db = new StackOverflowContext())
+            {
+                var result = db.GetAuthorResult.FromSql("SELECT * FROM get_author_of_comment({0})", commentId)
+                    .FirstOrDefault();
                 return result;
             }
         }
