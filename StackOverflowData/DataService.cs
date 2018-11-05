@@ -99,7 +99,7 @@ namespace StackOverflowData {
         {
             using (var db = new StackOverflowContext())
             {
-                var result =  db.GetUserResult.FromSql("SELECT * FROM create_user({0},{1},{2},{3},{4})", 
+                var result =  db.GetUserResult.FromSql("SELECT * FROM create_user({0},{1},{2},{3}, {4})", 
                     email, username, password, location, salt).FirstOrDefault();
 
                 db.SaveChanges();
