@@ -2,14 +2,15 @@
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using StackOverflowData.Functions;
+using StackOverflowData.SOVAEntities;
 
 namespace StackOverflowData {
     public interface IDataService {
         GetPostOrCommentResult GetPost(int id);
-        int GetUser(string username, string password);
+        GetUserResult GetUser(string username);
         List<GetPostOrCommentResult> GetAnswers(int questionId, int page, int pageSize);
         List<GetPostOrCommentResult> GetComments(int postId, int page, int pageSize);
-        int CreateUser(string email, string username, string password, string location);
+        GetUserResult CreateUser(string email, string username, string location, string passwd, string salt);
         bool DeleteUser(int userId);
         bool UpdateEmail(int id, string email);
         bool UpdateUsername(int id, string username);
@@ -35,10 +36,9 @@ namespace StackOverflowData {
             }
         }
 
-        public int GetUser(string username, string password) {
+        public GetUserResult GetUser(string username) {
             using (var db = new StackOverflowContext()) {
-                var result = db.GetUserResult.FromSql("select * from get_user({0},{1})", username,
-                    password).FirstOrDefault().Id;
+                var result = db.GetUserResult.FromSql("select * from get_user({0})", username).FirstOrDefault();
                 return result;
             }
         }
@@ -63,10 +63,10 @@ namespace StackOverflowData {
             }
         }
 
-        public int CreateUser(string email, string username, string password, string location) {
+        public GetUserResult CreateUser(string email, string username, string location, string passwd, string salt) {
             using (var db = new StackOverflowContext()) {
-                int result = db.GetUserResult.FromSql("SELECT * FROM create_user({0},{1},{2},{3})",
-                    email, username, password, location).FirstOrDefault().Id;
+                var result = db.GetUserResult.FromSql("SELECT * FROM create_user({0},{1},{2},{3},{4})",
+                    email, username, passwd, location, salt).FirstOrDefault();
 
                 db.SaveChanges();
                 return result;
