@@ -16,7 +16,7 @@ namespace StackOverflowData.Relationships {
             builder.ToTable("linked");
             builder.Property(x => x.QuestionId).HasColumnName("question_id");
             builder.Property(x => x.LinkpostId).HasColumnName("linkpost_id");
-            builder.HasKey(l => new { l.QuestionId, l.LinkpostId });
+            builder.HasKey(l => new {l.QuestionId, l.LinkpostId});
             builder.HasOne(l => l.Question)
                 .WithMany(q => q.QuestionLinkpost)
                 .HasForeignKey(l => l.QuestionId);

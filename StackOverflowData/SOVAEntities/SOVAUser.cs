@@ -10,6 +10,7 @@ namespace StackOverflowData.SOVAEntities {
         public string Username { get; set; }
         public string Password { get; set; }
         public string Location { get; set; }
+        public string Salt { get; set; }
         public List<History> Searched { get; set; }
         public List<Marks> Marks { get; set; }
     }

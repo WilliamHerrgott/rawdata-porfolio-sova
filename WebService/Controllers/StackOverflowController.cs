@@ -1,10 +1,10 @@
+using System;
+using System.Linq;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using StackOverflowData;
 using StackOverflowData.Functions;
-using AutoMapper;
 using WebService.Models;
-using System;
-using System.Linq;
 
 namespace WebService.Controllers {
     [Route("api/StackOverflow")]
@@ -27,8 +27,7 @@ namespace WebService.Controllers {
             var numberOfItems = _dataService.GetNoOfAnswers(questionId);
             var numberOfPages = ComputeNumberOfPages(pageSize, numberOfItems);
 
-            var result = new
-            {
+            var result = new {
                 NumberOfItems = numberOfItems,
                 NumberOfPages = numberOfPages,
                 First = CreateAnswersLink(0, pageSize),
@@ -60,8 +59,7 @@ namespace WebService.Controllers {
             var numberOfItems = _dataService.GetNoOfComments(postId) ;
             var numberOfPages = ComputeNumberOfPages(pageSize, numberOfItems);
 
-            var result = new
-            {
+            var result = new {
                 NumberOfItems = numberOfItems,
                 NumberOfPages = numberOfPages,
                 First = CreateCommentsLink(0, pageSize),
@@ -129,8 +127,7 @@ namespace WebService.Controllers {
             var numberOfItems = _dataService.GetSearchedCount(text);
             var numberOfPages = ComputeNumberOfPages(pageSize, numberOfItems);
 
-            var result = new
-            {
+            var result = new {
                 NumberOfItems = numberOfItems,
                 NumberOfPages = numberOfPages,
                 First = CreateCommentsLink(0, pageSize),
@@ -142,32 +139,27 @@ namespace WebService.Controllers {
             return Ok(result);
         }
 
-        private SearchModel CreateSearchModel(SearchResult search)
-        {
+        private SearchModel CreateSearchModel(SearchResult search) {
             var model = Mapper.Map<SearchModel>(search);
             model.Url = Url.Link(nameof(GetPost), new { id = search.Id });
             return model;
         }
 
         //helper functions
-        private static int ComputeNumberOfPages(int pageSize, int numberOfItems)
-        {
-            return (int)Math.Ceiling((double)numberOfItems / pageSize);
+        private static int ComputeNumberOfPages(int pageSize, int numberOfItems) {
+            return (int) Math.Ceiling((double) numberOfItems / pageSize);
         }
 
-        private string CreateAnswersLink(int page, int pageSize)
-        {
-            return Url.Link(nameof(GetAnswers), new { page, pageSize });
+        private string CreateAnswersLink(int page, int pageSize) {
+            return Url.Link(nameof(GetAnswers), new {page, pageSize});
         }
 
-        private string CreateCommentsLink(int page, int pageSize)
-        {
-            return Url.Link(nameof(GetComments), new { page, pageSize });
+        private string CreateCommentsLink(int page, int pageSize) {
+            return Url.Link(nameof(GetComments), new {page, pageSize});
         }
 
-        private string CreateSearchedLink(int page, int pageSize)
-        {
-            return Url.Link(nameof(Search), new { page, pageSize});
+        private string CreateSearchedLink(int page, int pageSize) {
+            return Url.Link(nameof(Search), new {page, pageSize});
         }
     }
 }

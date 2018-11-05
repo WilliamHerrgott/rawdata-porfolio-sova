@@ -4,11 +4,11 @@
 -- user or -1 if the insertion fails
 -- ----------------------------
 DROP FUNCTION IF EXISTS create_user;
-CREATE FUNCTION create_user(this_email varchar(50), this_username varchar(50), this_password varchar(50), this_location varchar(50))
-RETURNS TABLE (id integer, email text, username text, password text, location text) AS $$ 
+CREATE FUNCTION create_user(this_email varchar(50), this_username varchar(50), this_password varchar(50), this_location varchar(50), this_salt varchar(50))
+RETURNS TABLE (id integer, email text, username text, password text, location text, salt text) AS $$ 
 	BEGIN
 		IF(this_email NOT IN(SELECT email FROM "SOVA_users") and this_username NOT IN(SELECT username FROM "SOVA_users")) THEN
-		INSERT INTO "SOVA_users"(email, username, password, location) VALUES (this_email, this_username, this_password, this_location);
+		INSERT INTO "SOVA_users"(email, username, password, location, salt) VALUES (this_email, this_username, this_password, this_location, this_salt);
 		RETURN QUERY
 			SELECT *
 			FROM "SOVA_users" u
@@ -74,12 +74,13 @@ LANGUAGE plpgsql;
 -- Function for login a user 
 -- ----------------------------
 DROP FUNCTION IF EXISTS get_user;
-CREATE FUNCTION get_user(login varchar, password_var varchar)
-RETURNS TABLE (id integer, email text, username text, password text, location text) AS $$
-BEGIN	RETURN QUERY
+CREATE FUNCTION get_user(login varchar)
+RETURNS TABLE (id integer, email text, username text, password text, location text, salt text) AS $$
+BEGIN	
+RETURN QUERY
 	SELECT *
 	FROM "SOVA_users" u
-	WHERE u.username = login and u.password = password_var;
+	WHERE u.username = login;
 	END; $$			
 LANGUAGE plpgsql;
 
@@ -387,4 +388,3 @@ RETURNS TABLE (id integer, name varchar(255), created_date timestamp, location v
 		AND c.id = this_comment_id;
 	END; $$
 LANGUAGE plpgsql;
-adsff
