@@ -32,9 +32,6 @@ namespace StackOverflowData {
         int GetNoOfMarks(int userId);
         GetAuthorResult GetAuthorOfComment(int commentId);
         GetAuthorResult GetAuthorOfPost(int postId);
-        IEnumerable<SearchResult> Search(string text, int userId, int page, int pageSize);
-        IEnumerable<GetHistoryResult> GetHistory(int userId, int page, int pageSize);
-        IEnumerable<GetMarkedResult> GetMarked(int userId, int page, int pageSize);
     }
 
     public class DataService : IDataService{
@@ -98,7 +95,7 @@ namespace StackOverflowData {
             }
         }
 
-        public int CreateUser(string email, string username, string password, string location)
+        public int CreateUser(string email, string username, string password, string location, string salt)
         {
             using (var db = new StackOverflowContext())
             {
@@ -212,7 +209,7 @@ namespace StackOverflowData {
             }
         }
 
-        public IEnumerable<SearchResult> Search(string text, int userId, int page, int pageSize) {
+        public List<SearchResult> Search(string text, int userId, int page, int pageSize) {
             using (var db = new StackOverflowContext()) {
                 var result = db.SearchResults.FromSql("SELECT * FROM search_sova({0},{1})", text, userId)
                     .Skip(page * pageSize)
