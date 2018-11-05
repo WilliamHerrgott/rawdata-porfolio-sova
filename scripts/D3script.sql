@@ -5,17 +5,14 @@
 -- ----------------------------
 DROP FUNCTION IF EXISTS create_user;
 CREATE FUNCTION create_user(this_email varchar(50), this_username varchar(50), this_password varchar(50), this_location varchar(50))
-RETURNS integer AS $$ 
-Declare x integer;
+RETURNS TABLE (id integer, email text, username text, password text, location text) AS $$ 
 	BEGIN
-		IF(this_email IN(SELECT email FROM "SOVA_users") and this_username IN(SELECT username FROM "SOVA_users")) THEN
-			RETURN -1;
-		ELSE 
-			INSERT INTO "SOVA_users"(email, username, password, location) VALUES (this_email, this_username, this_password, this_location);
-			SELECT u.id into x
+		IF(this_email NOT IN(SELECT email FROM "SOVA_users") and this_username NOT IN(SELECT username FROM "SOVA_users")) THEN
+		INSERT INTO "SOVA_users"(email, username, password, location) VALUES (this_email, this_username, this_password, this_location);
+		RETURN QUERY
+			SELECT *
 			FROM "SOVA_users" u
 			WHERE u.username = this_username and u.password = this_password;
-			return x;		
 		END IF;
 	END; $$
 LANGUAGE plpgsql;
@@ -78,13 +75,11 @@ LANGUAGE plpgsql;
 -- ----------------------------
 DROP FUNCTION IF EXISTS get_user;
 CREATE FUNCTION get_user(login varchar, password_var varchar)
-RETURNS integer AS $$
-Declare x integer;
-BEGIN		
-	SELECT u.id into x
+RETURNS TABLE (id integer, email text, username text, password text, location text) AS $$
+BEGIN	RETURN QUERY
+	SELECT *
 	FROM "SOVA_users" u
 	WHERE u.username = login and u.password = password_var;
-	return x;
 	END; $$			
 LANGUAGE plpgsql;
 

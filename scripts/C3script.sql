@@ -12,7 +12,8 @@ CREATE TABLE "SOVA_users" (
 	email varchar(50) NOT NULL, 
   username varchar(50) NOT NULL,
   password varchar(50) NOT NULL,
-  location varchar(50)
+  location varchar(50),
+  salt varchar(50) NOT NULL
 )
 ;
 
