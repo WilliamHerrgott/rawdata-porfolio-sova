@@ -22,9 +22,9 @@ namespace StackOverflowData {
         bool MakeOrUpdateAnnotation(int userId, int postId, string text);
         bool DeleteAnnotation(int userId, int postId);
         bool DeleteHistory(int userId);
-        List<SearchResult> Search(string text, int userId, int page, int pageSize);
-        List<GetHistoryResult> GetHistory(int userId, int page, int pageSize);
-        List<GetMarkedResult> GetMarked(int userId, int page, int pageSize);
+        IEnumerable<SearchResult> Search(string text, int userId, int page, int pageSize);
+        IEnumerable<GetHistoryResult> GetHistory(int userId, int page, int pageSize);
+        IEnumerable<GetMarkedResult> GetMarked(int userId, int page, int pageSize);
     }
 
     public class DataService : IDataService {
@@ -175,7 +175,7 @@ namespace StackOverflowData {
             }
         }
 
-        public List<SearchResult> Search(string text, int userId, int page, int pageSize) {
+        public IEnumerable<SearchResult> Search(string text, int userId, int page, int pageSize) {
             using (var db = new StackOverflowContext()) {
                 var result = db.SearchResults.FromSql("SELECT * FROM search_sova({0},{1})", text, userId)
                     .Skip(page * pageSize)
@@ -186,7 +186,7 @@ namespace StackOverflowData {
             }
         }
 
-        public List<GetHistoryResult> GetHistory(int userId, int page, int pageSize) {
+        public IEnumerable<GetHistoryResult> GetHistory(int userId, int page, int pageSize) {
             using (var db = new StackOverflowContext()) {
                 var result = db.GetHistoryResult.FromSql("SELECT * FROM get_history({0})", userId)
                     .Skip(page * pageSize)
@@ -196,7 +196,7 @@ namespace StackOverflowData {
             }
         }
 
-        public List<GetMarkedResult> GetMarked(int userId, int page, int pageSize) {
+        public IEnumerable<GetMarkedResult> GetMarked(int userId, int page, int pageSize) {
             using (var db = new StackOverflowContext()) {
                 var result = db.GetMarkedResult.FromSql("SELECT * FROM get_marked({0})", userId)
                     .Skip(page * pageSize)

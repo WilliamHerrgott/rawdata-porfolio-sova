@@ -6,7 +6,7 @@ namespace StackOverflowData.Functions {
     public class GetPostOrCommentResult {
         public int Id { get; set; }
         public string Body { get; set; }
-        public string Score { get; set; }
+        public int Score { get; set; }
         public DateTime CreationDate { get; set; }
     }
 

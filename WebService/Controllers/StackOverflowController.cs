@@ -97,7 +97,8 @@ namespace WebService.Controllers {
             //{
             //    return NotFound();
             //}
-            var numberOfItems = searchResult.Count();
+            var searchModels = searchResult as SearchModel[] ?? searchResult.ToArray();
+            var numberOfItems = searchModels.Length;
             var numberOfPages = ComputeNumberOfPages(pageSize, numberOfItems);
 
             var result = new {
@@ -107,7 +108,7 @@ namespace WebService.Controllers {
                 Prev = page == 0 ? null : CreateCommentsLink(page - 1, pageSize),
                 Next = page >= numberOfPages - 1 ? null : CreateSearchedLink(page = page + 1, pageSize),
                 Last = CreateSearchedLink(numberOfPages - 1, pageSize),
-                Items = searchResult
+                Items = searchModels
             };
             return Ok(result);
         }

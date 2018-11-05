@@ -28,12 +28,13 @@ namespace StackOverflowData {
 
         public DbQuery<GetUserResult> GetUserResult { get; set; }
         public DbQuery<BooleanResult> BooleanResult { get; set; }
+        public DbQuery<IntegerResult> IntegerResult { get; set; }
         public DbQuery<GetHistoryResult> GetHistoryResult { get; set; }
         public DbQuery<GetMarkedResult> GetMarkedResult { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
             base.OnConfiguring(optionsBuilder);
-            optionsBuilder.UseNpgsql("");
+            optionsBuilder.UseNpgsql("host=localhost;db=sova;uid=user;pwd=postgresqlpwd");
             // you only need this if you want to see the SQL statments created
             // by EF
             optionsBuilder.UseLoggerFactory(MyLoggerFactory)
@@ -72,6 +73,7 @@ namespace StackOverflowData {
 
             modelBuilder.ApplyConfiguration(new GetUserResultConfiguration());
             modelBuilder.ApplyConfiguration(new BooleanResultConfiguration());
+            modelBuilder.ApplyConfiguration(new IntegerResultConfiguration());
             modelBuilder.ApplyConfiguration(new GetHistoryResultConfiguration());
             modelBuilder.ApplyConfiguration(new GetMarkedResultConfiguration());
         }

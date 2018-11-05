@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StackOverflowData", "StackO
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebService", "WebService\WebService.csproj", "{F9C7B50A-7020-4737-97F4-C9B0F8743989}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{3D4200C4-07B5-4C6F-9519-08F24AA451D3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{F9C7B50A-7020-4737-97F4-C9B0F8743989}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F9C7B50A-7020-4737-97F4-C9B0F8743989}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F9C7B50A-7020-4737-97F4-C9B0F8743989}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D4200C4-07B5-4C6F-9519-08F24AA451D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D4200C4-07B5-4C6F-9519-08F24AA451D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D4200C4-07B5-4C6F-9519-08F24AA451D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D4200C4-07B5-4C6F-9519-08F24AA451D3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
