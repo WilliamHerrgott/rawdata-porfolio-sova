@@ -95,12 +95,12 @@ namespace StackOverflowData {
             }
         }
 
-        public int CreateUser(string email, string username, string password, string location, string salt)
+        public GetUserResult CreateUser(string email, string username, string password, string location, string salt)
         {
             using (var db = new StackOverflowContext())
             {
-                int result =  db.GetUserResult.FromSql("SELECT * FROM create_user({0},{1},{2},{3})", 
-                    email, username, password, location).FirstOrDefault().Id;
+                var result =  db.GetUserResult.FromSql("SELECT * FROM create_user({0},{1},{2},{3},{4})", 
+                    email, username, password, location, salt).FirstOrDefault();
 
                 db.SaveChanges();
                 return result;
