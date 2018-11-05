@@ -367,7 +367,7 @@ LANGUAGE plpgsql;
 
 DROP FUNCTION IF EXISTS get_author_of_post;
 CREATE FUNCTION get_author_of_post(this_post_id integer)
-RETURNS TABLE (id integer, name text, created_date timestamp, location text, age integer) AS $$
+RETURNS TABLE (id integer, name varchar(255), created_date timestamp, location varchar(255), age integer) AS $$
 	BEGIN
 	RETURN QUERY
 		SELECT a.id, a.name, a.created_date, a.location, a.age
@@ -379,7 +379,7 @@ LANGUAGE plpgsql;
 
 DROP FUNCTION IF EXISTS get_author_of_comment;
 CREATE FUNCTION get_author_of_comment(this_comment_id integer)
-RETURNS TABLE (id integer, name text, created_date timestamp, location text, age integer) AS $$
+RETURNS TABLE (id integer, name varchar(255), created_date timestamp, location varchar(255), age integer) AS $$
 	BEGIN
 	RETURN QUERY
 		SELECT a.id, a.name, a.created_date, a.location, a.age
