@@ -2,10 +2,10 @@ using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.AspNetCore.Authorization;
 using StackOverflowData;
 using WebService.Models;
 using WebService.Services;
@@ -32,6 +32,7 @@ namespace WebService.Controllers {
             if (user == null) {
                 return BadRequest();
             }
+
             return Created("", user);
         }
 
@@ -50,7 +51,7 @@ namespace WebService.Controllers {
             var pwd = PasswordService.HashPassword(model.Password, user.Salt, size);
 
             if (user == null || pwd != user.Password) {
-                return BadRequest();                
+                return BadRequest();
             }
 
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -70,7 +71,7 @@ namespace WebService.Controllers {
                 user.Username,
                 token
             };
-            
+
             return Ok(resp);
         }
 
@@ -130,7 +131,7 @@ namespace WebService.Controllers {
 
         [Authorize]
         [HttpPut("update/location/{newLocation}")]
-        public IActionResult UpdateLocation( string newLocation) {
+        public IActionResult UpdateLocation(string newLocation) {
             int.TryParse(HttpContext.User.Identity.Name, out var id);
             var updated = _dataService.UpdateLocation(id, newLocation);
 

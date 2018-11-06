@@ -76,7 +76,6 @@ namespace StackOverflowData {
             modelBuilder.ApplyConfiguration(new BooleanResultConfiguration());
             modelBuilder.ApplyConfiguration(new GetHistoryResultConfiguration());
             modelBuilder.ApplyConfiguration(new GetMarkedResultConfiguration());
-
         }
     }
 }

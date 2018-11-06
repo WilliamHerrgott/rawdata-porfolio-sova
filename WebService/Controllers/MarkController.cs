@@ -71,7 +71,7 @@ namespace WebService.Controllers {
 
         [Authorize]
         [HttpDelete("annotation/{postId}")]
-        public IActionResult DeleteAnnotation( int postId) {
+        public IActionResult DeleteAnnotation(int postId) {
             int.TryParse(HttpContext.User.Identity.Name, out var userId);
             var deleted = _dataService.DeleteAnnotation(userId, postId);
 
@@ -110,7 +110,7 @@ namespace WebService.Controllers {
 
         private MarkModel CreateMarkModel(GetMarkedResult marks) {
             var model = Mapper.Map<MarkModel>(marks);
-            model.Post = Url.Link(nameof(StackOverflowController.GetPost), new { id = marks.PostId });
+            model.Post = Url.Link(nameof(StackOverflowController.GetPost), new {id = marks.PostId});
             return model;
         }
 

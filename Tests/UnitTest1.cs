@@ -1,12 +1,8 @@
-
 using StackOverflowData;
-using WebService.Controllers;
 using Xunit;
 
-namespace Tests
-{
-    public class WebServiceTests
-    {
+namespace Tests {
+    public class WebServiceTests {
         [Fact]
         public void Create_User_Successful() {
             var service = new DataService();
@@ -17,5 +13,4 @@ namespace Tests
             Assert.NotNull(user);
         }
     }
-    
 }

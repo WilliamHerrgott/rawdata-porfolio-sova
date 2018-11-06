@@ -2,10 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace StackOverflowData.Functions
-{
-    public class GetAuthorResult
-    {
+namespace StackOverflowData.Functions {
+    public class GetAuthorResult {
         public int Id { get; set; }
         public string Name { get; set; }
         public DateTime CreatedDate { get; set; }
@@ -13,10 +11,8 @@ namespace StackOverflowData.Functions
         public int? Age { get; set; }
     }
 
-    class GetAuthorResultConfiguration : IQueryTypeConfiguration<GetAuthorResult>
-    {
-        public void Configure(QueryTypeBuilder<GetAuthorResult> builder)
-        {
+    class GetAuthorResultConfiguration : IQueryTypeConfiguration<GetAuthorResult> {
+        public void Configure(QueryTypeBuilder<GetAuthorResult> builder) {
             builder.Property(x => x.Id).HasColumnName("id");
             builder.Property(x => x.Name).HasColumnName("name");
             builder.Property(x => x.CreatedDate).HasColumnName("created_date");

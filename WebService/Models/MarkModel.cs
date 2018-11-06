@@ -1,9 +1,7 @@
 ﻿using System;
 
-namespace WebService.Models
-{
-    public class MarkModel
-    {
+namespace WebService.Models {
+    public class MarkModel {
         public string User { get; set; }
         public string Post { get; set; }
         public string Annotation { get; set; }
