@@ -117,7 +117,7 @@ namespace WebService.Controllers {
             var updated = _dataService.UpdateEmail(id, newEmail);
 
             if (updated == false) {
-                return NotFound();
+                return BadRequest();
             }
 
             return Ok();
@@ -129,7 +129,7 @@ namespace WebService.Controllers {
             var updated = _dataService.UpdateUsername(id, newUsername);
 
             if (updated == false) {
-                return NotFound();
+                return BadRequest();
             }
 
             return Ok();
@@ -145,7 +145,7 @@ namespace WebService.Controllers {
             var updated = _dataService.UpdatePassword(id, pwd);
 
             if (updated == false) {
-                return NotFound();
+                return BadRequest();
             }
 
             return Ok();
@@ -158,7 +158,7 @@ namespace WebService.Controllers {
             var updated = _dataService.UpdateLocation(id, newLocation);
 
             if (updated == false) {
-                return NotFound();
+                return BadRequest();
             }
 
             return Ok();
