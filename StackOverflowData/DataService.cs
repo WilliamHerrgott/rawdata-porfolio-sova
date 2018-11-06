@@ -14,7 +14,7 @@ namespace StackOverflowData {
         bool DeleteUser(int userId);
         bool UpdateEmail(int id, string email);
         bool UpdateUsername(int id, string username);
-        bool UpdatePassword(int id, string password);
+        bool UpdatePassword(int id, string password, string salt);
         bool UpdateLocation(int id, string location);
         bool CreateMark(int userId, int postId);
         bool DeleteMark(int userId, int postId);
@@ -138,10 +138,10 @@ namespace StackOverflowData {
             }
         }
 
-        public bool UpdatePassword(int id, string password) {
+        public bool UpdatePassword(int id, string password, string salt) {
             using (var db = new StackOverflowContext()) {
                 var updated = db.BooleanResult
-                    .FromSql("SELECT * FROM update_password({0},{1}) AS successful", id, password)
+                    .FromSql("SELECT * FROM update_password({0},{1},{2}) AS successful", id, password, salt)
                     .First().Successful;
                 db.SaveChanges();
                 return updated;

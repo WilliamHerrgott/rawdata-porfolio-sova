@@ -140,14 +140,14 @@ namespace WebService.Controllers {
         public IActionResult UpdatePassword([FromBody] UserUpdatePasswordModel model) {
             int.TryParse(HttpContext.User.Identity.Name, out var id);
             int.TryParse(_config["security:pwdsize"], out var size);
+            var salt = PasswordService.GenerateSalt(size);
             var user = _dataService.GetUserById(id);
-            var pwd = PasswordService.HashPassword(model.Password, user.Salt, size);
-            var updated = _dataService.UpdatePassword(id, pwd);
+            var pwd = PasswordService.HashPassword(model.Password, salt, size);
+            var updated = _dataService.UpdatePassword(id, pwd, salt);
 
             if (updated == false) {
                 return NotFound();
             }
-
             return Ok();
         }
 
