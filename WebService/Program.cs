@@ -3,7 +3,8 @@ using Microsoft.AspNetCore.Hosting;
 
 namespace WebService {
     public class Program {
-        public static void Main(string[] args) {
+
+         public static void Main(string[] args) {
             CreateWebHostBuilder(args).Build().Run();
         }
 
