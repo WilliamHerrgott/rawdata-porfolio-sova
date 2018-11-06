@@ -110,10 +110,10 @@ namespace StackOverflowData {
         public bool DeleteUser(int userId) {
             using (var db = new StackOverflowContext()) {
                 var deleted = db.BooleanResult.FromSql("SELECT * FROM delete_user({0})", userId)
-                    .FirstOrDefault().Successful;
+                    .First();
 
                 db.SaveChanges();
-                return deleted;
+                return deleted.Successful;
             }
         }
 
