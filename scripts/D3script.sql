@@ -3,20 +3,20 @@
 -- It returns the id of the newly created
 -- user or -1 if the insertion fails
 -- ----------------------------
-DROP FUNCTION IF EXISTS create_user;
-CREATE FUNCTION create_user(this_email varchar(50), this_username varchar(50), this_password varchar(50), this_location varchar(50), this_salt varchar(50))
-RETURNS TABLE (id integer, email text, username text, password text, location text, salt text) AS $$ 
+CREATE OR REPLACE FUNCTION "public"."create_user"("this_email" varchar, "this_username" varchar, "this_password" varchar, "this_location" varchar, "this_salt" varchar)
+  RETURNS TABLE("id" int4, "email" varchar, "username" varchar, "password" varchar, "location" varchar, "salt" varchar) AS $BODY$ 
 	BEGIN
-		IF(this_email NOT IN(SELECT email FROM "SOVA_users") and this_username NOT IN(SELECT username FROM "SOVA_users")) THEN
+		IF(this_email NOT IN(SELECT "SOVA_users".email FROM "SOVA_users") and this_username NOT IN(SELECT "SOVA_users".username FROM "SOVA_users")) THEN
 		INSERT INTO "SOVA_users"(email, username, password, location, salt) VALUES (this_email, this_username, this_password, this_location, this_salt);
 		RETURN QUERY
 			SELECT *
 			FROM "SOVA_users" u
 			WHERE u.username = this_username and u.password = this_password;
 		END IF;
-	END; $$
-LANGUAGE plpgsql;
-
+	END; $BODY$
+LANGUAGE plpgsql VOLATILE
+COST 100
+ROWS 1000
 -- ----------------------------
 -- Function for deleting a user.
 -- It calls a trigger to delete 
