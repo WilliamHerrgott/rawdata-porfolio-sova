@@ -55,7 +55,7 @@ namespace WebService.Controllers {
         private HistoryModel CreateHistoryModel(GetHistoryResult history) {
             var model = Mapper.Map<HistoryModel>(history);
             model.Url = Url.Link(nameof(StackOverflowController.Search),
-                new {text = history.SearchedText, userId = history.UserId,});
+                new {text = history.SearchedText});
             return model;
         }
 

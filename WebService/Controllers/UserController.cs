@@ -2,6 +2,7 @@ using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -27,13 +28,28 @@ namespace WebService.Controllers {
             int.TryParse(_config["security:pwdsize"], out var size);
             var salt = PasswordService.GenerateSalt(size);
             var passwd = PasswordService.HashPassword(model.Password, salt, size);
-            var user = _dataService.CreateUser(model.Email, model.Username, model.Location, passwd, salt);
+            var user = _dataService.CreateUser(model.Email, model.Username, passwd, model.Location, salt);
 
             if (user == null) {
                 return BadRequest();
             }
+            var displayUser = Mapper.Map<GetUserModel>(user);
+            return Created("", displayUser);
+        }
 
-            return Created("", user);
+        [Authorize]
+        [HttpGet]
+        public IActionResult GetUser()
+        {
+            int.TryParse(HttpContext.User.Identity.Name, out var userId);
+            var user = _dataService.GetUserById(userId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            var displayUser = Mapper.Map<GetUserModel>(user);
+            //displayUser.Marks = Url.Link(nameof(MarkController.GetMarked));
+            return Ok(displayUser);
         }
 
         [HttpPost("login")]
