@@ -127,7 +127,7 @@ namespace StackOverflowData {
                     .First().Successful;
 
                 db.SaveChanges();
-                return deleted.Successful;
+                return deleted;
             }
         }
 
@@ -135,7 +135,7 @@ namespace StackOverflowData {
             using (var db = new StackOverflowContext()) {
                 var updated = db.BooleanResult
                     .FromSql("SELECT * FROM update_email({0},{1}) AS successful", id, email)
-                    .FirstOrDefault().Successful;
+                    .First().Successful;
                 db.SaveChanges();
                 return updated;
             }
@@ -145,7 +145,7 @@ namespace StackOverflowData {
             using (var db = new StackOverflowContext()) {
                 var updated = db.BooleanResult
                     .FromSql("SELECT * FROM update_username({0},{1}) AS successful", id, username)
-                    .FirstOrDefault().Successful;
+                    .First().Successful;
                 db.SaveChanges();
                 return updated;
             }
@@ -155,7 +155,7 @@ namespace StackOverflowData {
             using (var db = new StackOverflowContext()) {
                 var updated = db.BooleanResult
                     .FromSql("SELECT * FROM update_password({0},{1}) AS successful", id, password)
-                    .FirstOrDefault().Successful;
+                    .First().Successful;
                 db.SaveChanges();
                 return updated;
             }
@@ -165,7 +165,7 @@ namespace StackOverflowData {
             using (var db = new StackOverflowContext()) {
                 var updated = db.BooleanResult
                     .FromSql("SELECT * FROM update_location({0},{1}) AS successful", id, location)
-                    .FirstOrDefault().Successful;
+                    .First().Successful;
                 db.SaveChanges();
                 return updated;
             }
@@ -175,7 +175,7 @@ namespace StackOverflowData {
             using (var db = new StackOverflowContext()) {
                 var marked = db.BooleanResult
                     .FromSql("SELECT * FROM mark({0},{1}) AS successful", userId, postId)
-                    .FirstOrDefault().Successful;
+                    .First().Successful;
                 db.SaveChanges();
                 return marked;
             }
@@ -185,7 +185,7 @@ namespace StackOverflowData {
             using (var db = new StackOverflowContext()) {
                 var deleted = db.BooleanResult
                     .FromSql("SELECT * FROM delete_mark({0},{1}) AS successful", userId, postId)
-                    .FirstOrDefault().Successful;
+                    .First().Successful;
                 db.SaveChanges();
                 return deleted;
             }
@@ -195,7 +195,7 @@ namespace StackOverflowData {
             using (var db = new StackOverflowContext()) {
                 var deleted = db.BooleanResult
                     .FromSql("SELECT * FROM delete_mark({0}) AS successful", userId)
-                    .FirstOrDefault().Successful;
+                    .First().Successful;
                 db.SaveChanges();
                 return deleted;
             }
@@ -205,7 +205,7 @@ namespace StackOverflowData {
             using (var db = new StackOverflowContext()) {
                 var successful = db.BooleanResult
                     .FromSql("SELECT * FROM make_annotation({0},{1},{2}) AS successful", userId, postId, text)
-                    .FirstOrDefault().Successful;
+                    .First().Successful;
                 db.SaveChanges();
                 return successful;
             }
@@ -216,7 +216,7 @@ namespace StackOverflowData {
             using (var db = new StackOverflowContext()) {
                 var deleted = db.BooleanResult
                     .FromSql("SELECT * FROM delete_annotation({0},{1}) AS successful", userId, postId)
-                    .FirstOrDefault().Successful;
+                    .First().Successful;
                 db.SaveChanges();
                 return deleted;
             }
@@ -226,7 +226,7 @@ namespace StackOverflowData {
             using (var db = new StackOverflowContext()) {
                 var deleted = db.BooleanResult
                     .FromSql("SELECT * FROM delete_history({0}) AS successful", userId)
-                    .FirstOrDefault().Successful;
+                    .First().Successful;
                 db.SaveChanges();
                 return deleted;
             }
