@@ -11,7 +11,7 @@ CREATE TABLE "SOVA_users" (
   id SERIAL,
 	email varchar(50) NOT NULL, 
   username varchar(50) NOT NULL,
-  password varchar(50) NOT NULL,
+  password text NOT NULL,
   location varchar(50),
 	salt text
 )
@@ -232,7 +232,7 @@ INSERT INTO comments
 SELECT commentid, commentscore, commenttext, commentcreatedate, authorid, postid
 FROM comments_universal;
 
-
+											 
 DROP TABLE IF EXISTS posts_universal;
 DROP TABLE IF EXISTS comments_universal; 
 											 

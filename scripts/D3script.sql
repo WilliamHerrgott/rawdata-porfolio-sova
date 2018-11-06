@@ -4,8 +4,8 @@
 -- user or -1 if the insertion fails
 -- ----------------------------
 DROP FUNCTION IF EXISTS create_user;
-CREATE FUNCTION create_user(this_email varchar(50), this_username varchar(50), this_password varchar(50), this_location varchar(50), this_salt text)
-RETURNS TABLE (id integer, email varchar(50), username varchar(50), password varchar(50), location varchar(50), salt text) AS $$ 
+CREATE FUNCTION create_user(this_email varchar(50), this_username varchar(50), this_password text, this_location varchar(50), this_salt text)
+RETURNS TABLE (id integer, email varchar(50), username varchar(50), password text, location varchar(50), salt text) AS $$ 
 	BEGIN
 		IF(this_email NOT IN(SELECT u.email FROM "SOVA_users" u) and this_username NOT IN(SELECT u.username FROM "SOVA_users" u)) THEN
 		INSERT INTO "SOVA_users"(email, username, password, location, salt) VALUES (this_email, this_username, this_password, this_location, this_salt);
@@ -76,9 +76,8 @@ LANGUAGE plpgsql;
 -- ----------------------------
 DROP FUNCTION IF EXISTS get_user;
 CREATE FUNCTION get_user(login varchar)
-RETURNS TABLE (id integer, email varchar(50), username varchar(50), password varchar(50), location varchar(50), salt text) AS $$
-BEGIN	
-RETURN QUERY
+RETURNS TABLE (id integer, email varchar(50), username varchar(50), password text, location varchar(50), salt text) AS $$
+BEGIN	RETURN QUERY
 	SELECT *
 	FROM "SOVA_users" u
 	WHERE u.username = login;
@@ -87,7 +86,7 @@ LANGUAGE plpgsql;
 
 DROP FUNCTION IF EXISTS get_user_by_id;
 CREATE FUNCTION get_user_by_id(this_user_id integer)
-RETURNS TABLE (id integer, email varchar(50), username varchar(50), password varchar(50), location varchar(50), salt text) AS $$
+RETURNS TABLE (id integer, email varchar(50), username varchar(50), password text, location varchar(50), salt text) AS $$
 BEGIN	
 RETURN QUERY
 	SELECT *
@@ -120,7 +119,7 @@ LANGUAGE plpgsql;
 -- ----------------------------
 
 DROP FUNCTION IF EXISTS update_password;
-CREATE FUNCTION update_password(this_user_id integer, var_password varchar(20))
+CREATE FUNCTION update_password(this_user_id integer, var_password text)
 RETURNS BOOLEAN AS $$
 BEGIN
 	IF(this_user_id  IN(SELECT ID FROM "SOVA_users")) THEN 
@@ -250,7 +249,7 @@ DROP FUNCTION IF EXISTS make_annotation;
 CREATE FUNCTION make_annotation(this_user_id integer, this_post_id integer, new_text text)
 RETURNS BOOLEAN AS $$
 BEGIN
-	IF(this_user_id IN (SELECT ID FROM "SOVA_users") AND this_user_id IN (SELECT USER_ID FROM MARKS WHERE POST_ID = this_post_id)) THEN
+	IF(this_user_id IN (SELECT ID FROM "SOVA_users") AND this_user_id IN (SELECT USER_ID FROM MARKS)) THEN
 		UPDATE marks m 
 		SET text_annotation = new_text, annotation_creationdate = date_trunc('second', LOCALTIMESTAMP)
 		WHERE m.user_id = this_user_id 
