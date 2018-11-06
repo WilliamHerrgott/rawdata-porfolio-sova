@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authorization;
 using StackOverflowData;
 using WebService.Models;
 using WebService.Services;
@@ -21,17 +22,6 @@ namespace WebService.Controllers {
             _config = config;
         }
 
-        [HttpGet("{login}")]
-        public IActionResult GetUser(string username) {
-            var user = _dataService.GetUser(username);
-
-            if (user.Id == -1) {
-                return NotFound();
-            }
-
-            return Ok(user);
-        }
-
         [HttpPost]
         public IActionResult CreateUser([FromBody] UserRegModel model) {
             int.TryParse(_config["security:pwdsize"], out var size);
@@ -39,10 +29,9 @@ namespace WebService.Controllers {
             var passwd = PasswordService.HashPassword(model.Password, salt, size);
             var user = _dataService.CreateUser(model.Email, model.Username, model.Location, passwd, salt);
 
-            if (user.Id == -1) {
+            if (user == null) {
                 return BadRequest();
             }
-
             return Created("", user);
         }
 
@@ -85,20 +74,24 @@ namespace WebService.Controllers {
             return Ok(resp);
         }
 
-        [HttpDelete("{userId}")]
-        public IActionResult DeleteUser(int userId) {
-            var user = _dataService.DeleteUser(userId);
+        [Authorize]
+        [HttpDelete]
+        public IActionResult DeleteUser() {
+            int.TryParse(HttpContext.User.Identity.Name, out var id);
+            var user = _dataService.DeleteUser(id);
 
             if (user == false) {
-                return NotFound();
+                return BadRequest();
             }
 
             return Ok();
         }
 
-        [HttpPut("{userId}")]
-        public IActionResult UpdateEmail(int userId, string email) {
-            var updated = _dataService.UpdateEmail(userId, email);
+        [Authorize]
+        [HttpPut("update/email/{newEmail}")]
+        public IActionResult UpdateEmail(string newEmail) {
+            int.TryParse(HttpContext.User.Identity.Name, out var id);
+            var updated = _dataService.UpdateEmail(id, newEmail);
 
             if (updated == false) {
                 return NotFound();
@@ -107,9 +100,10 @@ namespace WebService.Controllers {
             return Ok();
         }
 
-        [HttpPut("{userId}")]
-        public IActionResult UpdateUsername(int userId, string username) {
-            var updated = _dataService.UpdateUsername(userId, username);
+        [HttpPut("update/username/{newUsername}")]
+        public IActionResult UpdateUsername(string newUsername) {
+            int.TryParse(HttpContext.User.Identity.Name, out var id);
+            var updated = _dataService.UpdateUsername(id, newUsername);
 
             if (updated == false) {
                 return NotFound();
@@ -118,9 +112,14 @@ namespace WebService.Controllers {
             return Ok();
         }
 
-        [HttpPut("{userId}")]
-        public IActionResult UpdatePassword(int userId, string password) {
-            var updated = _dataService.UpdatePassword(userId, password);
+        [Authorize]
+        [HttpPut("update/password")]
+        public IActionResult UpdatePassword([FromBody] UserUpdatePasswordModel model) {
+            int.TryParse(HttpContext.User.Identity.Name, out var id);
+            int.TryParse(_config["security:pwdsize"], out var size);
+            var user = _dataService.GetUserById(id);
+            var pwd = PasswordService.HashPassword(model.Password, user.Salt, size);
+            var updated = _dataService.UpdatePassword(id, pwd);
 
             if (updated == false) {
                 return NotFound();
@@ -129,9 +128,11 @@ namespace WebService.Controllers {
             return Ok();
         }
 
-        [HttpPut("{userId}")]
-        public IActionResult UpdateLocation(int userId, string location) {
-            var updated = _dataService.UpdateLocation(userId, location);
+        [Authorize]
+        [HttpPut("update/location/{newLocation}")]
+        public IActionResult UpdateLocation( string newLocation) {
+            int.TryParse(HttpContext.User.Identity.Name, out var id);
+            var updated = _dataService.UpdateLocation(id, newLocation);
 
             if (updated == false) {
                 return NotFound();

@@ -8,7 +8,7 @@ namespace StackOverflowData.Functions {
 
     class BooleanResultConfiguration : IQueryTypeConfiguration<BooleanResult> {
         public void Configure(QueryTypeBuilder<BooleanResult> builder) {
-            //builder.Property(x => x.Id).HasColumnName("id");
+            builder.Property(x => x.Successful).HasColumnName("successful");
         }
     }
 }

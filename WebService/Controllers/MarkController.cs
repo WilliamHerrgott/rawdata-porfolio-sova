@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StackOverflowData;
 using StackOverflowData.Functions;
@@ -16,8 +17,10 @@ namespace WebService.Controllers {
             _dataService = dataService;
         }
 
-        [HttpPost]
-        public IActionResult Mark(int userId, int postId) {
+        [Authorize]
+        [HttpPost("{postId}")]
+        public IActionResult Mark(int postId) {
+            int.TryParse(HttpContext.User.Identity.Name, out var userId);
             var marked = _dataService.CreateMark(userId, postId);
 
             if (marked == false) {
@@ -27,8 +30,10 @@ namespace WebService.Controllers {
             return Created("", new {userId, postId});
         }
 
-        [HttpDelete("{userId}")]
-        public IActionResult DeleteMark(int userId) {
+        [Authorize]
+        [HttpDelete]
+        public IActionResult DeleteMark() {
+            int.TryParse(HttpContext.User.Identity.Name, out var userId);
             var deleted = _dataService.DeleteMark(userId);
 
             if (deleted == false) {
@@ -38,19 +43,10 @@ namespace WebService.Controllers {
             return Ok();
         }
 
-        [HttpDelete("{userId}")]
-        public IActionResult DeleteMarksOfUser(int userId) {
-            var deleted = _dataService.DeleteMark(userId);
-
-            if (deleted == false) {
-                return NotFound();
-            }
-
-            return Ok();
-        }
-
-        [HttpDelete("{userId}/{postId}")]
-        public IActionResult DeleteMark(int userId, int postId) {
+        [Authorize]
+        [HttpDelete("{postId}")]
+        public IActionResult DeleteMarksOfUser(int postId) {
+            int.TryParse(HttpContext.User.Identity.Name, out var userId);
             var deleted = _dataService.DeleteMark(userId, postId);
 
             if (deleted == false) {
@@ -60,8 +56,10 @@ namespace WebService.Controllers {
             return Ok();
         }
 
-        [HttpPut("{userId}/{postId}")]
-        public IActionResult MakeOrUpdateAnnotation(int userId, int postId, string text) {
+        [Authorize]
+        [HttpPut("{postId}/{text}")]
+        public IActionResult MakeOrUpdateAnnotation(int postId, string text) {
+            int.TryParse(HttpContext.User.Identity.Name, out var userId);
             var successful = _dataService.MakeOrUpdateAnnotation(userId, postId, text);
 
             if (successful == false) {
@@ -71,8 +69,10 @@ namespace WebService.Controllers {
             return Ok();
         }
 
-        [HttpDelete("annotation/{userId}/{postId}")]
-        public IActionResult DeleteAnnotation(int userId, int postId) {
+        [Authorize]
+        [HttpDelete("annotation/{postId}")]
+        public IActionResult DeleteAnnotation( int postId) {
+            int.TryParse(HttpContext.User.Identity.Name, out var userId);
             var deleted = _dataService.DeleteAnnotation(userId, postId);
 
             if (deleted == false) {
@@ -82,8 +82,10 @@ namespace WebService.Controllers {
             return Ok();
         }
 
-        [HttpGet("{userId}", Name = nameof(GetMarked))]
-        public IActionResult GetMarked(int userId, int page = 0, int pageSize = 10) {
+        [Authorize]
+        [HttpGet(Name = nameof(GetMarked))]
+        public IActionResult GetMarked(int page = 0, int pageSize = 10) {
+            int.TryParse(HttpContext.User.Identity.Name, out var userId);
             var marks = _dataService.GetMarked(userId, page, pageSize)
                 .Select(CreateMarkModel);
             //if (marks == null)

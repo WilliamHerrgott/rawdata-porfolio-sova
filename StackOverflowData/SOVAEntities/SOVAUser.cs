@@ -23,6 +23,7 @@ namespace StackOverflowData.SOVAEntities {
             builder.Property(x => x.Username).HasColumnName("username");
             builder.Property(x => x.Password).HasColumnName("password");
             builder.Property(x => x.Location).HasColumnName("location");
+            builder.Property(x => x.Salt).HasColumnName("salt");
             builder.HasKey(u => u.Id);
         }
     }

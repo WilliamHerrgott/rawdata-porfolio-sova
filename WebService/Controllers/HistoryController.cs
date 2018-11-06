@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using StackOverflowData;
 using StackOverflowData.Functions;
@@ -16,8 +17,10 @@ namespace WebService.Controllers {
             _dataService = dataService;
         }
 
-        [HttpDelete("{userId}")]
-        public IActionResult DeleteHistory(int userId) {
+        [Authorize]
+        [HttpDelete]
+        public IActionResult DeleteHistory() {
+            int.TryParse(HttpContext.User.Identity.Name, out var userId);
             var deleted = _dataService.DeleteHistory(userId);
 
             if (deleted == false) {
@@ -27,16 +30,13 @@ namespace WebService.Controllers {
             return Ok();
         }
 
-        [HttpGet("{userId}", Name = nameof(GetAllHistoryOfUser))]
-        public IActionResult GetAllHistoryOfUser(int userId, int page = 0, int pageSize = 10)
+        [Authorize]
+        [HttpGet(Name = nameof(GetAllHistoryOfUser))]
+        public IActionResult GetAllHistoryOfUser(int page = 0, int pageSize = 10)
         {
+            int.TryParse(HttpContext.User.Identity.Name, out var userId);
             var history = _dataService.GetHistory(userId, page, pageSize)
                 .Select(CreateHistoryModel);
-
-            //if (history == null)
-            //{
-            //    return NotFound();
-            //}
 
             var numberOfItems = _dataService.GetHistoryCount(userId);
             var numberOfPages = ComputeNumberOfPages(pageSize, numberOfItems);

@@ -1,18 +1,45 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using StackOverflowData;
 using StackOverflowData.Functions;
+using System;
+using System.Text;
 using WebService.Models;
 
 namespace WebService {
     public class Startup {
+        public IConfiguration Configuration { get; }
+
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services) {
             services.AddMvc();
             services.AddSingleton<IDataService, DataService>();
+
+            var key = Encoding.UTF8.GetBytes(Configuration["security:key"]);
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(option =>
+                {
+                    option.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateAudience = false,
+                        ValidateIssuer = false,
+                        ValidateIssuerSigningKey = true,
+                        ValidateLifetime = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(key),
+                        ClockSkew = TimeSpan.Zero
+                    };
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -23,6 +50,7 @@ namespace WebService {
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseAuthentication();
             app.UseMvc();
 
             //app.Run(async (context) => { await context.Response.WriteAsync("Hello World!"); });

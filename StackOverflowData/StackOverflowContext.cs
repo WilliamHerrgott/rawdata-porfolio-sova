@@ -29,7 +29,6 @@ namespace StackOverflowData {
 
         public DbQuery<GetUserResult> GetUserResult { get; set; }
         public DbQuery<BooleanResult> BooleanResult { get; set; }
-        public DbQuery<IntegerResult> IntegerResult { get; set; }
         public DbQuery<GetHistoryResult> GetHistoryResult { get; set; }
         public DbQuery<GetMarkedResult> GetMarkedResult { get; set; }
 
@@ -75,7 +74,6 @@ namespace StackOverflowData {
 
             modelBuilder.ApplyConfiguration(new GetUserResultConfiguration());
             modelBuilder.ApplyConfiguration(new BooleanResultConfiguration());
-            modelBuilder.ApplyConfiguration(new IntegerResultConfiguration());
             modelBuilder.ApplyConfiguration(new GetHistoryResultConfiguration());
             modelBuilder.ApplyConfiguration(new GetMarkedResultConfiguration());
 
