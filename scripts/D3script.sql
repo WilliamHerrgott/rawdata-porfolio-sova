@@ -77,7 +77,8 @@ LANGUAGE plpgsql;
 DROP FUNCTION IF EXISTS get_user;
 CREATE FUNCTION get_user(login varchar)
 RETURNS TABLE (id integer, email varchar(50), username varchar(50), password text, location varchar(50), salt text) AS $$
-BEGIN	RETURN QUERY
+BEGIN	
+RETURN QUERY
 	SELECT *
 	FROM "SOVA_users" u
 	WHERE u.username = login;
@@ -119,13 +120,14 @@ LANGUAGE plpgsql;
 -- ----------------------------
 
 DROP FUNCTION IF EXISTS update_password;
-CREATE FUNCTION update_password(this_user_id integer, var_password text)
+CREATE FUNCTION update_password(this_user_id integer, var_password text, var_salt text)
 RETURNS BOOLEAN AS $$
 BEGIN
 	IF(this_user_id  IN(SELECT ID FROM "SOVA_users")) THEN 
 		UPDATE "SOVA_users" s
-		SET password = var_password
+		SET password = var_password, salt = var_salt
 		WHERE s.id = this_user_id;
+		
 		RETURN TRUE;
 	ELSE 	
 		RETURN FALSE;
