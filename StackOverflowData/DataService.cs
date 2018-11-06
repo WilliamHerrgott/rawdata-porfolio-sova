@@ -59,7 +59,7 @@ namespace StackOverflowData {
             }
         }
 
-        public List<GetPostOrCommentResult> GetAnswers(int questionId, int page, int pageSize) {
+        public List<GetPostOrCommentResult> GetAnswers(int questionId, int page = 0, int pageSize = 10) {
             using (var db = new StackOverflowContext()) {
                 var result = db.GetPostResults.FromSql("select * from get_answers({0})", questionId)
                     .Skip(page * pageSize)
@@ -77,7 +77,7 @@ namespace StackOverflowData {
             }
         }
 
-        public List<GetPostOrCommentResult> GetComments(int postId, int page, int pageSize) {
+        public List<GetPostOrCommentResult> GetComments(int postId, int page = 0, int pageSize = 10) {
             using (var db = new StackOverflowContext()) {
                 var result = db.GetPostResults.FromSql("select * from get_comments({0})", postId)
                     .Skip(page * pageSize)
@@ -219,7 +219,7 @@ namespace StackOverflowData {
             }
         }
 
-        public List<SearchResult> Search(string text, int userId, int page, int pageSize) {
+        public List<SearchResult> Search(string text, int userId, int page = 0, int pageSize = 10) {
             using (var db = new StackOverflowContext()) {
                 var result = db.SearchResults.FromSql("SELECT * FROM search_sova({0},{1})", text, userId)
                     .Skip(page * pageSize)
@@ -238,7 +238,7 @@ namespace StackOverflowData {
             }
         }
 
-        public List<GetHistoryResult> GetHistory(int userId, int page, int pageSize) {
+        public List<GetHistoryResult> GetHistory(int userId, int page = 0, int pageSize = 10) {
             using (var db = new StackOverflowContext()) {
                 var result = db.GetHistoryResult.FromSql("SELECT * FROM get_history({0})", userId)
                     .Skip(page * pageSize)
@@ -256,7 +256,7 @@ namespace StackOverflowData {
             }
         }
 
-        public List<GetMarkedResult> GetMarked(int userId, int page, int pageSize) {
+        public List<GetMarkedResult> GetMarked(int userId, int page = 0, int pageSize = 10) {
             using (var db = new StackOverflowContext()) {
                 var result = db.GetMarkedResult.FromSql("SELECT * FROM get_marked({0})", userId)
                     .Skip(page * pageSize)
