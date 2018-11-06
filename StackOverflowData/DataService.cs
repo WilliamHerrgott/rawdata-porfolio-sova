@@ -124,10 +124,10 @@ namespace StackOverflowData {
             using (var db = new StackOverflowContext()) {
                 var deleted = db.BooleanResult
                     .FromSql("SELECT * FROM delete_user({0}) AS successful", userId)
-                    .FirstOrDefault().Successful;
+                    .First().Successful;
 
                 db.SaveChanges();
-                return deleted;
+                return deleted.Successful;
             }
         }
 
