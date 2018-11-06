@@ -33,6 +33,7 @@ namespace WebService.Controllers {
             if (user == null) {
                 return BadRequest();
             }
+
             var displayUser = Mapper.Map<GetUserModel>(user);
             displayUser.Marks = Url.RouteUrl(nameof(MarkController.GetMarked));
             displayUser.History = Url.RouteUrl(nameof(HistoryController.GetAllHistoryOfUser));
@@ -41,14 +42,13 @@ namespace WebService.Controllers {
 
         [Authorize]
         [HttpGet]
-        public IActionResult GetUser()
-        {
+        public IActionResult GetUser() {
             int.TryParse(HttpContext.User.Identity.Name, out var userId);
             var user = _dataService.GetUserById(userId);
-            if (user == null)
-            {
+            if (user == null) {
                 return NotFound();
             }
+
             var displayUser = Mapper.Map<GetUserModel>(user);
             displayUser.Marks = Url.RouteUrl(nameof(MarkController.GetMarked));
             displayUser.History = Url.RouteUrl(nameof(HistoryController.GetAllHistoryOfUser));
