@@ -1,17 +1,13 @@
-
 using System;
 using StackOverflowData;
-using WebService.Controllers;
 using Xunit;
 
-namespace Tests
-{
+namespace Tests {
     public class DatabaseFixture : IDisposable
     {
         protected DataService service { get; private set; }
 
-        protected DatabaseFixture()
-        {
+        protected DatabaseFixture() {
             service = new DataService();
 
             // initialize data in the test database
@@ -20,16 +16,15 @@ namespace Tests
                 service.DeleteUser(u1.Id);
         }
 
-        public void Dispose()
-        {
+        public void Dispose() {
             var u1 = service.GetUser("test");
             if (u1 != null)
-                service.DeleteUser(u1.Id);        }
+                service.DeleteUser(u1.Id);
+            
+        }
     }   
-    public class WebServiceTests: DatabaseFixture
-    {
-             
-        
+    
+    public class WebServiceTests: DatabaseFixture {
         [Fact]
         public void Create_User_Successful() {
             var user = service.CreateUser("test@test.te", "test", "Roskilde", "testpwd", "salt");
@@ -52,5 +47,4 @@ namespace Tests
             var resultList = service.Search("python variable", user.Id);
         }
     }
-    
 }

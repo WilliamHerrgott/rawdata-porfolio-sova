@@ -1,9 +1,7 @@
 ﻿using System;
 
-namespace WebService.Models
-{
-    public class PostModel
-    {
+namespace WebService.Models {
+    public class PostModel {
         public string Body { get; set; }
         public int Score { get; set; }
         public DateTime CreationDate { get; set; }

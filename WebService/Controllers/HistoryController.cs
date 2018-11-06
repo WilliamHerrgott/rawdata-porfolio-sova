@@ -32,8 +32,7 @@ namespace WebService.Controllers {
 
         [Authorize]
         [HttpGet(Name = nameof(GetAllHistoryOfUser))]
-        public IActionResult GetAllHistoryOfUser(int page = 0, int pageSize = 10)
-        {
+        public IActionResult GetAllHistoryOfUser(int page = 0, int pageSize = 10) {
             int.TryParse(HttpContext.User.Identity.Name, out var userId);
             var history = _dataService.GetHistory(userId, page, pageSize)
                 .Select(CreateHistoryModel);
@@ -47,7 +46,7 @@ namespace WebService.Controllers {
                 First = CreateLink(0, pageSize),
                 Prev = CreateLinkToPrevPage(page, pageSize),
                 Next = CreateLinkToNextPage(page, pageSize, numberOfPages),
-                Last = (numberOfPages == 0) ? null : CreateLink(numberOfPages - 1, pageSize),
+                Last = numberOfPages == 0 ? null : CreateLink(numberOfPages - 1, pageSize),
                 Items = history
             };
             return Ok(result);
@@ -56,7 +55,7 @@ namespace WebService.Controllers {
         private HistoryModel CreateHistoryModel(GetHistoryResult history) {
             var model = Mapper.Map<HistoryModel>(history);
             model.Url = Url.Link(nameof(StackOverflowController.Search),
-                new { text = history.SearchedText, userId = history.UserId, });
+                new {text = history.SearchedText, userId = history.UserId,});
             return model;
         }
 
@@ -77,9 +76,8 @@ namespace WebService.Controllers {
             return (int) Math.Ceiling((double) numberOfItems / pageSize);
         }
 
-        private string CreateLink(int page, int pageSize)
-        {
-            return Url.Link(nameof(GetAllHistoryOfUser), new { page, pageSize });
+        private string CreateLink(int page, int pageSize) {
+            return Url.Link(nameof(GetAllHistoryOfUser), new {page, pageSize});
         }
     }
 }

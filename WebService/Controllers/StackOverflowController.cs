@@ -31,20 +31,19 @@ namespace WebService.Controllers {
                 NumberOfItems = numberOfItems,
                 NumberOfPages = numberOfPages,
                 First = CreateAnswersLink(0, pageSize),
-                Prev = (page == 0 ? null : CreateAnswersLink(page - 1, pageSize)),
-                Next = (page >= numberOfPages - 1 ? null : CreateAnswersLink(page = page + 1, pageSize)),
-                Last = (numberOfPages == 0) ? null : CreateAnswersLink(numberOfPages - 1, pageSize),
+                Prev = page == 0 ? null : CreateAnswersLink(page - 1, pageSize),
+                Next = page >= numberOfPages - 1 ? null : CreateAnswersLink(page = page + 1, pageSize),
+                Last = numberOfPages == 0 ? null : CreateAnswersLink(numberOfPages - 1, pageSize),
                 Items = answers
             };
 
             return Ok(result);
         }
 
-        private AnswerModel CreateAnswersModel(GetPostOrCommentResult answers)
-        {
+        private AnswerModel CreateAnswersModel(GetPostOrCommentResult answers) {
             var model = Mapper.Map<AnswerModel>(answers);
-            model.Comments = Url.Link(nameof(GetComments), new { postId = answers.Id });
-            model.Author = Url.Link(nameof(GetAuthorOfPost), new { postId = answers.Id });
+            model.Comments = Url.Link(nameof(GetComments), new {postId = answers.Id});
+            model.Author = Url.Link(nameof(GetAuthorOfPost), new {postId = answers.Id});
             return model;
         }
 
@@ -56,26 +55,25 @@ namespace WebService.Controllers {
             //if (comment == null) {
             //    return NotFound();
             //}
-            var numberOfItems = _dataService.GetNoOfComments(postId) ;
+            var numberOfItems = _dataService.GetNoOfComments(postId);
             var numberOfPages = ComputeNumberOfPages(pageSize, numberOfItems);
 
             var result = new {
                 NumberOfItems = numberOfItems,
                 NumberOfPages = numberOfPages,
                 First = CreateCommentsLink(0, pageSize),
-                Prev = (page == 0 ? null : CreateCommentsLink(page - 1, pageSize)),
-                Next = (page >= numberOfPages - 1 ? null : CreateCommentsLink(page = page + 1, pageSize)),
-                Last = (numberOfPages == 0) ? null : CreateCommentsLink(numberOfPages - 1, pageSize),
+                Prev = page == 0 ? null : CreateCommentsLink(page - 1, pageSize),
+                Next = page >= numberOfPages - 1 ? null : CreateCommentsLink(page = page + 1, pageSize),
+                Last = numberOfPages == 0 ? null : CreateCommentsLink(numberOfPages - 1, pageSize),
                 Items = comments
             };
 
             return Ok(result);
         }
 
-        private CommentModel CreateCommentsModel(GetPostOrCommentResult comments)
-        {
+        private CommentModel CreateCommentsModel(GetPostOrCommentResult comments) {
             var model = Mapper.Map<CommentModel>(comments);
-            model.Author = Url.Link(nameof(GetAuthorOfComment), new { commentId = comments.Id });
+            model.Author = Url.Link(nameof(GetAuthorOfComment), new {commentId = comments.Id});
             return model;
         }
 
@@ -86,38 +84,36 @@ namespace WebService.Controllers {
             if (post == null) {
                 return NotFound();
             }
+
             var model = Mapper.Map<PostModel>(post);
-            model.Author = Url.Link(nameof(GetAuthorOfPost), new { postId = post.Id });
+            model.Author = Url.Link(nameof(GetAuthorOfPost), new {postId = post.Id});
             return Ok(model);
         }
 
         [HttpGet("author/post/{postId}", Name = nameof(GetAuthorOfPost))]
-        public IActionResult GetAuthorOfPost(int postId)
-        {
+        public IActionResult GetAuthorOfPost(int postId) {
             var author = _dataService.GetAuthorOfPost(postId);
-            if (author == null)
-            {
+            if (author == null) {
                 return NotFound();
             }
+
             var model = Mapper.Map<AuthorModel>(author);
             return Ok(model);
         }
 
         [HttpGet("author/comment/{commentId}", Name = nameof(GetAuthorOfComment))]
-        public IActionResult GetAuthorOfComment(int commentId)
-        {
+        public IActionResult GetAuthorOfComment(int commentId) {
             var author = _dataService.GetAuthorOfComment(commentId);
-            if (author == null)
-            {
+            if (author == null) {
                 return NotFound();
             }
+
             var model = Mapper.Map<AuthorModel>(author);
             return Ok(model);
         }
 
         [HttpGet("{text}/{userId}", Name = nameof(Search))]
-        public IActionResult Search(string text, int userId, int page = 0, int pageSize = 10)
-        {
+        public IActionResult Search(string text, int userId, int page = 0, int pageSize = 10) {
             var searchResult = _dataService.Search(text, userId, page, pageSize)
                 .Select(CreateSearchModel);
             //if (searchResult == null)
@@ -131,9 +127,9 @@ namespace WebService.Controllers {
                 NumberOfItems = numberOfItems,
                 NumberOfPages = numberOfPages,
                 First = CreateCommentsLink(0, pageSize),
-                Prev = (page == 0 ? null : CreateCommentsLink(page - 1, pageSize)),
-                Next = (page >= numberOfPages - 1 ? null : CreateSearchedLink(page = page + 1, pageSize)),
-                Last = (numberOfPages == 0) ? null : CreateSearchedLink(numberOfPages - 1, pageSize),
+                Prev = page == 0 ? null : CreateCommentsLink(page - 1, pageSize),
+                Next = page >= numberOfPages - 1 ? null : CreateSearchedLink(page = page + 1, pageSize),
+                Last = numberOfPages == 0 ? null : CreateSearchedLink(numberOfPages - 1, pageSize),
                 Items = searchResult
             };
             return Ok(result);
@@ -141,7 +137,7 @@ namespace WebService.Controllers {
 
         private SearchModel CreateSearchModel(SearchResult search) {
             var model = Mapper.Map<SearchModel>(search);
-            model.Url = Url.Link(nameof(GetPost), new { id = search.Id });
+            model.Url = Url.Link(nameof(GetPost), new {id = search.Id});
             return model;
         }
 
