@@ -34,6 +34,8 @@ namespace WebService.Controllers {
                 return BadRequest();
             }
             var displayUser = Mapper.Map<GetUserModel>(user);
+            displayUser.Marks = Url.RouteUrl(nameof(MarkController.GetMarked));
+            displayUser.History = Url.RouteUrl(nameof(HistoryController.GetAllHistoryOfUser));
             return Created("", displayUser);
         }
 
@@ -48,7 +50,8 @@ namespace WebService.Controllers {
                 return NotFound();
             }
             var displayUser = Mapper.Map<GetUserModel>(user);
-            //displayUser.Marks = Url.Link(nameof(MarkController.GetMarked));
+            displayUser.Marks = Url.RouteUrl(nameof(MarkController.GetMarked));
+            displayUser.History = Url.RouteUrl(nameof(HistoryController.GetAllHistoryOfUser));
             return Ok(displayUser);
         }
 

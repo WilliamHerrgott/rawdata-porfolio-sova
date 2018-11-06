@@ -114,7 +114,7 @@ namespace WebService.Controllers {
         }
 
         [Authorize]
-        [HttpGet("{text}", Name = nameof(Search))]
+        [HttpGet("search/{text}", Name = nameof(Search))]
         public IActionResult Search(string text, int page = 0, int pageSize = 10) {
             int.TryParse(HttpContext.User.Identity.Name, out var userId);
             var searchResult = _dataService.Search(text, userId, page, pageSize)
