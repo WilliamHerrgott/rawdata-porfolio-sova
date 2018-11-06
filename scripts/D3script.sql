@@ -3,20 +3,20 @@
 -- It returns the id of the newly created
 -- user or -1 if the insertion fails
 -- ----------------------------
-CREATE OR REPLACE FUNCTION "public"."create_user"("this_email" varchar, "this_username" varchar, "this_password" varchar, "this_location" varchar, "this_salt" varchar)
-  RETURNS TABLE("id" int4, "email" varchar, "username" varchar, "password" varchar, "location" varchar, "salt" varchar) AS $BODY$ 
+DROP FUNCTION IF EXISTS create_user;
+CREATE FUNCTION create_user(this_email varchar(50), this_username varchar(50), this_password varchar(50), this_location varchar(50), this_salt text)
+RETURNS TABLE (id integer, email varchar(50), username varchar(50), password varchar(50), location varchar(50), salt text) AS $$ 
 	BEGIN
-		IF(this_email NOT IN(SELECT "SOVA_users".email FROM "SOVA_users") and this_username NOT IN(SELECT "SOVA_users".username FROM "SOVA_users")) THEN
+		IF(this_email NOT IN(SELECT u.email FROM "SOVA_users" u) and this_username NOT IN(SELECT u.username FROM "SOVA_users" u)) THEN
 		INSERT INTO "SOVA_users"(email, username, password, location, salt) VALUES (this_email, this_username, this_password, this_location, this_salt);
 		RETURN QUERY
 			SELECT *
 			FROM "SOVA_users" u
-			WHERE u.username = this_username and u.password = this_password;
+			WHERE u.username = this_username;
 		END IF;
-	END; $BODY$
-LANGUAGE plpgsql VOLATILE
-COST 100
-ROWS 1000
+	END; $$
+LANGUAGE plpgsql;
+
 -- ----------------------------
 -- Function for deleting a user.
 -- It calls a trigger to delete 
@@ -26,7 +26,7 @@ ROWS 1000
 
 DROP FUNCTION IF EXISTS delete_user;
 CREATE FUNCTION delete_user(this_user_id integer)
-RETURNS BOOLEAN AS $$ 
+RETURNS BOOLEAN AS $$
 	BEGIN
 		IF(this_user_id  IN(SELECT ID FROM "SOVA_users")) THEN
 			DELETE FROM marks m
@@ -40,10 +40,11 @@ RETURNS BOOLEAN AS $$
 			IF(this_user_id  IN(SELECT id FROM "SOVA_users")) THEN 
 					RETURN FALSE;
 			ELSIF(this_user_id  IN(SELECT user_id FROM history)) THEN 
-					RETURN FALSE;			
+					RETURN FALSE;		
 			ELSIF(this_user_id  IN(SELECT user_id FROM marks)) THEN 
 					RETURN FALSE;		
-			ELSE RETURN TRUE;
+			ELSE 
+					RETURN TRUE;
 			END IF;
 		ELSE
 			RETURN FALSE;
@@ -75,12 +76,22 @@ LANGUAGE plpgsql;
 -- ----------------------------
 DROP FUNCTION IF EXISTS get_user;
 CREATE FUNCTION get_user(login varchar)
-RETURNS TABLE (id integer, email varchar, username varchar, password varchar, location varchar, salt varchar) AS $$
+RETURNS TABLE (id integer, email varchar(50), username varchar(50), password varchar(50), location varchar(50), salt text) AS $$
+BEGIN	RETURN QUERY
+	SELECT *
+	FROM "SOVA_users" u
+	WHERE u.username = login;
+	END; $$			
+LANGUAGE plpgsql;
+
+DROP FUNCTION IF EXISTS get_user_by_id;
+CREATE FUNCTION get_user_by_id(this_user_id integer)
+RETURNS TABLE (id integer, email varchar(50), username varchar(50), password varchar(50), location varchar(50), salt text) AS $$
 BEGIN	
 RETURN QUERY
 	SELECT *
 	FROM "SOVA_users" u
-	WHERE u.username = login;
+	WHERE u.id = this_user_id;
 	END; $$			
 LANGUAGE plpgsql;
 
@@ -321,10 +332,10 @@ BEGIN
 			JOIN questions q ON p.id = q.id
 		WHERE to_tsvector(q.title || '. ' || p.body || replace(q.tags, '::', ' ')) @@ plainto_tsquery(this_searched_text);
 		
-
+	IF ( this_user_id IN (SELECT u.id FROM "SOVA_users" u) ) THEN
 		INSERT INTO history (search_text, date, user_id)
 		VALUES(this_searched_text, date_trunc('second', LOCALTIMESTAMP), this_user_id);
-		
+	END IF;
 	
 END; $$
 LANGUAGE plpgsql;
@@ -358,7 +369,7 @@ RETURNS BOOLEAN AS $$
 			DELETE FROM history
 			WHERE history.user_id = user_id_to;
 			RETURN TRUE;
-		ELSE 
+		ELSE
 			RETURN FALSE;
 		END IF;
 	END; $$
