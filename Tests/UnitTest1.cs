@@ -64,7 +64,7 @@ namespace Tests {
         [Fact]
         public void Modify_User_Password() {
             var user = service.CreateUser("test@test.te", "test", "Roskilde", "testpwd", "salt");
-            service.UpdatePassword(user.Id, "pwd");
+            service.UpdatePassword(user.Id, "pwd", user.Salt);
             var Nuser = service.GetUser(user.Username);
             Assert.Equal("pwd", Nuser.Password);
         }
