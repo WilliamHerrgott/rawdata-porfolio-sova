@@ -77,7 +77,8 @@ LANGUAGE plpgsql;
 DROP FUNCTION IF EXISTS get_user;
 CREATE FUNCTION get_user(login varchar)
 RETURNS TABLE (id integer, email varchar(50), username varchar(50), password varchar(50), location varchar(50), salt text) AS $$
-BEGIN	RETURN QUERY
+BEGIN	
+RETURN QUERY
 	SELECT *
 	FROM "SOVA_users" u
 	WHERE u.username = login;
@@ -249,7 +250,7 @@ DROP FUNCTION IF EXISTS make_annotation;
 CREATE FUNCTION make_annotation(this_user_id integer, this_post_id integer, new_text text)
 RETURNS BOOLEAN AS $$
 BEGIN
-	IF(this_user_id IN (SELECT ID FROM "SOVA_users") AND this_user_id IN (SELECT USER_ID FROM MARKS)) THEN
+	IF(this_user_id IN (SELECT ID FROM "SOVA_users") AND this_user_id IN (SELECT USER_ID FROM MARKS WHERE POST_ID = this_post_id)) THEN
 		UPDATE marks m 
 		SET text_annotation = new_text, annotation_creationdate = date_trunc('second', LOCALTIMESTAMP)
 		WHERE m.user_id = this_user_id 
