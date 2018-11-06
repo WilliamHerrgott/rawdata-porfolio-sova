@@ -67,9 +67,12 @@ namespace WebService.Controllers {
             }
 
             var user = _dataService.GetUser(model.Username);
+            if (user == null) {
+                return BadRequest();
+            }
+                
             var pwd = PasswordService.HashPassword(model.Password, user.Salt, size);
-
-            if (user == null || pwd != user.Password) {
+            if (pwd != user.Password) {
                 return BadRequest();
             }
 
