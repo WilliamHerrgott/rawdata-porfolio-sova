@@ -75,7 +75,7 @@ LANGUAGE plpgsql;
 -- ----------------------------
 DROP FUNCTION IF EXISTS get_user;
 CREATE FUNCTION get_user(login varchar)
-RETURNS TABLE (id integer, email text, username text, password text, location text, salt text) AS $$
+RETURNS TABLE (id integer, email varchar, username varchar, password varchar, location varchar, salt varchar) AS $$
 BEGIN	
 RETURN QUERY
 	SELECT *
