@@ -8,5 +8,6 @@ namespace WebService.Models {
         public string Author { get; set; }
         public string Answers { get; set; }
         public string Comments { get; set; }
+        public string ClickHereToMark { get; set; }
     }
 }

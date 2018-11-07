@@ -18,7 +18,7 @@ namespace WebService.Controllers {
         }
 
         [Authorize]
-        [HttpPost("{postId}")]
+        [HttpPost("{postId}", Name = nameof(Mark))]
         public IActionResult Mark(int postId) {
             int.TryParse(HttpContext.User.Identity.Name, out var userId);
             var marked = _dataService.CreateMark(userId, postId);
@@ -57,7 +57,7 @@ namespace WebService.Controllers {
         }
 
         [Authorize]
-        [HttpPut("{postId}/{text}")]
+        [HttpPut("{postId}/{text}", Name = nameof(MakeOrUpdateAnnotation))]
         public IActionResult MakeOrUpdateAnnotation(int postId, string text) {
             int.TryParse(HttpContext.User.Identity.Name, out var userId);
             var successful = _dataService.MakeOrUpdateAnnotation(userId, postId, text);

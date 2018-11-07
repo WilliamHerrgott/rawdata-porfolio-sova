@@ -7,5 +7,6 @@ namespace WebService.Models {
         public DateTime CreationDate { get; set; }
         public string Comments { get; set; }
         public string Author { get; set; }
+        public string ClickHereToMark { get; set; }
     }
 }
