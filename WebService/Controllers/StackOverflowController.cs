@@ -21,10 +21,7 @@ namespace WebService.Controllers {
         public IActionResult GetAnswers(int questionId, int page = 0, int pageSize = 5) {
             var answers = _dataService.GetAnswers(questionId, page, pageSize)
                 .Select(CreateAnswersModel);
-
-            //if (answers == null) {
-            //    return NotFound();
-            //}
+           
             var numberOfItems = _dataService.GetNoOfAnswers(questionId);
             var numberOfPages = ComputeNumberOfPages(pageSize, numberOfItems);
 
