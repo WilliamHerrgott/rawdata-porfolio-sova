@@ -45,6 +45,7 @@ namespace WebService.Controllers {
             var model = Mapper.Map<AnswerModel>(answers);
             model.Comments = Url.Link(nameof(GetComments), new {postId = answers.Id});
             model.Author = Url.Link(nameof(GetAuthorOfPost), new {postId = answers.Id});
+            model.ClickHereToMark = Url.Link(nameof(MarkController.Mark), new { postId = answers.Id });
             return model;
         }
 
@@ -99,6 +100,7 @@ namespace WebService.Controllers {
             model.Author = Url.Link(nameof(GetAuthorOfPost), new {postId = post.Id});
             model.Answers = (isQuestion == true)? Url.Link(nameof(GetAnswers), new { questionId = post.Id}): null;
             model.Comments = Url.Link(nameof(GetComments), new { postId = post.Id});
+            model.ClickHereToMark = Url.Link(nameof(MarkController.Mark), new { postId = post.Id });
             return Ok(model);
         }
 
