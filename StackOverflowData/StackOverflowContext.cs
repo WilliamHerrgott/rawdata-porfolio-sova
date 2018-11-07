@@ -7,7 +7,7 @@ using StackOverflowData.SOVAEntities;
 using StackOverflowData.StackOverflowEntities;
 
 namespace StackOverflowData {
-    class StackOverflowContext : DbContext {
+    public class StackOverflowContext : DbContext {
         public DbSet<Answer> Answers { get; set; }
         public DbSet<Author> Authors { get; set; }
         public DbSet<Comment> Comments { get; set; }
