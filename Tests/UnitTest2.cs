@@ -8,34 +8,31 @@ using StackOverflowData;
 using Xunit;
 
 namespace Tests {
-    public class User
-    {
+    public class User {
         public string Username { get; set; }
-        public string Email{ get; set; }
-        public string Password{ get; set; }
-        public string Location{ get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
+        public string Location { get; set; }
         public string Token { get; set; }
     }
-    
-    public class ApiTests: DatabaseFixture {
+
+    public class ApiTests : DatabaseFixture {
         private static readonly DataService S = new DataService();
         private const string BaseApi = "https://localhost:5001/api/";
 
-        private static readonly HttpClient Client = new HttpClient(new HttpClientHandler
-        {
+        private static readonly HttpClient Client = new HttpClient(new HttpClientHandler {
             ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => true
         });
 
         [Fact]
         public void Register() {
-            var user = new User
-            {
+            var user = new User {
                 Username = "test",
                 Email = "test@test.te",
                 Password = "passwd",
                 Location = "Rennes"
             };
-            
+
             var request = new HttpRequestMessage {
                 RequestUri = new Uri(BaseApi + "users/"),
                 Method = HttpMethod.Post,
@@ -51,11 +48,10 @@ namespace Tests {
                 DeleteUser(u);
             }
         }
-        
+
         [Fact]
         public void Login() {
-            var user = new
-            {
+            var user = new {
                 Username = "test",
                 Password = "passwd",
                 Email = "test@test.te",
@@ -83,11 +79,10 @@ namespace Tests {
                 DeleteUser(u);
             }
         }
-        
+
         [Fact]
         public void UpdateUser() {
-            var user = new
-            {
+            var user = new {
                 Username = "test",
                 Password = "passwd",
                 Email = "test@test.te",
@@ -118,8 +113,7 @@ namespace Tests {
                     Method = HttpMethod.Put,
                     Content = new StringContent(JsonConvert.SerializeObject(user), Encoding.UTF8, "application/json"),
                 };
-                using (var response2 = Client.SendAsync(request2).Result)
-                {
+                using (var response2 = Client.SendAsync(request2).Result) {
                     Assert.Equal(HttpStatusCode.OK, response2.StatusCode);
                     var u1 = service.GetUser("test");
                     Assert.Equal("Roskilde", u1.Location);
@@ -148,7 +142,6 @@ namespace Tests {
 
         [Fact]
         public void SeeAnswer_Bad_Request() {
-
             var request = new HttpRequestMessage {
                 RequestUri = new Uri(BaseApi + "StackOverflow/answers/9389989887810/"),
                 Method = HttpMethod.Get
@@ -160,14 +153,12 @@ namespace Tests {
                 Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             }
         }
-        
-        private static T GetObjectFromResponse<T>(HttpResponseMessage response)
-        {
+
+        private static T GetObjectFromResponse<T>(HttpResponseMessage response) {
             return JsonConvert.DeserializeObject<T>(response.Content.ReadAsStringAsync().Result);
         }
 
-        private static void DeleteUser(User u)
-        {
+        private static void DeleteUser(User u) {
             S.DeleteUser(S.GetUser(u.Username).Id);
         }
     }

@@ -123,7 +123,7 @@ namespace Tests {
             var r = service.MakeOrUpdateAnnotation(user.Id, 61545, "Annotation1");
             Assert.True(r);
         }
-        
+
         [Fact]
         public void User_Make_Annotation_Not_Successful() {
             var user = service.CreateUser("test@test.te", "test", "Roskilde", "testpwd", "salt");

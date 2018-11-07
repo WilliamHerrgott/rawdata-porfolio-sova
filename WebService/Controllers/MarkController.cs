@@ -88,10 +88,6 @@ namespace WebService.Controllers {
             int.TryParse(HttpContext.User.Identity.Name, out var userId);
             var marks = _dataService.GetMarked(userId, page, pageSize)
                 .Select(CreateMarkModel);
-            //if (marks == null)
-            //{
-            //    return NotFound();
-            //}
 
             var numberOfItems = _dataService.GetNoOfMarks(userId);
             var numberOfPages = ComputeNumberOfPages(pageSize, numberOfItems);

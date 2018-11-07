@@ -53,9 +53,6 @@ namespace WebService.Controllers {
             var comments = _dataService.GetComments(postId, page, pageSize)
                 .Select(CreateCommentsModel);
 
-            //if (comment == null) {
-            //    return NotFound();
-            //}
             var numberOfItems = _dataService.GetNoOfComments(postId);
             var numberOfPages = ComputeNumberOfPages(pageSize, numberOfItems);
 
@@ -81,24 +78,24 @@ namespace WebService.Controllers {
         [HttpGet("post/{id}", Name = nameof(GetPost))]
         public IActionResult GetPost(int id) {
             var post = _dataService.GetPost(id);
-            
+
             if (post == null) {
                 return NotFound();
             }
+
             bool isQuestion;
             var model = Mapper.Map<PostModel>(post);
-            using (var context = new StackOverflowContext())
-            {
+            using (var context = new StackOverflowContext()) {
                 if (context.Answers.Any(i => i.Id == post.Id))
                     isQuestion = false;
                 else
                     isQuestion = true;
             }
 
-            
+
             model.Author = Url.Link(nameof(GetAuthorOfPost), new {postId = post.Id});
-            model.Answers = (isQuestion == true)? Url.Link(nameof(GetAnswers), new { questionId = post.Id}): null;
-            model.Comments = Url.Link(nameof(GetComments), new { postId = post.Id});
+            model.Answers = isQuestion == true ? Url.Link(nameof(GetAnswers), new {questionId = post.Id}) : null;
+            model.Comments = Url.Link(nameof(GetComments), new {postId = post.Id});
             return Ok(model);
         }
 
@@ -130,10 +127,7 @@ namespace WebService.Controllers {
             int.TryParse(HttpContext.User.Identity.Name, out var userId);
             var searchResult = _dataService.Search(text, userId, page, pageSize)
                 .Select(CreateSearchModel);
-            //if (searchResult == null)
-            //{
-            //    return NotFound();
-            //}
+
             var numberOfItems = _dataService.GetSearchedCount(text);
             var numberOfPages = ComputeNumberOfPages(pageSize, numberOfItems);
 
