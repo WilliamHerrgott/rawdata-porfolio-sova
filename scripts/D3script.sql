@@ -77,8 +77,7 @@ LANGUAGE plpgsql;
 DROP FUNCTION IF EXISTS get_user;
 CREATE FUNCTION get_user(login varchar)
 RETURNS TABLE (id integer, email varchar(50), username varchar(50), password text, location varchar(50), salt text) AS $$
-BEGIN	
-RETURN QUERY
+BEGIN	RETURN QUERY
 	SELECT *
 	FROM "SOVA_users" u
 	WHERE u.username = login;
@@ -211,7 +210,8 @@ DROP FUNCTION IF EXISTS mark;
 CREATE FUNCTION mark(this_user_id integer, this_post_id integer)
 RETURNS BOOLEAN AS $$
 BEGIN
-	IF (this_user_id IN (SELECT id FROM "SOVA_users")) THEN
+	IF (this_user_id IN (SELECT id FROM "SOVA_users") AND this_post_id NOT IN (SELECT post_id FROM marks 
+			WHERE marks.user_id = this_user_id)) THEN
 		INSERT INTO marks VALUES (this_user_id, this_post_id, date_trunc('second', LOCALTIMESTAMP), null, null);
 		RETURN TRUE;
 	ELSE 

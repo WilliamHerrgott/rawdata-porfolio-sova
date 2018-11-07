@@ -1,10 +1,10 @@
 ----------------------------------------------------------------
 -- Creating a user
 ----------------------------------------------------------------
-SELECT create_user('apecini@ruc.dk', 'ap', '1234', 'Albania');
-SELECT create_user('blmeec@ruc.dk', 'blm', '5678', 'France');
-SELECT create_user('vdsa@ruc.dk', 'vsilva', 'asd123', 'Portugal');
-SELECT create_user('wihe@ruc.dk', 'william', '987654321', 'France');
+SELECT create_user('apecini@ruc.dk', 'ap', '1234', 'Albania', '1');
+SELECT create_user('blmeec@ruc.dk', 'blm', '5678', 'France', '2');
+SELECT create_user('vdsa@ruc.dk', 'vsilva', 'asd123', 'Portugal', '3');
+SELECT create_user('wihe@ruc.dk', 'william', '987654321', 'France', '4');
 
 SElECT * FROM "SOVA_users";
 
@@ -71,7 +71,7 @@ SELECT * FROM marks;
 -- Deleting a marked post from a given user and post
 ----------------------------------------------------------------
 
-SELECT delete_mark(1,718);
+SELECT * FROM delete_mark(1,712) AS successful;
 
 SELECT * FROM marks;
 
@@ -103,10 +103,13 @@ SELECT * FROM marks;
 -- Getting posts for a given search text
 ----------------------------------------------------------------
 
-SELECT * 
-FROM history;
+
+SELECT search_sova('php', 1);
 
 SELECT search_sova('Python', 1);
+SELECT search_sova('c#', 1);
+SELECT search_sova('sql', 1);
+SELECT search_sova('polymorphism', 1);
 
 -- grabbing the first returned post_id in order to test the function
 
@@ -122,7 +125,7 @@ FROM history;
 -- You can pass as a parameter the limit and offset 
 ----------------------------------------------------------------
 
-SELECT get_history(1);
+SELECT * from get_history(1);
 
 ----------------------------------------------------------------
 -- Deleting history for a given user
@@ -176,18 +179,20 @@ SELECT * FROM "SOVA_users";
 SELECT update_username(2, 'User Name updated');
 
 SELECT * FROM "SOVA_users";
-SELECT update_password(4, '1995');
+SELECT update_password(4, '1995', 'oui');
 
 SELECT * FROM "SOVA_users";
 SELECT update_location(5, 'Roskilde');
 
 SELECT * FROM "SOVA_users";
 
+select * from get_author_of_post(3987810); 
+
 ----------------------------------------------------------------
 -- Update user's enail, displayname, password or location
 ----------------------------------------------------------------
 
-SELECT get_user('vsilva','1995');
+SELECT get_user('vsilva');
 
 SELECT ID
 FROM "SOVA_users"
@@ -199,6 +204,7 @@ WHERE USERNAME = 'vsilva' AND PASSWORD = '1995';
 -- It should delete history, marks, annotations for given user
 ----------------------------------------------------------------
 SELECT search_sova('Python', 1);
+SELECT * FROM search_posts('c++');
 
 SELECT *
 FROM "SOVA_users"
