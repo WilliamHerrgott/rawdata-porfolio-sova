@@ -90,7 +90,6 @@ namespace WebService.Controllers {
                     isQuestion = true;
             }
 
-
             model.Author = Url.Link(nameof(GetAuthorOfPost), new {postId = post.Id});
             model.Answers = (isQuestion == true)? Url.Link(nameof(GetAnswers), new { questionId = post.Id}): null;
             model.Comments = Url.Link(nameof(GetComments), new { postId = post.Id});
