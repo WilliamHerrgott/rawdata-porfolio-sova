@@ -98,20 +98,6 @@ namespace Tests {
         }
 
         [Fact]
-        public void Search_User_History_Content() {
-            var user = service.CreateUser("test@test.te", "test", "Roskilde", "testpwd", "salt");
-            service.Search("python 1", user.Id);
-            service.Search("python 2", user.Id);
-            service.Search("python 3", user.Id);
-            service.Search("c# boogie doogie", user.Id);
-            service.Search("php", user.Id);
-            service.Search("roskilde", user.Id);
-            var history = service.GetHistory(user.Id);
-            Assert.Equal("roskilde", history[0].SearchedText);
-            Assert.Equal("python 1", history[5].SearchedText);
-        }
-
-        [Fact]
         public void User_Mark_Post() {
             var user = service.CreateUser("test@test.te", "test", "Roskilde", "testpwd", "salt");
             var r = service.CreateMark(user.Id, 61545);
@@ -136,6 +122,13 @@ namespace Tests {
             service.CreateMark(user.Id, 61545);
             var r = service.MakeOrUpdateAnnotation(user.Id, 61545, "Annotation1");
             Assert.True(r);
+        }
+        
+        [Fact]
+        public void User_Make_Annotation_Not_Successful() {
+            var user = service.CreateUser("test@test.te", "test", "Roskilde", "testpwd", "salt");
+            var r = service.MakeOrUpdateAnnotation(user.Id, 61545, "Annotation1");
+            Assert.False(r);
         }
 
         [Fact]

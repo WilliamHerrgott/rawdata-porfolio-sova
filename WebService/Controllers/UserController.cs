@@ -61,20 +61,23 @@ namespace WebService.Controllers {
                 return BadRequest();
             }
 
+            Console.WriteLine("#############1");
             int.TryParse(_config["security:pwdsize"], out var size);
             if (size == 0) {
                 return BadRequest();
             }
-
+            Console.WriteLine("#############2");
             var user = _dataService.GetUser(model.Username);
             if (user == null) {
                 return BadRequest();
             }
-                
+            Console.WriteLine("#############3");
+
             var pwd = PasswordService.HashPassword(model.Password, user.Salt, size);
             if (pwd != user.Password) {
                 return BadRequest();
             }
+            Console.WriteLine("#############4");
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(_config["security:key"]);
