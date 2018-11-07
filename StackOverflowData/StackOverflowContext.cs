@@ -50,9 +50,6 @@ namespace StackOverflowData {
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
             base.OnModelCreating(modelBuilder);
-            //modelBuilder.HasSequence<int>("OrderNumbers")
-            //    .StartsAt(99999)
-            //    .IncrementsBy(1);
 
             modelBuilder.ApplyConfiguration(new AnswerConfiguration());
             modelBuilder.ApplyConfiguration(new AuthorConfiguration());

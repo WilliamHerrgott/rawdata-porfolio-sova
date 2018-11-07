@@ -111,7 +111,9 @@ SELECT search_sova('c#', 1);
 SELECT search_sova('sql', 1);
 SELECT search_sova('polymorphism', 1);
 
+----------------------------------------------------------------
 -- grabbing the first returned post_id in order to test the function
+----------------------------------------------------------------
 
 SELECT * 
 FROM POSTS 
@@ -203,6 +205,7 @@ WHERE USERNAME = 'vsilva' AND PASSWORD = '1995';
 -- Deleting a user
 -- It should delete history, marks, annotations for given user
 ----------------------------------------------------------------
+
 SELECT search_sova('Python', 1);
 SELECT * FROM search_posts('c++');
 

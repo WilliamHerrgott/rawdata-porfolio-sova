@@ -101,12 +101,14 @@ namespace WebService.Controllers {
                 Last = CreateLink(numberOfPages - 1, pageSize),
                 Items = marks
             };
+            
             return Ok(result);
         }
 
         private MarkModel CreateMarkModel(GetMarkedResult marks) {
             var model = Mapper.Map<MarkModel>(marks);
             model.Post = Url.Link(nameof(StackOverflowController.GetPost), new {id = marks.PostId});
+            
             return model;
         }
 
