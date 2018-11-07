@@ -83,6 +83,51 @@ namespace Tests {
                 DeleteUser(u);
             }
         }
+        
+        [Fact]
+        public void UpdateUser() {
+            var user = new
+            {
+                Username = "test",
+                Password = "passwd",
+                Email = "test@test.te",
+                Location = "Rennes"
+            };
+            var request = new HttpRequestMessage {
+                RequestUri = new Uri(BaseApi + "users/"),
+                Method = HttpMethod.Post,
+                Content = new StringContent(JsonConvert.SerializeObject(user), Encoding.UTF8, "application/json")
+            };
+            var _ = Client.SendAsync(request).Result;
+
+            var request1 = new HttpRequestMessage {
+                RequestUri = new Uri(BaseApi + "users/login"),
+                Method = HttpMethod.Post,
+                Content = new StringContent(JsonConvert.SerializeObject(user), Encoding.UTF8, "application/json")
+            };
+
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            using (var response1 = Client.SendAsync(request1).Result) {
+                Assert.Equal(HttpStatusCode.OK, response1.StatusCode);
+                var u = GetObjectFromResponse<User>(response1);
+                Assert.Equal("test", u.Username);
+                Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", u.Token);
+                var request2 = new HttpRequestMessage {
+                    RequestUri = new Uri(BaseApi + "users/update/location/Roskilde"),
+                    Method = HttpMethod.Put,
+                    Content = new StringContent(JsonConvert.SerializeObject(user), Encoding.UTF8, "application/json"),
+                };
+                using (var response2 = Client.SendAsync(request2).Result)
+                {
+                    Assert.Equal(HttpStatusCode.OK, response2.StatusCode);
+                    var u1 = service.GetUser("test");
+                    Assert.Equal("Roskilde", u1.Location);
+                }
+
+                DeleteUser(u);
+            }
+        }
 
         [Fact]
         public void SeeAnswer() {
