@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 using StackOverflowData.Functions;
 
 namespace StackOverflowData {
@@ -22,11 +25,18 @@ namespace StackOverflowData {
         bool MakeOrUpdateAnnotation(int userId, int postId, string text);
         bool DeleteAnnotation(int userId, int postId);
         bool DeleteHistory(int userId);
+        
         List<SearchResult> Search(string text, int userId, int page, int pageSize);
+        List<SearchResult> SearchExactMatch(string text, int userId, int page, int pageSize);
+        List<SearchResult> SearchBestMatch(string text, int userId, int page, int pageSize, bool weighted);
+        List<SearchResult> SearchRelatedTerm(string text, int userId, int page, int pageSize, bool weighted);
+        List<SearchResult> SearchExpandedQuery(string text, int userId, int page, int pageSize);
+        
         List<GetHistoryResult> GetHistory(int userId, int page, int pageSize);
         List<GetMarkedResult> GetMarked(int userId, int page, int pageSize);
         int GetHistoryCount(int userId);
         int GetSearchedCount(string text);
+        int GetSearchedCountSpecial(string text, string name_func);
         int GetNoOfAnswers(int postId);
         int GetNoOfComments(int postId);
         int GetNoOfMarks(int userId);
@@ -34,6 +44,7 @@ namespace StackOverflowData {
         GetAuthorResult GetAuthorOfPost(int postId);
     }
 
+    [SuppressMessage("ReSharper", "EF1000")]
     public class DataService : IDataService {
         public GetPostOrCommentResult GetPost(int postId) {
             using (var db = new StackOverflowContext()) {
@@ -229,10 +240,69 @@ namespace StackOverflowData {
                 return result;
             }
         }
+        
+        public List<SearchResult> SearchExactMatch(string text, int userId, int page = 0, int pageSize = 10)
+        {
+            using (var db = new StackOverflowContext()) {
+                var result = db.SearchResults.FromSql("SELECT * FROM exact_match({0})", text.Split(' '))
+                    .Skip(page * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+                db.SaveChanges();
+                return result;
+            }
+        }
+
+        public List<SearchResult> SearchBestMatch(string text, int userId, int page = 0, int pageSize = 10, bool weighted = true) {
+            text = text.Split(' ').Join("', '");
+            using (var db = new StackOverflowContext()) {
+                var result = db.SearchResults
+                    .FromSql("SELECT * FROM bestmatch" + (weighted ? "weighted" : "") + "({0})", text.Split(' '))
+                    .Skip(page * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+                db.SaveChanges();
+                return result;
+            }
+        }
+
+        public List<SearchResult> SearchRelatedTerm(string text, int userId, int page = 0, int pageSize = 10, bool weighted = true) {
+            text = text.Split(' ').Join("', '");
+            using (var db = new StackOverflowContext()) {
+                var result = db.SearchResults
+                    .FromSql("SELECT * FROM keyword_list" + (weighted ? "_weighted" : "") + "({0})", text.Split(' '))
+                    .Skip(page * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+                db.SaveChanges();
+                return result;
+            }
+        }
+        
+        public List<SearchResult> SearchExpandedQuery(string text, int userId, int page = 0, int pageSize = 10) {
+            text = text.Split(' ').Join("', '");
+            using (var db = new StackOverflowContext()) {
+                var result = db.SearchResults
+                    .FromSql("SELECT * FROM expanded_query_search{0}", text)
+                    .Skip(page * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+                db.SaveChanges();
+                return result;
+            }
+        }
 
         public int GetSearchedCount(string text) {
             using (var db = new StackOverflowContext()) {
                 var count = db.SearchResults.FromSql("SELECT * FROM search_posts({0})", text)
+                    .Count();
+                return count;
+            }
+        }
+        
+        public int GetSearchedCountSpecial(string text, string name_function) {
+            using (var db = new StackOverflowContext()) {
+                var count = db.SearchResults.FromSql("SELECT * FROM {1}({0})", text, name_function)
                     .Count();
                 return count;
             }
