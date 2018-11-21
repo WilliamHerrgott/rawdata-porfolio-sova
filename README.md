@@ -16,9 +16,6 @@ See PDF attached to this repository in the subjects folder.</h1>
             <a href="https://github.com/annapecini" title="annapecini">Ana Pecini</a>
         </li>
         <li>
-            <a href="https://github.com/vaabreu95" title="vaabreu95">Valter Da Silva Abreu</a>
-        </li>
-        <li>
             <a href="https://github.com/BorisLeMeec" title="BorisLeMeec">Boris Le Méec</a>
         </li>
         <li>
