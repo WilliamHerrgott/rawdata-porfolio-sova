@@ -177,7 +177,8 @@ END; $$
 LANGUAGE plpgsql;
 
 -- ----------------------------
--- Function for getting all answers to a question
+-- Function for getting all answers to a question 
+-- with the question's id
 -- ----------------------------
 
 DROP FUNCTION IF EXISTS get_answers(integer);
