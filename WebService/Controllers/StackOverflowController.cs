@@ -134,13 +134,63 @@ namespace WebService.Controllers {
                 NumberOfPages = numberOfPages,
                 First = CreateCommentsLink(0, pageSize),
                 Prev = page == 0 ? null : CreateCommentsLink(page - 1, pageSize),
-                Next = page >= numberOfPages - 1 ? null : CreateSearchedLink(page = page + 1, pageSize),
+                Next = page >= numberOfPages - 1 ? null : CreateSearchedLink(page + 1, pageSize),
                 Last = numberOfPages == 0 ? null : CreateSearchedLink(numberOfPages - 1, pageSize),
                 Items = searchResult
             };
             return Ok(result);
         }
 
+        [Authorize]
+        [HttpGet("search/exact/{text}", Name = nameof(SearchExactMatch))]
+        public IActionResult SearchExactMatch(string text, int page = 0, int pageSize = 10) {
+            int.TryParse(HttpContext.User.Identity.Name, out var userId);
+            var searchResult = _dataService.SearchExactMatch(text, userId, page, pageSize)
+                .Select(CreateSearchModel);
+            //if (searchResult == null)
+            //{
+            //    return NotFound();
+            //}
+            var numberOfItems = _dataService.GetSearchedCountSpecial(text, "exact_match");
+            var numberOfPages = ComputeNumberOfPages(pageSize, numberOfItems);
+
+            var result = new {
+                NumberOfItems = numberOfItems,
+                NumberOfPages = numberOfPages,
+                First = CreateCommentsLink(0, pageSize),
+                Prev = page == 0 ? null : CreateCommentsLink(page - 1, pageSize),
+                Next = page >= numberOfPages - 1 ? null : CreateSearchedLink(page + 1, pageSize),
+                Last = numberOfPages == 0 ? null : CreateSearchedLink(numberOfPages - 1, pageSize),
+                Items = searchResult
+            };
+            return Ok(result);
+        }
+        
+        [Authorize]
+        [HttpGet("search/best/{text}", Name = nameof(SearchExactMatch))]
+        public IActionResult SearchBestMatch(string text, int page = 0, int pageSize = 10) {
+            int.TryParse(HttpContext.User.Identity.Name, out var userId);
+            var searchResult = _dataService.SearchExactMatch(text, userId, page, pageSize)
+                .Select(CreateSearchModel);
+            //if (searchResult == null)
+            //{
+            //    return NotFound();
+            //}
+            var numberOfItems = _dataService.GetSearchedCountSpecial(text, "bestmatchweighted");
+            var numberOfPages = ComputeNumberOfPages(pageSize, numberOfItems);
+
+            var result = new {
+                NumberOfItems = numberOfItems,
+                NumberOfPages = numberOfPages,
+                First = CreateCommentsLink(0, pageSize),
+                Prev = page == 0 ? null : CreateCommentsLink(page - 1, pageSize),
+                Next = page >= numberOfPages - 1 ? null : CreateSearchedLink(page + 1, pageSize),
+                Last = numberOfPages == 0 ? null : CreateSearchedLink(numberOfPages - 1, pageSize),
+                Items = searchResult
+            };
+            return Ok(result);
+        }
+        
         private SearchModel CreateSearchModel(SearchResult search) {
             var model = Mapper.Map<SearchModel>(search);
             model.Url = Url.Link(nameof(GetPost), new {id = search.Id});
