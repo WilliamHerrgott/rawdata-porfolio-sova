@@ -229,7 +229,7 @@ BEGIN
 END $$
 LANGUAGE plpgsql;
 
-select * from keyword_list_weighted('entity');
+select * from keyword_list_weighted('sql');
 
 -- B.7
 -- Co-occurrence term network
@@ -264,6 +264,50 @@ END $$
 LANGUAGE plpgsql;
 
 SELECT * FROM get_co_occurrent_words('language');
+
+--B.8. Force network visualization
+drop function if exists generate_force_graph_input;
+create function generate_force_graph_input(in w varchar(100), n real) 
+returns table (line text) as $$
+declare
+	l text;
+begin
+line := '{"nodes":[';
+return next;
+line := '';
+return next;
+for l in (select '{"id":"'||lower(second)||'"},' from co_occurrence where first=w and grade>=n)
+loop
+	line:=l;
+	return next;
+end loop;
+
+line := '{"id":"'||w||'"},';
+return next;
+line :=  '],';
+return next;
+line :=  '"links":[';
+return next;
+
+for l in (select '{"source":"'||lower(first)||'", "target":"'||lower(second)||'", "value":'||grade/2||'},'  
+from (
+select * from co_occurrence where first = w and grade>=n
+union
+select * from co_occurrence 
+where first in (select second from co_occurrence where first=w and grade>=n)
+and second in (select second from co_occurrence where first=w and grade>=n)) t)
+loop
+	line:=l;
+	return next;
+end loop;
+
+line := ']}';
+return next;
+return;
+end;
+$$
+language 'plpgsql';
+select generate_force_graph_input('sql', 2);
 
 --OPTIONAL
 --Query expansion
