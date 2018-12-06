@@ -209,3 +209,4 @@ project.lock.json
 *.feature.cs
 *.feature.xlsx.*
 *.Specs_*.html
+/StackOverflowData/ClassDiagram1.cd
