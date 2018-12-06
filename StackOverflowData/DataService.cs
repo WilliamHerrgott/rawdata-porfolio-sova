@@ -31,6 +31,7 @@ namespace StackOverflowData {
         List<SearchResult> SearchBestMatch(string text, int userId, int page, int pageSize, bool weighted);
         List<SearchResult> SearchRelatedTerm(string text, int userId, int page, int pageSize, bool weighted);
         List<SearchResult> SearchExpandedQuery(string text, int userId, int page, int pageSize);
+        List<SearchResult> SearchCoWordQuery(string text, int userId, int page, int pageSize);
         
         List<GetHistoryResult> GetHistory(int userId, int page, int pageSize);
         List<GetMarkedResult> GetMarked(int userId, int page, int pageSize);
@@ -271,6 +272,18 @@ namespace StackOverflowData {
             using (var db = new StackOverflowContext()) {
                 var result = db.SearchResults
                     .FromSql("SELECT * FROM keyword_list" + (weighted ? "_weighted" : "") + "({0})", text.Split(' '))
+                    .Skip(page * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+                db.SaveChanges();
+                return result;
+            }
+        }
+        
+        public List<SearchResult> SearchCoWordQuery(string text, int userId, int page = 0, int pageSize = 10) {
+            using (var db = new StackOverflowContext()) {
+                var result = db.SearchResultsWords
+                    .FromSql("SELECT * FROM get_co_occurrent_words({0}) order by grade desc", text)
                     .Skip(page * pageSize)
                     .Take(pageSize)
                     .ToList();

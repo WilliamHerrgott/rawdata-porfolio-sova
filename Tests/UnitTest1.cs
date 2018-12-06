@@ -114,6 +114,13 @@ namespace Tests {
             var resultList = service.SearchRelatedTerm("python user variable", user.Id, 0, 15);
             Assert.Equal(15, resultList.Count);
         }
+        
+        [Fact]
+        public void GetCoOccurrentWordSearch_User_Count() {
+            var user = service.CreateUser("test@test.te", "test", "Roskilde", "testpwd", "salt");
+            var resultList = service.SearchRelatedTerm("python", user.Id, 0, 15);
+            Assert.Equal(15, resultList.Count);
+        }
 
         [Fact]
         public void Search_User_History_Count() {

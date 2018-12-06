@@ -18,6 +18,7 @@ namespace StackOverflowData {
 
         public DbQuery<GetPostOrCommentResult> GetPostResults { get; set; }
         public DbQuery<SearchResult> SearchResults { get; set; }
+        public DbQuery<SearchResult> SearchResultsWords { get; set; }
         public DbQuery<GetAuthorResult> GetAuthorResult { get; set; }
 
         //SOVA DbSets
@@ -61,6 +62,7 @@ namespace StackOverflowData {
 
             modelBuilder.ApplyConfiguration(new GetPostOrCommentResultConfiguration());
             modelBuilder.ApplyConfiguration(new SearchResultConfiguration());
+            modelBuilder.ApplyConfiguration(new SearchResultWordsConfiguration());
             modelBuilder.ApplyConfiguration(new GetAuthorResultConfiguration());
 
             //SOVA configurations
