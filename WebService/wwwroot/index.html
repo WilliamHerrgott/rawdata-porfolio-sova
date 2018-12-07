@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SOVA</title>
+    
+</head>
+<body>
+<div class="row">
+    <h1>StackOverFlow Viewer and annotater</h1>
+</div>
+<div>
+    <input type="text" data-bind="value: searchString" />
+    <button data-bind="click: search">Search</button>
+</div>
+
+<div data-bind="template: view"></div>
+
+<script type="text/html" id="default">
+    </script>
+
+<script type="text/html" id="repos">
+    <div style="margin-top: 10px">
+        <table>
+            <thead>
+            <tr><th>Name</th><th>Stars</th><th>Languge</th></tr>
+            </thead>
+            <tbody data-bind="foreach: data">
+            <tr>
+                <td data-bind="text: name"></td>
+                <td data-bind="text: stargazers_count"></td>
+                <td data-bind="text: language"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</script>
+
+<script type="text/html" id="users">
+    <div>
+        <ul data-bind="foreach: data">
+            <li><a href="#" data-bind="click: $parent.show"><span data-bind="text: login"></span></a></li>
+        </ul>
+    </div>
+</script>
+<script src="bower_components/jquery/src/jquery.js"></script>
+<script src="bower_components/knockout/src/knockout.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
