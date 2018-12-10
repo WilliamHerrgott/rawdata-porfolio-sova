@@ -7,9 +7,11 @@
     <!-- Optional theme -->
 
     <!-- Latest compiled and minified JavaScript -->
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script   src="https://code.jquery.com/jquery-3.3.1.min.js"   integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="   crossorigin="anonymous"></script>    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+    <script type='text/javascript' src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js"></script>
+    <script type='text/javascript' src="js/App.js"></script>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -48,29 +50,19 @@
 
 <div class="container" style="margin-top: 5%">
     <form class="form-inline">
-        <input class="form-control mr-sm-2 col-8 offset-2" type="search" placeholder="Search.." aria-label="Search">
+        <input class="form-control mr-sm-2 col-8 offset-2" type="search" placeholder="Search.." aria-label="Search"
+               data-bind="textInput: search_query">
     </form>
-    <div class="row"> </div>
-    <div class="card w-25">
-        <div class="card-body">
-            <h5 class="card-title">Why Python is not working anymore ?</h5>
-            <p class="card-text">With supporting text below as a natural lead-in to additional content (...)</p>
-            <a href="#" class="btn btn-primary">Go to question</a>
+    <div class="card-columns">
+    <!-- ko foreach: posts -->
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title text-truncate" data-bind="text: title"></h5>
+                <p class="card-text text-truncate" data-bind="text: body"></p>
+                <a href="#" class="btn btn-primary" data-bind="text: score"></a>
+            </div>
         </div>
-    </div>
-    <div class="card w-25">
-        <div class="card-body">
-            <h5 class="card-title">Why Python is not working anymore ?</h5>
-            <p class="card-text">With supporting text below as a natural lead-in to additional content (...)</p>
-            <a href="#" class="btn btn-primary">Go to question</a>
-        </div>
-    </div>
-    <div class="card w-25">
-        <div class="card-body">
-            <h5 class="card-title">Why Python is not working anymore ?</h5>
-            <p class="card-text">With supporting text below as a natural lead-in to additional content (...)</p>
-            <a href="#" class="btn btn-primary">Go to question</a>
-        </div>
+    <!-- /ko -->
     </div>
 </div>
 </body>

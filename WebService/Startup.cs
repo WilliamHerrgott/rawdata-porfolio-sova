@@ -24,6 +24,11 @@ namespace WebService {
         public void ConfigureServices(IServiceCollection services) {
             services.AddMvc();
             services.AddSingleton<IDataService, DataService>();
+            services.AddCors(options => 
+                options.AddPolicy("AllowAllOrigins",
+                    builder => builder.AllowAnyOrigin()
+                    .AllowAnyHeader()));
+                       
 
             var key = Encoding.UTF8.GetBytes(Configuration["security:key"]);
 
