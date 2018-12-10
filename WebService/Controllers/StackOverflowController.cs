@@ -119,7 +119,6 @@ namespace WebService.Controllers {
             return Ok(model);
         }
 
-        [Authorize]
         [HttpGet("search/{text}", Name = nameof(Search))]
         public IActionResult Search(string text, int page = 0, int pageSize = 10) {
             int.TryParse(HttpContext.User.Identity.Name, out var userId);
@@ -138,12 +137,12 @@ namespace WebService.Controllers {
                 Last = numberOfPages == 0 ? null : CreateSearchedLink(numberOfPages - 1, pageSize),
                 Items = searchResult
             };
-            return Ok(result);
+            return Json(result);
         }
 
         [Authorize]
         [HttpGet("search/exact/{text}", Name = nameof(SearchExactMatch))]
-        public IActionResult SearchExactMatch(string text, int page = 0, int pageSize = 10) {
+        public JsonResult SearchExactMatch(string text, int page = 0, int pageSize = 10) {
             int.TryParse(HttpContext.User.Identity.Name, out var userId);
             var searchResult = _dataService.SearchExactMatch(text, userId, page, pageSize)
                 .Select(CreateSearchModel);
@@ -163,7 +162,7 @@ namespace WebService.Controllers {
                 Last = numberOfPages == 0 ? null : CreateSearchedLink(numberOfPages - 1, pageSize),
                 Items = searchResult
             };
-            return Ok(result);
+            return Json(result);
         }
         
         [Authorize]
