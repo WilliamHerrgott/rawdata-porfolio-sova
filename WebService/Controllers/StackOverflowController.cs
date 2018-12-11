@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using StackOverflowData;
 using StackOverflowData.Functions;
@@ -120,6 +121,7 @@ namespace WebService.Controllers {
         }
 
         [HttpGet("search/{text}", Name = nameof(Search))]
+//        [EnableCors("http://example.com", "*", "*")]
         public IActionResult Search(string text, int page = 0, int pageSize = 10) {
             int.TryParse(HttpContext.User.Identity.Name, out var userId);
             var searchResult = _dataService.Search(text, userId, page, pageSize)

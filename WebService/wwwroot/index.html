@@ -57,9 +57,9 @@
     <!-- ko foreach: posts -->
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title text-truncate" data-bind="text: title"></h5>
+                <!--<h5 class="card-title text-truncate" data-bind="text: title"></h5>-->
                 <p class="card-text text-truncate" data-bind="text: body"></p>
-                <a href="#" class="btn btn-primary" data-bind="text: score"></a>
+                <a href="#" class="btn btn-primary" data-bind="attr: { href: url}">See post</a>
             </div>
         </div>
     <!-- /ko -->
