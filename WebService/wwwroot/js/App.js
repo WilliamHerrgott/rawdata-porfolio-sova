@@ -80,18 +80,21 @@ var viewModel = function() {
         // });
         
         self.request('StackOverflow/search/' + self.search_query(), null, function (data, status) {
-                return console.log("The returned data", data);
+            self.posts.removeAll();
+                $.each(data.items, function (i, item) {
+                    self.posts.push(item)
+                })
         });
     };
     
     
-    self.request = function(path, data, callback) {
+    self.request = function(path, dataJSON, callback) {
         $.ajax({
             url: "https://localhost:5001/api/" + path,
             dataType: 'json',
-            data: data,
-            success: callback(data, status),
-            beforeSend: function(xhr, settings) { xhr.setRequestHeader('Authorization','Bearer ' + self.loggedToken ); }
+            data: dataJSON,
+            success: function(data, status){callback(data, status)},
+            beforeSend: function(xhr, settings) { xhr.setRequestHeader('Authorization','Bearer ' + self.loggedToken() ); }
         });
     }
 };
