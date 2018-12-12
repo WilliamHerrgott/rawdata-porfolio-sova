@@ -24,25 +24,31 @@ var viewModel = function() {
         $.post(url, ko.toJSON({Username:self.registerLogin, Password: self.registerPassword, Email: self.registerEmail, Location: self.registerLocation}),
             function() {
                 self.loginToSOVA(self.registerLogin, self.registerPassword);
-                
-            }, "json");
+            }, "json")
+            .fail(function() {
+                alert("That user already exist");
+            });
     };
-
-    
-    
+        
     self.tryLogin = function() {
         self.loginToSOVA(self.login, self.password);
     };
 
     self.loginToSOVA = function(login, password) {
         var url = "https://localhost:5001/api/users/login";
-        $.post(url, ko.toJSON({Username:login, Password: password}), function(data, textStatus) {
-            Cookies.set('token', data.token, { expires: 7 });
-            Cookies.set('login', data.username, { expires: 7 });
-            self.setAccountON(data.token, data.username);
-        }, "json");
+        $.post(url, ko.toJSON({Username:login, Password: password}),
+            function(data, textStatus) {
+                Cookies.set('token', data.token, { expires: 7 });
+                Cookies.set('login', data.username, { expires: 7 });
+                self.setAccountON(data.token, data.username);
+            }, "json")
+            .done(function() {
+                alert("Logged in");
+            })
+            .fail(function() {
+                alert("Bad login or password");
+            });
     };
-
 
     self.setAccountON = function (token, login) {
         self.loggedToken(token);
