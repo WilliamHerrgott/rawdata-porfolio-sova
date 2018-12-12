@@ -13,7 +13,7 @@ var viewModel = function() {
     
     
     self.tryRegister = function() {
-        var url = "http://localhost:5000/api/users/";
+        var url = "http://localhost:5001/api/users/";
         $.post(url, ko.toJSON({Username:self.registerLogin, Password: self.registerPassword, Email: self.registerEmail, Location: self.registerLocation}),
             function() {
                 self.loginToSOVA(self.registerLogin, self.registerPassword);
@@ -23,7 +23,7 @@ var viewModel = function() {
 
 
     self.loginToSOVA = function(login, password) {
-        var url = "http://localhost:5000/api/users/login";
+        var url = "http://localhost:5001/api/users/login";
         $.post(url, ko.toJSON({Username:login, Password: password}), function(data, textStatus) {
             Cookies.set('token', data.token, { expires: 7 });
             Cookies.set('login', data.username, { expires: 7 });
