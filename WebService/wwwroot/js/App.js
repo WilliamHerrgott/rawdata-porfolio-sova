@@ -2,14 +2,21 @@ var viewModel = function() {
     var self = this;
 
     self.search_query = ko.observable('');
-    
+    self.posts = ko.observableArray([]);
+
+
     self.loggedLogin = ko.observable('');
     self.loggedToken = ko.observable('');
+    
     
     self.registerLogin = ko.observable('');
     self.registerPassword = ko.observable('');
     self.registerEmail = ko.observable('');
     self.registerLocation = ko.observable('');
+
+
+    self.login = ko.observable('');
+    self.password = ko.observable('');
     
     
     self.tryRegister = function() {
@@ -21,6 +28,11 @@ var viewModel = function() {
             }, "json");
     };
 
+    
+    
+    self.tryLogin = function() {
+        self.loginToSOVA(self.login, self.password);
+    };
 
     self.loginToSOVA = function(login, password) {
         var url = "http://localhost:5001/api/users/login";
@@ -40,16 +52,23 @@ var viewModel = function() {
         $('#registerLink').addClass('d-none');
         $('#loggedInMenu').removeClass('d-none');
     };
-    
-    
-    self.login = ko.observable('');
-    self.password = ko.observable('');
-    self.tryLogin = function() {
-        self.loginToSOVA(self.login, self.password);
+
+
+    self.tryLogout = function() {
+        self.setAccountOFF();
     };
     
-    self.posts = ko.observableArray([]);
-
+    self.setAccountOFF = function () {
+        Cookies.remove('token');  
+        Cookies.remove('login');
+        $('#loginForm').removeClass('d-none');
+        $('#registerLink').removeClass('d-none');
+        $('#loggedInMenu').addClass('d-none');
+    };
+    
+    
+    
+    
     self.search = function () {
         $.getJSON("https://localhost:5001/api/StackOverflow/search/" + self.search_query(), function (data) {
             // Now use this data to update your view models, 
