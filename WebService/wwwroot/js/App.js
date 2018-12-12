@@ -20,7 +20,7 @@ var viewModel = function() {
     
     
     self.tryRegister = function() {
-        var url = "http://localhost:5001/api/users/";
+        var url = "https://localhost:5001/api/users/";
         $.post(url, ko.toJSON({Username:self.registerLogin, Password: self.registerPassword, Email: self.registerEmail, Location: self.registerLocation}),
             function() {
                 self.loginToSOVA(self.registerLogin, self.registerPassword);
@@ -35,7 +35,7 @@ var viewModel = function() {
     };
 
     self.loginToSOVA = function(login, password) {
-        var url = "http://localhost:5001/api/users/login";
+        var url = "https://localhost:5001/api/users/login";
         $.post(url, ko.toJSON({Username:login, Password: password}), function(data, textStatus) {
             Cookies.set('token', data.token, { expires: 7 });
             Cookies.set('login', data.username, { expires: 7 });
@@ -70,15 +70,30 @@ var viewModel = function() {
     
     
     self.search = function () {
-        $.getJSON("https://localhost:5001/api/StackOverflow/search/" + self.search_query(), function (data) {
-            // Now use this data to update your view models, 
-            // and Knockout will update your UI automatically 
-            self.posts.removeAll();
-            $.each(data.items, function (i, item) {
-                self.posts.push(item)
-            })
+        // $.getJSON("https://localhost:5001/api/, function (data) {
+        //     // Now use this data to update your view models, 
+        //     // and Knockout will update your UI automatically 
+        //     self.posts.removeAll();
+        //     $.each(data.items, function (i, item) {
+        //         self.posts.push(item)
+        //     })
+        // });
+        
+        self.request('StackOverflow/search/' + self.search_query(), null, function (data, status) {
+                return console.log("The returned data", data);
         });
     };
+    
+    
+    self.request = function(path, data, callback) {
+        $.ajax({
+            url: "https://localhost:5001/api/" + path,
+            dataType: 'json',
+            data: data,
+            success: callback(data, status),
+            beforeSend: function(xhr, settings) { xhr.setRequestHeader('Authorization','Bearer ' + self.loggedToken ); }
+        });
+    }
 };
 
 // Activates knockout.js

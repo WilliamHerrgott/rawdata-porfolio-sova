@@ -120,8 +120,8 @@ namespace WebService.Controllers {
             return Ok(model);
         }
 
+        [Authorize]
         [HttpGet("search/{text}", Name = nameof(Search))]
-//        [EnableCors("http://example.com", "*", "*")]
         public IActionResult Search(string text, int page = 0, int pageSize = 10) {
             int.TryParse(HttpContext.User.Identity.Name, out var userId);
             var searchResult = _dataService.Search(text, userId, page, pageSize)
