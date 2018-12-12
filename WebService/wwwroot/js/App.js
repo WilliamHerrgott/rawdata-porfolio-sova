@@ -5,7 +5,7 @@ var viewModel = function() {
     self.posts = ko.observableArray([]);
 
     self.search = function () {
-        $.getJSON("http://localhost:5000/api/StackOverflow/search/"+self.search_query(), function(data) {
+        $.getJSON("https://localhost:5001/api/StackOverflow/search/" + self.search_query(), function (data) {
             // Now use this data to update your view models, 
             // and Knockout will update your UI automatically 
             self.posts.removeAll();
