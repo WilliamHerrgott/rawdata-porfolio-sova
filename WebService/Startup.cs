@@ -64,7 +64,7 @@ namespace WebService {
 
             app.UseAuthentication();
             app.UseCors(
-                options => options.AllowAnyOrigin().AllowAnyMethod()
+                options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()
             );
             app.UseMvc();
 //            app.UseCors(builder =>

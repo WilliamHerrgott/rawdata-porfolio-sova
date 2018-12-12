@@ -68,12 +68,12 @@ namespace WebService.Controllers {
 
             var user = _dataService.GetUser(model.Username);
             if (user == null) {
-                return BadRequest();
+                return Unauthorized();
             }
 
             var pwd = PasswordService.HashPassword(model.Password, user.Salt, size);
             if (pwd != user.Password) {
-                return BadRequest();
+                return Unauthorized();
             }
 
             var tokenHandler = new JwtSecurityTokenHandler();
