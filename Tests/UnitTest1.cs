@@ -84,14 +84,14 @@ namespace Tests {
             var resultList = service.Search("python variable", user.Id, 0, 15);
             Assert.Equal(11, resultList.Count);
         }
-        
+
         [Fact]
         public void ExactMatchSearch_User_Count() {
             var user = service.CreateUser("test@test.te", "test", "Roskilde", "testpwd", "salt");
             var resultList = service.SearchExactMatch("this is", user.Id, 0, 15);
             Assert.Equal(15, resultList.Count);
         }
-        
+
         [Fact]
         public void BestMatchSearch_User_Count() {
             var user = service.CreateUser("test@test.te", "test", "Roskilde", "testpwd", "salt");
@@ -107,14 +107,14 @@ namespace Tests {
             var resultList2 = service.SearchRelatedTerm("python", user.Id, 0, 15, false);
             Assert.Equal(15, resultList2.Count);
         }
-        
+
         [Fact]
         public void ExpandedQuerySearch_User_Count() {
             var user = service.CreateUser("test@test.te", "test", "Roskilde", "testpwd", "salt");
             var resultList = service.SearchRelatedTerm("python user variable", user.Id, 0, 15);
             Assert.Equal(15, resultList.Count);
         }
-        
+
         [Fact]
         public void GetCoOccurrentWordSearch_User_Count() {
             var user = service.CreateUser("test@test.te", "test", "Roskilde", "testpwd", "salt");
