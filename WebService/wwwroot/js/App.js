@@ -29,7 +29,7 @@ var viewModel = function() {
     self.password = ko.observable('');
 
     // See if user is connected
-    self.isConnected = ko.observable(false)
+    self.isConnected = ko.observable(false);
     
     
     self.tryRegister = function() {
