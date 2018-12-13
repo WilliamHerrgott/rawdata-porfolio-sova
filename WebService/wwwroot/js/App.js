@@ -4,16 +4,16 @@ var viewModel = function() {
     self.search_query = ko.observable('');
     self.posts = ko.observableArray([]);
 
-
+    // Infos stored in db
     self.loggedID = ko.observable('');
     self.loggedLogin = ko.observable('');
     self.loggedEmail = ko.observable('');
     self.loggedToken = ko.observable('');
     self.loggedLocation = ko.observable('');
     
-    
     self.fullModifyPassword = ko.observable(false);
     
+    // Modifying infos
     self.modifyLogin = ko.observable('');
     self.modifyLogin.focused = ko.observable('');
     self.modifyEmail = ko.observable('');
@@ -21,15 +21,18 @@ var viewModel = function() {
     self.modifyPassword = ko.observable('');
     self.modifyPasswordBis = ko.observable('');
 
-
+    // Creating user
     self.registerLogin = ko.observable('');
     self.registerPassword = ko.observable('');
     self.registerEmail = ko.observable('');
     self.registerLocation = ko.observable('');
 
-
+    // Login in
     self.login = ko.observable('');
     self.password = ko.observable('');
+
+    // See if user is connected
+    self.isConnected = ko.observable(false);
     
     
     self.tryRegister = function() {
@@ -95,6 +98,7 @@ var viewModel = function() {
     };
 
     self.setAccountON = function (token, login) {
+        self.isConnected(true);
         self.loggedToken(token);
         self.loggedLogin(login);
         self.modifyLogin(login);
@@ -117,6 +121,7 @@ var viewModel = function() {
     };
     
     self.setAccountOFF = function () {
+        self.isConnected(false);
         Cookies.remove('token');  
         Cookies.remove('login');
         self.loggedToken();
@@ -125,9 +130,6 @@ var viewModel = function() {
         $('#registerLink').removeClass('d-none');
         $('#loggedInMenu').addClass('d-none');
     };
-    
-    
-    
     
     self.search = function () {
         // $.getJSON("https://localhost:5001/api/, function (data) {
@@ -146,7 +148,6 @@ var viewModel = function() {
                 })
         }, 'POST');
     };
-    
     
     self.request = function(path, dataJSON, callback, type) {
         $.ajax({
