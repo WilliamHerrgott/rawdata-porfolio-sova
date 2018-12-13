@@ -13,7 +13,7 @@ namespace StackOverflowData.Functions {
             builder.Property(x => x.Body).HasColumnName("body");
         }
     }
-    
+
     public class SearchResultWords {
         public int word { get; set; }
         public string grade { get; set; }
@@ -25,6 +25,4 @@ namespace StackOverflowData.Functions {
             builder.Property(x => x.word).HasColumnName("word");
         }
     }
-
-
 }

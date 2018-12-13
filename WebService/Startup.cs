@@ -35,8 +35,8 @@ namespace WebService {
 //
 //                    });
 //            });
-                 
-            
+
+
             services.AddCors();
 
             var key = Encoding.UTF8.GetBytes(Configuration["security:key"]);

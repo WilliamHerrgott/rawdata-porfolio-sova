@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using StackOverflowData;
 using StackOverflowData.Functions;
@@ -22,7 +21,7 @@ namespace WebService.Controllers {
         public IActionResult GetAnswers(int questionId, int page = 0, int pageSize = 5) {
             var answers = _dataService.GetAnswers(questionId, page, pageSize)
                 .Select(CreateAnswersModel);
-           
+
             var numberOfItems = _dataService.GetNoOfAnswers(questionId);
             var numberOfPages = ComputeNumberOfPages(pageSize, numberOfItems);
 
@@ -43,7 +42,7 @@ namespace WebService.Controllers {
             var model = Mapper.Map<AnswerModel>(answers);
             model.Comments = Url.Link(nameof(GetComments), new {postId = answers.Id});
             model.Author = Url.Link(nameof(GetAuthorOfPost), new {postId = answers.Id});
-            model.ClickHereToMark = Url.Link(nameof(MarkController.Mark), new { postId = answers.Id });
+            model.ClickHereToMark = Url.Link(nameof(MarkController.Mark), new {postId = answers.Id});
             return model;
         }
 
@@ -92,9 +91,9 @@ namespace WebService.Controllers {
             }
 
             model.Author = Url.Link(nameof(GetAuthorOfPost), new {postId = post.Id});
-            model.Answers = (isQuestion == true)? Url.Link(nameof(GetAnswers), new { questionId = post.Id}): null;
-            model.Comments = Url.Link(nameof(GetComments), new { postId = post.Id});
-            model.ClickHereToMark = Url.Link(nameof(MarkController.Mark), new { postId = post.Id });
+            model.Answers = isQuestion == true ? Url.Link(nameof(GetAnswers), new {questionId = post.Id}) : null;
+            model.Comments = Url.Link(nameof(GetComments), new {postId = post.Id});
+            model.ClickHereToMark = Url.Link(nameof(MarkController.Mark), new {postId = post.Id});
             return Ok(model);
         }
 
@@ -166,7 +165,7 @@ namespace WebService.Controllers {
             };
             return Json(result);
         }
-        
+
         [Authorize]
         [HttpGet("search/best/{text}", Name = nameof(SearchBestMatch))]
         public IActionResult SearchBestMatch(string text, int page = 0, int pageSize = 10) {
@@ -191,7 +190,7 @@ namespace WebService.Controllers {
             };
             return Ok(result);
         }
-        
+
         private SearchModel CreateSearchModel(SearchResult search) {
             var model = Mapper.Map<SearchModel>(search);
             model.Url = Url.Link(nameof(GetPost), new {id = search.Id});
