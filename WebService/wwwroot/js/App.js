@@ -44,6 +44,12 @@ var viewModel = function() {
     self.tryLogin = function() {
         self.loginToSOVA(self.login, self.password);
     };
+    
+    self.cancelModifyPassword = function() {
+    };
+    
+    self.modifyPassword = function() {
+    };
 
     self.loginToSOVA = function(login, password) {
         var url = "https://localhost:5001/api/users/login";
