@@ -37,7 +37,16 @@ var viewModel = function() {
                 self.loginToSOVA(self.registerLogin, self.registerPassword);
             }, "json")
             .fail(function() {
-                alert("That user already exist");
+                $.alert({
+                    title: 'Encountered an error!',
+                    content: 'This user already exists',
+                    type: 'red',
+                    typeAnimated: true,
+                    backgroundDismiss: true,
+                    icon: 'fa fa-warning',
+                    closeIcon: true,
+                    closeIconClass: 'fa fa-close'
+                });
             });
     };
         
@@ -60,7 +69,16 @@ var viewModel = function() {
                 self.setAccountON(data.token, data.username);
             }, "json")
             .fail(function() {
-                alert("Bad login or password");
+                $.alert({
+                    title: 'Encountered an error!',
+                    content: 'Bad login or password',
+                    type: 'red',
+                    typeAnimated: true,
+                    backgroundDismiss: true,
+                    icon: 'fa fa-warning',
+                    closeIcon: true,
+                    closeIconClass: 'fa fa-close'
+                });
             });
     };
 
