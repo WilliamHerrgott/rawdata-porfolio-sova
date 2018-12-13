@@ -35,7 +35,7 @@ namespace StackOverflowData {
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
             base.OnConfiguring(optionsBuilder);
-            optionsBuilder.UseNpgsql("host=localhost;db=stackoverflow;uid=postgres;pwd=");
+            optionsBuilder.UseNpgsql("host=rawdata.ruc.dk;db=raw9;uid=raw9;pwd=oXa+yMeV");
             // you only need this if you want to see the SQL statments created
             // by EF
             optionsBuilder.UseLoggerFactory(MyLoggerFactory)
