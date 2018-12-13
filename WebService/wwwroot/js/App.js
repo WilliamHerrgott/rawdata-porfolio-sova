@@ -5,10 +5,21 @@ var viewModel = function() {
     self.posts = ko.observableArray([]);
 
 
+    self.loggedID = ko.observable('');
     self.loggedLogin = ko.observable('');
+    self.loggedEmail = ko.observable('');
     self.loggedToken = ko.observable('');
+    self.loggedLocation = ko.observable('');
     
     
+    
+    self.modifyLogin = ko.observable('');
+    self.modifyEmail = ko.observable('');
+    self.modifyLocation = ko.observable('');
+    self.modifyPassword = ko.observable('');
+    self.modifyPasswordBis = ko.observable('');
+
+
     self.registerLogin = ko.observable('');
     self.registerPassword = ko.observable('');
     self.registerEmail = ko.observable('');
@@ -68,6 +79,14 @@ var viewModel = function() {
     self.setAccountON = function (token, login) {
         self.loggedToken(token);
         self.loggedLogin(login);
+        self.modifyLogin(login);
+        self.request("users", null, function(data, status) {
+            self.loggedLocation(data.location);
+            self.modifyLocation(data.location);
+            self.loggedEmail(data.email);
+            self.modifyEmail(data.email);
+            self.loggedID(data.id);
+        }, 'GET');
         $('#registerModal').modal('hide');
         $('#loginForm').addClass('d-none');
         $('#registerLink').addClass('d-none');
@@ -82,6 +101,8 @@ var viewModel = function() {
     self.setAccountOFF = function () {
         Cookies.remove('token');  
         Cookies.remove('login');
+        self.loggedToken();
+        self.loggedLogin();
         $('#loginForm').removeClass('d-none');
         $('#registerLink').removeClass('d-none');
         $('#loggedInMenu').addClass('d-none');
@@ -101,18 +122,22 @@ var viewModel = function() {
         // });
         
         self.request('StackOverflow/search/' + self.search_query(), null, function (data, status) {
-                return console.log("The returned data", data);
-        });
+            self.posts.removeAll();
+                $.each(data.items, function (i, item) {
+                    self.posts.push(item)
+                })
+        }, 'POST');
     };
     
     
-    self.request = function(path, data, callback) {
+    self.request = function(path, dataJSON, callback, type) {
         $.ajax({
             url: "https://localhost:5001/api/" + path,
+            type: type,
             dataType: 'json',
-            data: data,
-            success: callback(data, status),
-            beforeSend: function(xhr, settings) { xhr.setRequestHeader('Authorization','Bearer ' + self.loggedToken ); }
+            data: dataJSON,
+            success: function(data, status){callback(data, status)},
+            beforeSend: function(xhr, settings) { xhr.setRequestHeader('Authorization','Bearer ' + self.loggedToken() ); }
         });
     }
 };
