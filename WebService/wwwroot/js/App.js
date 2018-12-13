@@ -12,8 +12,10 @@ var viewModel = function() {
     self.loggedLocation = ko.observable('');
     
     
+    self.fullModifyPassword = ko.observable(false);
     
     self.modifyLogin = ko.observable('');
+    self.modifyLogin.focused = ko.observable('');
     self.modifyEmail = ko.observable('');
     self.modifyLocation = ko.observable('');
     self.modifyPassword = ko.observable('');
@@ -53,6 +55,16 @@ var viewModel = function() {
     self.tryLogin = function() {
         self.loginToSOVA(self.login, self.password);
     };
+
+    self.showFullModifyPassword = function (){
+        self.fullModifyPassword(true);
+    };
+    
+    self.modifyLogin.focused.subscribe(function(on) {
+        if (!on) {
+            
+        }
+    });
     
     self.cancelModifyPassword = function() {
     };

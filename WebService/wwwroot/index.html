@@ -14,7 +14,7 @@
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
 
     <script type='text/javascript' src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js"></script>
-    <script type='text/javascript' src="js/App.js?version=6"></script>
+    <script type='text/javascript' src="js/App.js?version=8"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.js"></script>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -130,11 +130,12 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form>
+                    <form class="needs-validation" novalidate>
                         <div class="form-group">
                             <label for="modifyLogin">Login</label>
                             <input type="text" class="form-control" id="modifyLogin" aria-describedby="emailHelp" placeholder="Choose login"
-                                   data-bind="textInput: modifyLogin">
+                                   data-bind="textInput: modifyLogin, hasFocus: modifyLogin.focused">
+                            <div class="invalid-feedback">Non</div>
                             <label for="modifyLocation">Location</label>
                             <input type="text" class="form-control" id="modifyLocation" placeholder="Location"
                                    data-bind="textInput: modifyLocation">
@@ -148,19 +149,19 @@
                         <div class="form-row">
                             <div class="form-group col-md-4">
                                 <input type="password" class="form-control" id="modifyPassword" placeholder="Password" autocomplete="off"
-                                    data-bind="textInput: modifyPassword">
+                                    data-bind="textInput: modifyPassword, click: showFullModifyPassword">
                             </div>
                             <div class="form-group col-md-4">
-                                <input type="password" class="form-control d-none" id="modifyPasswordBis" autocomplete="off"
-                                    data-bind="textInput: modifyPasswordBis" title="passwordRepet">
+                                <input type="password" class="form-control" id="modifyPasswordBis" autocomplete="off"
+                                    data-bind="textInput: modifyPasswordBis, visible: fullModifyPassword" title="passwordRepet">
                             </div>
                             <div class="form-group col-md-2">
-                                <button type="button" class="btn btn-primary btn-success d-none" id="saveButtonModifyPassword"
-                                        data-bind="click: modifyPassword">Confirm</button>
+                                <button type="button" class="btn btn-primary btn-success" id="saveButtonModifyPassword"
+                                        data-bind="click: modifyPassword, visible: fullModifyPassword">Confirm</button>
                             </div>
                             <div class="form-group col-md-2">
-                                <button type="button" class="btn btn-primary btn-danger d-none" id="cancelButtonModifyPassword"
-                                        data-bind="click: cancelModifyPassword">Cancel</button>
+                                <button type="button" class="btn btn-primary btn-danger" id="cancelButtonModifyPassword"
+                                        data-bind="click: cancelModifyPassword, visible: fullModifyPassword">Cancel</button>
                             </div>
                         </div>
                     </form>
