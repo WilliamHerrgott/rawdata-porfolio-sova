@@ -254,10 +254,9 @@ namespace StackOverflowData {
 
         public List<SearchResult> SearchBestMatch(string text, int userId, int page = 0, int pageSize = 10,
             bool weighted = true) {
-            text = text.Split(' ').Join("', '");
             using (var db = new StackOverflowContext()) {
                 var result = db.SearchResults
-                    .FromSql("SELECT * FROM bestmatch" + (weighted ? "weighted" : "") + "({0})", text.Split(' '))
+                    .FromSql("SELECT * FROM dynamic_search({0})", text)
                     .Skip(page * pageSize)
                     .Take(pageSize)
                     .ToList();
