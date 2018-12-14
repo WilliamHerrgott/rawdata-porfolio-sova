@@ -64,8 +64,9 @@ var viewModel = function() {
     };
     
     self.modifyLogin.focused.subscribe(function(on) {
-        if (!on) {
-            
+        if (!on && self.modifyLogin() !== self.loggedLogin()) {
+            self.request("users/update/username/" + self.modifyLogin, null, function(data, status) {
+            }, 'PUT', function(){});
         }
     });
     
@@ -108,7 +109,7 @@ var viewModel = function() {
             self.loggedEmail(data.email);
             self.modifyEmail(data.email);
             self.loggedID(data.id);
-        }, 'GET');
+        }, 'GET', function(){});
         $('#registerModal').modal('hide');
         $('#loginForm').addClass('d-none');
         $('#registerLink').addClass('d-none');
@@ -132,30 +133,26 @@ var viewModel = function() {
     };
     
     self.search = function () {
-        // $.getJSON("https://localhost:5001/api/, function (data) {
-        //     // Now use this data to update your view models, 
-        //     // and Knockout will update your UI automatically 
-        //     self.posts.removeAll();
-        //     $.each(data.items, function (i, item) {
-        //         self.posts.push(item)
-        //     })
-        // });
-        
         self.request('StackOverflow/search/' + self.search_query(), null, function (data, status) {
             self.posts.removeAll();
+            var news = [];
                 $.each(data.items, function (i, item) {
-                    self.posts.push(item)
-                })
-        }, 'POST');
+                    // self.posts.push(item)
+                    news.push(item);
+                });
+            ko.utils.arrayPushAll(self.posts, news);
+            self.posts.valueHasMutated();
+        }, 'POST', function () {});
     };
     
-    self.request = function(path, dataJSON, callback, type) {
+    self.request = function(path, dataJSON, callback, type, callback_error) {
         $.ajax({
             url: "https://localhost:5001/api/" + path,
             type: type,
             dataType: 'json',
             data: dataJSON,
             success: function(data, status){callback(data, status)},
+            error: function(jqXHR, status, error){callback_error(jqXHR, status, error)},
             beforeSend: function(xhr, settings) { xhr.setRequestHeader('Authorization','Bearer ' + self.loggedToken() ); }
         });
     }
