@@ -142,7 +142,7 @@ var viewModel = function() {
                 });
             ko.utils.arrayPushAll(self.posts, news);
             self.posts.valueHasMutated();
-        }, 'POST', function () {});
+        }, 'GET', function () {});
     };
     
     self.request = function(path, dataJSON, callback, type, callback_error) {
