@@ -1,0 +1,39 @@
+<div class="modal fade" id="registerModal" tabindex="-1" role="dialog" aria-labelledby="registerModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Register to SOVA</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label for="inputLogin">Login</label>
+                        <input type="text" class="form-control" id="inputLogin" aria-describedby="emailHelp" placeholder="Choose login"
+                               data-bind="textInput: registerLogin">
+                        <label for="inputLocation">Location</label>
+                        <input type="text" class="form-control" id="inputLocation" placeholder="Location"
+                               data-bind="textInput: registerLocation">
+                        <small id="locationlHelp" class="form-text text-muted">Where do you live</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputEmail">Email address</label>
+                        <input type="email" class="form-control" id="inputEmail" aria-describedby="emailHelp" placeholder="Enter email"
+                               data-bind="textInput: registerEmail">
+                        <small id="emailHelp" class="form-text text-muted">We won't send you any commercial emails</small>
+                        <label for="inputPassword1">Password</label>
+                        <input type="password" class="form-control" id="inputPassword1" placeholder="Password"
+                               data-bind="textInput: registerPassword">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <!--<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>-->
+                <button type="button" class="btn btn-primary"
+                        data-bind="click: tryRegister">Register</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,52 @@
+<div class="modal fade" id="profileModal" tabindex="-1" role="dialog" aria-labelledby="profileModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="profileModalLabel">Modify Profile</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form class="needs-validation" novalidate>
+                    <div class="form-group">
+                        <label for="modifyLogin">Login</label>
+                        <input type="text" class="form-control" id="modifyLogin" aria-describedby="emailHelp" placeholder="Choose login"
+                               data-bind="textInput: modifyLogin, hasFocus: modifyLogin.focused">
+                        <div class="invalid-feedback">Non</div>
+                        <label for="modifyLocation">Location</label>
+                        <input type="text" class="form-control" id="modifyLocation" placeholder="Location"
+                               data-bind="textInput: modifyLocation">
+                    </div>
+                    <div class="form-group">
+                        <label for="modifyEmail">Email address</label>
+                        <input type="email" class="form-control" id="modifyEmail" aria-describedby="emailHelp" placeholder="Enter email"
+                               data-bind="textInput: modifyEmail">
+                    </div>
+                    <label for="modifyPassword">Modify Password</label>
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <input type="password" class="form-control" id="modifyPassword" placeholder="Password" autocomplete="off"
+                                   data-bind="textInput: modifyPassword, click: showFullModifyPassword">
+                        </div>
+                        <div class="form-group col-md-4">
+                            <input type="password" class="form-control" id="modifyPasswordBis" autocomplete="off"
+                                   data-bind="textInput: modifyPasswordBis, visible: fullModifyPassword" title="passwordRepet">
+                        </div>
+                        <div class="form-group col-md-2">
+                            <button type="button" class="btn btn-primary btn-success" id="saveButtonModifyPassword"
+                                    data-bind="click: modifyPassword, visible: fullModifyPassword">Confirm</button>
+                        </div>
+                        <div class="form-group col-md-2">
+                            <button type="button" class="btn btn-primary btn-danger" id="cancelButtonModifyPassword"
+                                    data-bind="click: cancelModifyPassword, visible: fullModifyPassword">Cancel</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <!--<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>-->
+            </div>
+        </div>
+    </div>
+</div>
