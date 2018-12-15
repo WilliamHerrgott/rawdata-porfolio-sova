@@ -320,10 +320,8 @@ namespace StackOverflowData {
             }
         }
 
-        public int GetExactSearchedCount(string text)
-        {
-            using (var db = new StackOverflowContext())
-            {
+        public int GetExactSearchedCount(string text) {
+            using (var db = new StackOverflowContext()) {
                 var count = db.SearchResults.FromSql("SELECT * FROM exact_match({0})", text)
                     .Count();
                 return count;

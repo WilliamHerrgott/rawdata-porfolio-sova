@@ -30,9 +30,7 @@ namespace WebService.Controllers {
             var passwd = PasswordService.HashPassword(model.Password, salt, size);
             var user = _dataService.CreateUser(model.Email, model.Username, passwd, model.Location, salt);
 
-            if (user == null) {
-                return BadRequest();
-            }
+            if (user == null) return BadRequest();
 
             var displayUser = Mapper.Map<GetUserModel>(user);
             displayUser.Marks = Url.RouteUrl(nameof(MarkController.GetMarked));
@@ -45,9 +43,7 @@ namespace WebService.Controllers {
         public IActionResult GetUser() {
             int.TryParse(HttpContext.User.Identity.Name, out var userId);
             var user = _dataService.GetUserById(userId);
-            if (user == null) {
-                return NotFound();
-            }
+            if (user == null) return NotFound();
 
             var displayUser = Mapper.Map<GetUserModel>(user);
             displayUser.Marks = Url.RouteUrl(nameof(MarkController.GetMarked));
@@ -57,24 +53,16 @@ namespace WebService.Controllers {
 
         [HttpPost("login")]
         public IActionResult LoginUser([FromBody] UserLoginModel model) {
-            if (string.IsNullOrEmpty(model.Username) || string.IsNullOrEmpty(model.Password)) {
-                return BadRequest();
-            }
+            if (string.IsNullOrEmpty(model.Username) || string.IsNullOrEmpty(model.Password)) return BadRequest();
 
             int.TryParse(_config["security:pwdsize"], out var size);
-            if (size == 0) {
-                return BadRequest();
-            }
+            if (size == 0) return BadRequest();
 
             var user = _dataService.GetUser(model.Username);
-            if (user == null) {
-                return Unauthorized();
-            }
+            if (user == null) return Unauthorized();
 
             var pwd = PasswordService.HashPassword(model.Password, user.Salt, size);
-            if (pwd != user.Password) {
-                return Unauthorized();
-            }
+            if (pwd != user.Password) return Unauthorized();
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(_config["security:key"]);
@@ -103,9 +91,7 @@ namespace WebService.Controllers {
             int.TryParse(HttpContext.User.Identity.Name, out var id);
             var user = _dataService.DeleteUser(id);
 
-            if (user == false) {
-                return BadRequest();
-            }
+            if (user == false) return BadRequest();
 
             return Ok();
         }
@@ -116,9 +102,7 @@ namespace WebService.Controllers {
             int.TryParse(HttpContext.User.Identity.Name, out var id);
             var updated = _dataService.UpdateEmail(id, newEmail);
 
-            if (updated == false) {
-                return BadRequest();
-            }
+            if (updated == false) return BadRequest();
 
             return Ok();
         }
@@ -128,9 +112,7 @@ namespace WebService.Controllers {
             int.TryParse(HttpContext.User.Identity.Name, out var id);
             var updated = _dataService.UpdateUsername(id, newUsername);
 
-            if (updated == false) {
-                return BadRequest();
-            }
+            if (updated == false) return BadRequest();
 
             return Ok();
         }
@@ -145,9 +127,7 @@ namespace WebService.Controllers {
             var pwd = PasswordService.HashPassword(model.Password, salt, size);
             var updated = _dataService.UpdatePassword(id, pwd, salt);
 
-            if (updated == false) {
-                return BadRequest();
-            }
+            if (updated == false) return BadRequest();
 
             return Ok();
         }
@@ -158,9 +138,7 @@ namespace WebService.Controllers {
             int.TryParse(HttpContext.User.Identity.Name, out var id);
             var updated = _dataService.UpdateLocation(id, newLocation);
 
-            if (updated == false) {
-                return BadRequest();
-            }
+            if (updated == false) return BadRequest();
 
             return Ok();
         }
