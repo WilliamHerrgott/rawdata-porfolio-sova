@@ -1,0 +1,27 @@
+<div class="modal fade" id="postModal" tabindex="-1" role="dialog" aria-labelledby="postModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="postModalLabel">Post</h5>
+                <button class="btn btn-primary" id="markButton" data-bind="click: $root.markPost">Mark</button>
+            </div>
+            <div class="modal-body">
+                <p class="card-text" data-bind="text: postBody"></p>
+                <hr/>
+                <p class="cart-text text-right" data-bind="text: postDate"></p>
+                <!--ko foreach: answers -->
+                <div class="card">
+                    <div class="card-body">
+                        <!--<h5 class="card-title text-truncate" data-bind="text: title"></h5>-->
+                        <p class="card-text text-truncate" data-bind="text: $root.strip(body)"></p>
+                    </div>
+                </div>
+                <!-- /ko -->
+
+            </div>
+            <div class="modal-footer">
+                <!--<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>-->
+            </div>
+        </div>
+    </div>
+</div>
