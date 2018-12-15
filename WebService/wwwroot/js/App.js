@@ -184,7 +184,6 @@ function init() {
             xhttp.open("GET", file, true);
             xhttp.send();
             /* Exit the function: */
-            console.log("try : " +i);
             return;
         }
     }
@@ -195,15 +194,14 @@ function init() {
     var VM = new viewModel();
 
 
-    VM.search_query.subscribe(function () {
-        VM.search();
-    });
+    // VM.search_query.subscribe(function () {
+    //     VM.search();
+    // });
 
     if (Cookies.get('token') != null && Cookies.get('login'))
         VM.setAccountON(Cookies.get('token'), Cookies.get('login'));
 
     ko.applyBindings(VM);
-    console.log('end of binding');
 }
 
 
