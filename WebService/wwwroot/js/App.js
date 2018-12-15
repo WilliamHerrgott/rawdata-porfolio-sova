@@ -133,7 +133,7 @@ var viewModel = function() {
     };
     
     self.search = function () {
-        self.request('StackOverflow/search/' + self.search_query(), null, function (data, status) {
+        self.request('StackOverflow/search/best/' + self.search_query(), null, function (data, status) {
             self.posts.removeAll();
             var news = [];
                 $.each(data.items, function (i, item) {

@@ -27,7 +27,7 @@ namespace StackOverflowData {
 
         List<SearchResult> Search(string text, int userId, int page, int pageSize);
         List<SearchResult> SearchExactMatch(string text, int userId, int page, int pageSize);
-        List<SearchResult> SearchBestMatch(string text, int userId, int page, int pageSize, bool weighted);
+        List<SearchResult> SearchBestMatch(string text, int userId, int page, int pageSize);
         List<SearchResult> SearchRelatedTerm(string text, int userId, int page, int pageSize, bool weighted);
         List<SearchResult> SearchExpandedQuery(string text, int userId, int page, int pageSize);
         List<SearchResult> SearchCoWordQuery(string text, int userId, int page, int pageSize);
@@ -36,7 +36,8 @@ namespace StackOverflowData {
         List<GetMarkedResult> GetMarked(int userId, int page, int pageSize);
         int GetHistoryCount(int userId);
         int GetSearchedCount(string text);
-        int GetSearchedCountSpecial(string text, string name_func);
+        int GetExactSearchedCount(string text);
+        int GetBestSearchedCount(string text);
         int GetNoOfAnswers(int postId);
         int GetNoOfComments(int postId);
         int GetNoOfMarks(int userId);
@@ -252,11 +253,10 @@ namespace StackOverflowData {
             }
         }
 
-        public List<SearchResult> SearchBestMatch(string text, int userId, int page = 0, int pageSize = 10,
-            bool weighted = true) {
+        public List<SearchResult> SearchBestMatch(string text, int userId, int page = 0, int pageSize = 10) {
             using (var db = new StackOverflowContext()) {
                 var result = db.SearchResults
-                    .FromSql("SELECT * FROM dynamic_search({0})", text)
+                    .FromSql("SELECT * FROM dynamic_search_with_history({0})", text, userId)
                     .Skip(page * pageSize)
                     .Take(pageSize)
                     .ToList();
@@ -312,9 +312,19 @@ namespace StackOverflowData {
             }
         }
 
-        public int GetSearchedCountSpecial(string text, string name_function) {
+        public int GetBestSearchedCount(string text) {
             using (var db = new StackOverflowContext()) {
-                var count = db.SearchResults.FromSql("SELECT * FROM {1}({0})", text, name_function)
+                var count = db.SearchResults.FromSql("SELECT * FROM dynamic_search_without_history({0})", text)
+                    .Count();
+                return count;
+            }
+        }
+
+        public int GetExactSearchedCount(string text)
+        {
+            using (var db = new StackOverflowContext())
+            {
+                var count = db.SearchResults.FromSql("SELECT * FROM exact_match({0})", text)
                     .Count();
                 return count;
             }
