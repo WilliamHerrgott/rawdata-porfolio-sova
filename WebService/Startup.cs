@@ -66,13 +66,15 @@ namespace WebService {
             app.UseCors(
                 options => options.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()
             );
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
             app.UseMvc();
 //            app.UseCors(builder =>
 //                builder.AllowAnyOrigin()
 //                .AllowAnyHeader()
 //                .AllowAnyMethod()
 //                .AllowCredentials());
-            app.Run(async (context) => { await context.Response.WriteAsync("Hello World!"); });
+           // app.Run(async (context) => { await context.Response.WriteAsync("Hello World!"); });
         }
 
         private void MapperConfig() {
