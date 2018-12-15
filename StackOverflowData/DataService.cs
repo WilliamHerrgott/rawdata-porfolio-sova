@@ -256,7 +256,7 @@ namespace StackOverflowData {
         public List<SearchResult> SearchBestMatch(string text, int userId, int page = 0, int pageSize = 10) {
             using (var db = new StackOverflowContext()) {
                 var result = db.SearchResults
-                    .FromSql("SELECT * FROM dynamic_search_with_history({0})", text, userId)
+                    .FromSql("SELECT * FROM dynamic_search_with_history({0}, {1})", text, userId)
                     .Skip(page * pageSize)
                     .Take(pageSize)
                     .ToList();
