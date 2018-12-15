@@ -4,7 +4,14 @@ var viewModel = function() {
     self.search_query = ko.observable('');
     
     self.posts = ko.observableArray([]);
-    self.markedPosts = ko.observableArray([]);
+    self.answers = ko.observableArray([]);
+    self.comments = ko.observableArray([]);
+    self.marks = ko.observableArray([]);
+    
+    
+    self.postBody = ko.observable();
+    self.postDate = ko.observable();
+    self.postLinkMark = ko.observable();
 
     // Infos stored in db
     self.loggedID = ko.observable('');
@@ -114,7 +121,7 @@ var viewModel = function() {
             self.loggedEmail(data.email);
             self.modifyEmail(data.email);
             self.loggedID(data.id);
-        }, 'GET', function(){});
+        }, 'GET', function(){self.setAccountOFF()});
         $('#registerModal').modal('hide');
         $('#loginForm').addClass('d-none');
         $('#registerLink').addClass('d-none');
@@ -128,6 +135,7 @@ var viewModel = function() {
     
     self.setAccountOFF = function () {
         self.isConnected(false);
+        self.posts([]);
         Cookies.remove('token');  
         Cookies.remove('login');
         self.loggedToken();
@@ -155,12 +163,57 @@ var viewModel = function() {
         self.request('StackOverflow/search/best/' + self.search_query(), null, function (data, status) {
             self.posts.removeAll();
             var news = [];
-                $.each(data.items, function (i, item) {
-                    news.push(item);
-                });
+            $.each(data.items, function (i, item) {
+                news.push(item);
+            });
             ko.utils.arrayPushAll(self.posts, news);
             self.posts.valueHasMutated();
         }, 'GET', function () {});
+    };
+
+    self.loadFullPost = function(data, event) {
+        $('#markButton').removeClass('btn-success').attr("disabled", false);
+
+        var dataUrl = event.target.getAttribute('data-url');
+        dataUrl = dataUrl.substring(dataUrl.indexOf('api/')+4);
+        
+        self.request(dataUrl, null, function (data, status) {
+            console.log(data);
+            self.postBody(self.strip(data.body));
+            self.postDate(data.creationDate);
+            self.postLinkMark(getAPIUrl(data.clickHereToMark));
+            
+            self.request(getAPIUrl(data.answers), null, function (data1, status) {
+                console.log(data1);
+                self.answers.removeAll();
+                var news = [];
+                $.each(data1.items, function (i, item) {
+                    news.push(item);
+                });
+                ko.utils.arrayPushAll(self.answers, news);
+                self.answers.valueHasMutated();
+            }, 'GET', function(){});
+        }, 'GET', function(){})
+    };
+    
+    self.markPost = function() {
+        self.request(self.postLinkMark(), null, function(data, status){
+            console.log('OK');
+            $('#markButton').addClass('btn-success').attr("disabled", true);
+        }, 'POST', function(){$('#markButton').addClass('btn-success').attr("disabled", true);});
+    };
+    
+    self.updateMarks = function(){
+        self.request('marks', null, function (data, status) {
+            self.marks.removeAll();
+            var news = [];
+            console.log(data);
+            $.each(data.items, function (i, item) {
+                news.push(item);
+            });
+            ko.utils.arrayPushAll(self.marks, news);
+            self.marks.valueHasMutated();
+        }, 'GET', function(){})
     };
     
     self.request = function(path, dataJSON, callback, type, callback_error) {
@@ -173,8 +226,20 @@ var viewModel = function() {
             error: function(jqXHR, status, error){callback_error(jqXHR, status, error)},
             beforeSend: function(xhr, settings) { xhr.setRequestHeader('Authorization','Bearer ' + self.loggedToken() ); }
         });
-    };
+    }
+    
+    self.strip = function (html) {
+        var tmp = document.createElement("DIV");
+        tmp.innerHTML = html;
+        return tmp.textContent || tmp.innerText || "";
+    }
 };
+
+
+
+function getAPIUrl(url){
+    return url.substring(url.indexOf('api/')+4);
+}
 
 function init() {
     var z, i, elmnt, file, xhttp;

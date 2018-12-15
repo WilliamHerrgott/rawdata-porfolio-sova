@@ -2,18 +2,17 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="profileModalLabel">See marked posts'</h5>
+                <h5 class="modal-title" id="marksModalLabel">See marked posts'</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                 <!--ko foreach: markedPosts -->
+                 <!--ko foreach: marks -->
                 <div class="card">
                     <div class="card-body">
                         <!--<h5 class="card-title text-truncate" data-bind="text: title"></h5>-->
-                        <p class="card-text text-truncate" data-bind="text: body"></p>
-                        <a href="#" class="btn btn-primary" data-bind="attr: { href: url}">See post</a>
+                        <p class="card-text text-truncate" data-bind="text: post"></p>
                     </div>
                 </div>
                 <!-- /ko -->

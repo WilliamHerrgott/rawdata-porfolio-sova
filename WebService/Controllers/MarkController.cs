@@ -94,6 +94,7 @@ namespace WebService.Controllers {
 
             return Ok(result);
         }
+        
 
         private MarkModel CreateMarkModel(GetMarkedResult marks) {
             var model = Mapper.Map<MarkModel>(marks);
