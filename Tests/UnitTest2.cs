@@ -134,9 +134,6 @@ namespace Tests {
 
             using (var response = Client.SendAsync(request).Result) {
                 Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-//                dynamic stuff = JObject.Parse(response);
-
-//                Assert.Equal(188, stuff.NumberOfItems);
             }
         }
 

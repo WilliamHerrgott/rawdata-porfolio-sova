@@ -26,16 +26,6 @@ namespace WebService {
             services.AddCors();
             services.AddMvc();
             services.AddSingleton<IDataService, DataService>();
-//            services.AddCors(options =>
-//            {
-//                options.AddPolicy("AllowAllOrigins",
-//                    builder =>
-//                    {
-//                        builder.AllowAnyOrigin().AllowAnyHeader();
-//
-//                    });
-//            });
-
 
             services.AddCors();
 
@@ -69,12 +59,6 @@ namespace WebService {
             app.UseDefaultFiles();
             app.UseStaticFiles();
             app.UseMvc();
-//            app.UseCors(builder =>
-//                builder.AllowAnyOrigin()
-//                .AllowAnyHeader()
-//                .AllowAnyMethod()
-//                .AllowCredentials());
-           // app.Run(async (context) => { await context.Response.WriteAsync("Hello World!"); });
         }
 
         private void MapperConfig() {
@@ -86,7 +70,6 @@ namespace WebService {
                 cfg.CreateMap<GetMarkedResult, MarkModel>();
                 cfg.CreateMap<SearchResult, SearchModel>();
                 cfg.CreateMap<GetUserResult, GetUserModel>();
-                //.ForMember(dest => dest.Category, opt => opt.MapFrom(src => src.Category.Name));
             });
         }
     }
