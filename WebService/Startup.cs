@@ -4,7 +4,6 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -26,16 +25,6 @@ namespace WebService {
             services.AddCors();
             services.AddMvc();
             services.AddSingleton<IDataService, DataService>();
-//            services.AddCors(options =>
-//            {
-//                options.AddPolicy("AllowAllOrigins",
-//                    builder =>
-//                    {
-//                        builder.AllowAnyOrigin().AllowAnyHeader();
-//
-//                    });
-//            });
-
 
             services.AddCors();
 
@@ -58,9 +47,7 @@ namespace WebService {
         public void Configure(IApplicationBuilder app, IHostingEnvironment env) {
             MapperConfig();
 
-            if (env.IsDevelopment()) {
-                app.UseDeveloperExceptionPage();
-            }
+            if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
 
             app.UseAuthentication();
             app.UseCors(
@@ -69,12 +56,6 @@ namespace WebService {
             app.UseDefaultFiles();
             app.UseStaticFiles();
             app.UseMvc();
-//            app.UseCors(builder =>
-//                builder.AllowAnyOrigin()
-//                .AllowAnyHeader()
-//                .AllowAnyMethod()
-//                .AllowCredentials());
-           // app.Run(async (context) => { await context.Response.WriteAsync("Hello World!"); });
         }
 
         private void MapperConfig() {
@@ -86,7 +67,6 @@ namespace WebService {
                 cfg.CreateMap<GetMarkedResult, MarkModel>();
                 cfg.CreateMap<SearchResult, SearchModel>();
                 cfg.CreateMap<GetUserResult, GetUserModel>();
-                //.ForMember(dest => dest.Category, opt => opt.MapFrom(src => src.Category.Name));
             });
         }
     }

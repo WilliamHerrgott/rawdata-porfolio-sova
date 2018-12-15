@@ -146,12 +146,9 @@ namespace WebService.Controllers {
         public JsonResult SearchExactMatch(string text, int page = 0, int pageSize = 10) {
             int.TryParse(HttpContext.User.Identity.Name, out var userId);
             var searchResult = _dataService.SearchExactMatch(text, userId, page, pageSize)
-                .Select(CreateSearchModel);
-            //if (searchResult == null)
-            //{
-            //    return NotFound();
-            //}
-            var numberOfItems = _dataService.GetSearchedCountSpecial(text, "exact_match");
+                                           .Select(CreateSearchModel);
+            
+            var numberOfItems = _dataService.GetExactSearchedCount(text);
             var numberOfPages = ComputeNumberOfPages(pageSize, numberOfItems);
 
             var result = new {
@@ -170,13 +167,10 @@ namespace WebService.Controllers {
         [HttpGet("search/best/{text}", Name = nameof(SearchBestMatch))]
         public IActionResult SearchBestMatch(string text, int page = 0, int pageSize = 10) {
             int.TryParse(HttpContext.User.Identity.Name, out var userId);
-            var searchResult = _dataService.SearchBestMatch(text, userId, page, pageSize, false)
-                .Select(CreateSearchModel);
-            //if (searchResult == null)
-            //{
-            //    return NotFound();
-            //}
-            var numberOfItems = _dataService.GetSearchedCountSpecial(text, "bestmatch");
+            var searchResult = _dataService.SearchBestMatch(text, userId, page, pageSize)
+                                           .Select(CreateSearchModel);
+
+            var numberOfItems = _dataService.GetBestSearchedCount(text);
             var numberOfPages = ComputeNumberOfPages(pageSize, numberOfItems);
 
             var result = new {

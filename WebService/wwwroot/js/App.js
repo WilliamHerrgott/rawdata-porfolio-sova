@@ -43,7 +43,9 @@ var viewModel = function() {
     // See if user is connected
     self.isConnected = ko.observable(false);
     
-    
+    // History array
+    self.history = ko.observableArray();
+
     self.tryRegister = function() {
         console.log("TE");
         var url = "https://localhost:5001/api/users/";
@@ -142,9 +144,23 @@ var viewModel = function() {
         $('#registerLink').removeClass('d-none');
         $('#loggedInMenu').addClass('d-none');
     };
+
+    self.getHistory = function() {
+        // self.history().destr
+        self.request('history', null, function (data, status) {
+            self.history.removeAll();
+            var hist = [];
+            $.each(data.items, function (i, item) {
+                hist.push(item);
+            });
+            ko.utils.arrayPushAll(self.history, hist);
+            self.history.valueHasMutated();
+            console.log(self.history());
+        }, 'GET', function (){});
+    };
     
     self.search = function () {
-        self.request('StackOverflow/search/' + self.search_query(), null, function (data, status) {
+        self.request('StackOverflow/search/best/' + self.search_query(), null, function (data, status) {
             self.posts.removeAll();
             var news = [];
             $.each(data.items, function (i, item) {
@@ -257,11 +273,6 @@ function init() {
 
     var VM = new viewModel();
 
-
-    // VM.search_query.subscribe(function () {
-    //     VM.search();
-    // });
-
     if (Cookies.get('token') != null && Cookies.get('login'))
         VM.setAccountON(Cookies.get('token'), Cookies.get('login'));
 
@@ -273,4 +284,3 @@ function init() {
 $(document).ready(function() {
     init();
 });
-
