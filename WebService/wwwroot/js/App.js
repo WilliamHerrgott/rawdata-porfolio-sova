@@ -75,7 +75,7 @@ var viewModel = function() {
                 });
                 ko.utils.arrayPushAll(self.words, newWords);
                 self.words.valueHasMutated();
-                $("#wordcloud").jQCloud(JSON.parse(self.words));
+                $("#wordcloud").jQCloud(self.words);
             },
             dataType: 'json',                
             error: function(jqXHR, status, error) { callback_error(jqXHR, status, error) },
