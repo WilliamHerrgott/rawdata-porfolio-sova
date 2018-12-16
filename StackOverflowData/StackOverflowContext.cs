@@ -18,7 +18,7 @@ namespace StackOverflowData {
 
         public DbQuery<GetPostOrCommentResult> GetPostResults { get; set; }
         public DbQuery<SearchResult> SearchResults { get; set; }
-        public DbQuery<SearchResult> SearchResultsWords { get; set; }
+        public DbQuery<SearchResultWords> SearchResultWords { get; set; }
         public DbQuery<GetAuthorResult> GetAuthorResult { get; set; }
 
         //SOVA DbSets

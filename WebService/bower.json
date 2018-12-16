@@ -19,7 +19,8 @@
     "knockout": "v3.4.2",
     "requirejs": "2.3.6",
     "text": "2.0.15",
-    "jQuery": "3.2.0"
+    "jQuery": "3.2.0",
+    "jqcloud2": "v2.0.3"
   },
   "resolutions": {
     "jQuery": "3.3.1"

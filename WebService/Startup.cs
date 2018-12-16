@@ -86,6 +86,7 @@ namespace WebService {
                 cfg.CreateMap<GetMarkedResult, MarkModel>();
                 cfg.CreateMap<SearchResult, SearchModel>();
                 cfg.CreateMap<GetUserResult, GetUserModel>();
+                cfg.CreateMap<SearchResultWords, SearchWordsModel>();
                 //.ForMember(dest => dest.Category, opt => opt.MapFrom(src => src.Category.Name));
             });
         }

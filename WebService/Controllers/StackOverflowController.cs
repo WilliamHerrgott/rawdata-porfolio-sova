@@ -191,9 +191,25 @@ namespace WebService.Controllers {
             return Ok(result);
         }
 
+        [Authorize]
+        [HttpGet("search/words/{text}", Name = nameof(SearchRelatedWords))]
+        public IActionResult SearchRelatedWords(string text)
+        {
+            int.TryParse(HttpContext.User.Identity.Name, out var userId);
+            var words = _dataService.SearchRelatedTerm(text, userId, true)
+                .Select(CreateSearchWordsModel);
+            return Ok(words);
+        }
+
         private SearchModel CreateSearchModel(SearchResult search) {
             var model = Mapper.Map<SearchModel>(search);
             model.Url = Url.Link(nameof(GetPost), new {id = search.Id});
+            return model;
+        }
+
+        private SearchWordsModel CreateSearchWordsModel(SearchResultWords search)
+        {
+            var model = Mapper.Map<SearchWordsModel>(search);
             return model;
         }
 
