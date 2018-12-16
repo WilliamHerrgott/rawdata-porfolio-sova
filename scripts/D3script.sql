@@ -236,19 +236,19 @@ DROP FUNCTION IF EXISTS delete_mark(integer, integer);
 CREATE FUNCTION delete_mark(this_user_id integer, this_post_id integer DEFAULT NULL)
 RETURNS BOOLEAN AS $$
 BEGIN
-		IF this_post_id IS NULL AND this_user_id IN(SELECT USER_ID FROM marks) THEN
-			DELETE FROM marks m
-			WHERE m.user_id = this_user_id;
-			RETURN TRUE;
-		ELSIF this_post_id IS NOT NULL AND this_user_id IN(SELECT USER_ID FROM marks) THEN
-			DELETE FROM marks
-			WHERE user_id = this_user_id
-			AND post_id = this_post_id;
-			RETURN TRUE;
-		ELSE 
-			RETURN FALSE;
-		END IF;
-	END; $$
+	IF this_post_id IS NULL AND this_user_id IN(SELECT USER_ID FROM marks) THEN
+		DELETE FROM marks m
+		WHERE m.user_id = this_user_id;
+		RETURN TRUE;
+	ELSIF this_post_id IS NOT NULL AND this_user_id IN(SELECT USER_ID FROM marks) THEN
+		DELETE FROM marks
+		WHERE user_id = this_user_id
+		AND post_id = this_post_id;
+		RETURN TRUE;
+	ELSE 
+		RETURN FALSE;
+	END IF;
+END; $$
 LANGUAGE plpgsql;
 
 -- ----------------------------
@@ -288,7 +288,7 @@ BEGIN
 	ELSE
 		RETURN FALSE;
 	END IF;
-	END; $$
+END; $$
 LANGUAGE plpgsql;
 
 -- ----------------------------
@@ -422,3 +422,21 @@ RETURNS TABLE (id integer, name varchar(255), created_date timestamp, location v
 		AND c.id = this_comment_id;
 	END; $$
 LANGUAGE plpgsql;
+
+-- ----------------------------
+-- Return true if the post is marked 
+-- and false if not
+-- ----------------------------
+
+DROP FUNCTION IF EXISTS is_marked(this_post_id integer, this_user_id integer);
+CREATE FUNCTION is_marked(this_post_id integer, this_user_id integer)
+RETURNS bool AS $$
+	BEGIN
+		IF (this_user_id IN (SELECT id FROM "SOVA_users") AND this_post_id NOT IN (SELECT post_id FROM marks 
+				WHERE marks.user_id = this_user_id)) THEN
+			RETURN FALSE;
+		ELSE 
+			RETURN TRUE;
+		END IF;
+	END; $$
+LANGUAGE plpgsql VOLATILE
