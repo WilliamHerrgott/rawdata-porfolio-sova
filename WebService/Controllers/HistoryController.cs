@@ -23,9 +23,7 @@ namespace WebService.Controllers {
             int.TryParse(HttpContext.User.Identity.Name, out var userId);
             var deleted = _dataService.DeleteHistory(userId);
 
-            if (deleted == false) {
-                return NotFound();
-            }
+            if (deleted == false) return NotFound();
 
             return Ok();
         }

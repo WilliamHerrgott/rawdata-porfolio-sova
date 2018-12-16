@@ -2,25 +2,24 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="profileModalLabel">See marked posts'</h5>
+                <h5 class="modal-title" id="marksModalLabel">See marked posts</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
+                    <span aria-hidden="true"></span>
                 </button>
             </div>
             <div class="modal-body">
-                 <!--ko foreach: markedPosts -->
+                 <!--ko foreach: marks -->
                 <div class="card">
                     <div class="card-body">
-                        <!--<h5 class="card-title text-truncate" data-bind="text: title"></h5>-->
-                        <p class="card-text text-truncate" data-bind="text: body"></p>
-                        <a href="#" class="btn btn-primary" data-bind="attr: { href: url}">See post</a>
+                        <p class="card-text text-truncate" data-bind="text: $root.strip(body)"></p>
                     </div>
+                    <footer class="blockquote-footer" data-bind="text: annotation, visible: annotation != null"><cite title="Date" data-bind="text: date"></cite></footer>
+                    <a href="#" class="btn btn-primary" data-bind="attr: {'data-url': url}, click: $root.loadFullPost"
+                       data-toggle="modal" data-target="#postModal">Look post</a>
                 </div>
                 <!-- /ko -->
             </div>
-            <div class="modal-footer">
-                <!--<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>-->
-            </div>
+            <div class="modal-footer"></div>
         </div>
     </div>
 </div>

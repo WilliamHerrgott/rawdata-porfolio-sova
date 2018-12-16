@@ -12,7 +12,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.0/showdown.min.js"></script>
+    <script src="https://unpkg.com/moment"></script>
     <script type='text/javascript' src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.js"></script>
 
@@ -23,45 +24,47 @@
 
 </head>
 <body>
-    <div w3-include-html="nav.html"></div>
+<div w3-include-html="nav.html"></div>
 
-    <div class="container" style="margin-top: 5%">
-        <form class="form-inline">
-            <div class="input-group mr-sm-2 col-8 offset-2" data-bind="visible: isConnected">
-                <input type="search" class="form-control" placeholder="Search.." aria-label="Search"
-                       data-bind="textInput: search_query">
-                <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" type="button"
-                            data-bind="click: search">
-                        Search !
-                    </button>
-                </div>
+<div class="container" style="margin-top: 5%">
+    <form class="form-inline">
+        <div class="input-group mr-sm-2 col-8 offset-2" data-bind="visible: isConnected">
+            <input type="search" class="form-control" placeholder="Search.." aria-label="Search"
+                   data-bind="textInput: search_query">
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="button"
+                        data-bind="click: search">
+                    Search !
+                </button>
                 <button class="btn btn-outline-secondary" type="button" data-bind="click: getRelatedWords">
                     Word Cloud
                 </button>
             </div>
-
-        </form>
-        <div class="card-columns">
-            <!-- ko foreach: posts -->
-            <div class="card">
-                <div class="card-body">
-                    <!--<h5 class="card-title text-truncate" data-bind="text: title"></h5>-->
-                    <p class="card-text text-truncate" data-bind="text: body"></p>
-                    <a href="#" class="btn btn-primary" data-bind="attr: { href: url}">See post</a>
-                </div>
-            </div>
-            <!-- /ko -->
         </div>
-
-        <div id="wordcloud" style="width: 550px; height: 350px; border: 1px solid #f00;"></div>
-
-
-        <div w3-include-html="registerModal.html?version=2"></div>
-        <div w3-include-html="profileModal.html?version=2"></div>
-        <div w3-include-html="historyModal.html?version=2"></div>
-        <div w3-include-html="marksModal.html?version=2"></div>
+    </form>
+    <div class="card-columns">
+        <!-- ko foreach: posts -->
+        <div class="card">
+            <div class="card-body">
+                <!--<h5 class="card-title text-truncate" data-bind="text: title"></h5>-->
+                <p class="card-text text-truncate" data-bind="text: $root.strip(body)"></p>
+                <button class="btn btn-primary" data-bind="attr: {'data-url': url}, click: $root.loadFullPost"
+                        data-toggle="modal" data-target="#postModal">
+                    See post
+                </button>
+            </div>
+        </div>
+        <!-- /ko -->
     </div>
+    <div id="wordcloud" style="width: 550px; height: 350px; border: 1px solid #f00;"></div>
+
+    <div w3-include-html="registerModal.html"></div>
+    <div w3-include-html="profileModal.html"></div>
+    <div w3-include-html="historyModal.html"></div>
+    <div w3-include-html="marksModal.html"></div>
+    <div w3-include-html="postModal.html"></div>
+    <div w3-include-html="commentsModal.html"></div>
+</div>
 </body>
-<script type='text/javascript' src="js/App.js?version=130"></script>
+<script type='text/javascript' src="js/App.js"></script>
 </html>

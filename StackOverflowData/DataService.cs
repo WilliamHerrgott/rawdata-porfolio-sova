@@ -23,6 +23,7 @@ namespace StackOverflowData {
         bool DeleteMark(int userId);
         bool MakeOrUpdateAnnotation(int userId, int postId, string text);
         bool DeleteAnnotation(int userId, int postId);
+        bool IsMarked(int postId, int userId);
         bool DeleteHistory(int userId);
 
         List<SearchResult> Search(string text, int userId, int page, int pageSize);
@@ -221,6 +222,16 @@ namespace StackOverflowData {
             }
         }
 
+        public bool IsMarked(int postId, int userId) {
+            using (var db = new StackOverflowContext()) {
+                var marked = db.BooleanResult
+                    .FromSql("SELECT * FROM is_marked({0},{1}) AS successful", postId, userId)
+                    .First().Successful;
+                db.SaveChanges();
+                return marked;
+            }
+        }
+
         public bool DeleteHistory(int userId) {
             using (var db = new StackOverflowContext()) {
                 var deleted = db.BooleanResult
@@ -316,10 +327,8 @@ namespace StackOverflowData {
             }
         }
 
-        public int GetExactSearchedCount(string text)
-        {
-            using (var db = new StackOverflowContext())
-            {
+        public int GetExactSearchedCount(string text) {
+            using (var db = new StackOverflowContext()) {
                 var count = db.SearchResults.FromSql("SELECT * FROM exact_match({0})", text)
                     .Count();
                 return count;

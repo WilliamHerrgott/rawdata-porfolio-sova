@@ -4,7 +4,14 @@ var viewModel = function() {
     self.search_query = ko.observable('');
     
     self.posts = ko.observableArray([]);
-    self.markedPosts = ko.observableArray([]);
+    self.answers = ko.observableArray([]);
+    self.comments = ko.observableArray([]);
+    self.marks = ko.observableArray([]);
+    
+    
+    self.postBody = ko.observable();
+    self.postDate = ko.observable();
+    self.postLinkMark = ko.observable();
 
     // Infos stored in db
     self.loggedID = ko.observable('');
@@ -55,8 +62,10 @@ var viewModel = function() {
         }, 'GET', function () { });
     };
 
+    // History array
+    self.history = ko.observableArray();
+
     self.tryRegister = function() {
-        console.log("TE");
         var url = "https://localhost:5001/api/users/";
         $.post(url, ko.toJSON({Username:self.registerLogin, Password: self.registerPassword, Email: self.registerEmail, Location: self.registerLocation}),
             function() {
@@ -130,7 +139,7 @@ var viewModel = function() {
             self.loggedEmail(data.email);
             self.modifyEmail(data.email);
             self.loggedID(data.id);
-        }, 'GET', function(){});
+        }, 'GET', function(){self.setAccountOFF()});
         $('#registerModal').modal('hide');
         $('#loginForm').addClass('d-none');
         $('#registerLink').addClass('d-none');
@@ -144,6 +153,7 @@ var viewModel = function() {
     
     self.setAccountOFF = function () {
         self.isConnected(false);
+        self.posts([]);
         Cookies.remove('token');  
         Cookies.remove('login');
         self.loggedToken();
@@ -152,18 +162,105 @@ var viewModel = function() {
         $('#registerLink').removeClass('d-none');
         $('#loggedInMenu').addClass('d-none');
     };
+
+    self.getHistory = function() {
+        // self.history().destr
+        self.request('history', null, function (data, status) {
+            self.history.removeAll();
+            var hist = [];
+            $.each(data.items, function (i, item) {
+                hist.push(item);
+            });
+            ko.utils.arrayPushAll(self.history, hist);
+            self.history.valueHasMutated();
+        }, 'GET', function (){});
+    };
     
     self.search = function () {
         self.request('StackOverflow/search/best/' + self.search_query(), null, function (data, status) {
             self.posts.removeAll();
             var news = [];
-                $.each(data.items, function (i, item) {
-                    // self.posts.push(item)
-                    news.push(item);
-                });
+            $.each(data.items, function (i, item) {
+                news.push(item);
+            });
             ko.utils.arrayPushAll(self.posts, news);
             self.posts.valueHasMutated();
         }, 'GET', function () {});
+    };
+
+    self.loadFullPost = function(data, event) {
+        $('#markButton').removeClass('btn-success').attr("disabled", false);
+
+        var dataUrl = event.target.getAttribute('data-url');
+        
+        self.request(getAPIUrl(dataUrl), null, function (data, status) {
+            self.postBody(self.strip(data.body));
+            self.postDate(data.creationDate);
+            self.postLinkMark(getAPIUrl(data.clickHereToMark));
+            
+            self.request(getAPIUrl(data.answers), null, function (data1, status) {
+                self.answers.removeAll();
+                var news = [];
+                console.log(data1);
+                $.each(data1.items, function (i, item) {
+                    var nbOfComment = 0;
+                    self.request(getAPIUrl(item.comments), null, function(data2, success){
+                        nbOfComment = data2.numberOfItems;
+                    }, 'GET', function(){});
+                    self.request(getAPIUrl(item.author), null, function(data2, success) {
+                        news.push({
+                            body: item.body,
+                            nbComments: nbOfComment,
+                            commentsUrl: item.comments,
+                            date: item.creationDate,
+                            author: data2.name
+                        });
+                    }, 'GET', function() {});
+                });
+                ko.utils.arrayPushAll(self.answers, news);
+                self.answers.valueHasMutated();
+            }, 'GET', function(){});
+        }, 'GET', function(){})
+    };
+    
+    self.updateComments = function(data, event){
+        var dataUrl = event.target.closest('a').getAttribute('data-url');
+        self.request(getAPIUrl(dataUrl), null, function (data, status) {
+            self.comments.removeAll();
+            var news = [];
+            $.each(data.items, function (i, item) {
+                self.request(getAPIUrl(item.author), null, function(data1, success) {
+                    news.push({
+                        body: item.body,
+                        date: item.creationDate,
+                        author: data1.name,
+                        authorUrl: item.author
+                    });
+                }, 'GET', function(){});
+            });
+            ko.utils.arrayPushAll(self.comments, news);
+            self.comments.valueHasMutated();
+        }, 'GET', function(){})
+    };
+    
+    self.markPost = function() {
+        self.request(self.postLinkMark(), null, function(data, status){
+            $('#markButton').addClass('btn-success').attr("disabled", true);
+        }, 'POST', function(){$('#markButton').addClass('btn-success').attr("disabled", true);});
+    };
+    
+    self.updateMarks = function(){
+        self.request('marks', null, function (data, status) {
+            self.marks.removeAll();
+            var news = [];
+            $.each(data.items, function (i, item) {
+                self.request(getAPIUrl(item.post), null, function(data1, status){
+                    news.push({body: data1.body, date: data1.creationDate, annotation: data1.annotation, url: item.post});
+                }, 'GET', function(){});
+            });
+            ko.utils.arrayPushAll(self.marks, news);
+            self.marks.valueHasMutated();
+        }, 'GET', function(){})
     };
     
     self.request = function(path, dataJSON, callback, type, callback_error) {
@@ -176,8 +273,20 @@ var viewModel = function() {
             error: function(jqXHR, status, error){callback_error(jqXHR, status, error)},
             beforeSend: function(xhr, settings) { xhr.setRequestHeader('Authorization','Bearer ' + self.loggedToken() ); }
         });
+    };
+    
+    self.strip = function (html) {
+        var tmp = document.createElement("DIV");
+        tmp.innerHTML = html;
+        return tmp.textContent || tmp.innerText || "";
     }
 };
+
+
+
+function getAPIUrl(url){
+    return url.substring(url.indexOf('api/')+4);
+}
 
 function init() {
     var z, i, elmnt, file, xhttp;
@@ -206,16 +315,11 @@ function init() {
         }
     }
     $.ajaxSetup({
-        contentType: "application/json; charset=utf-8"
+        contentType: "application/json; charset=utf-8",
+        async: false
     });
 
     var VM = new viewModel();
-
-
-    // VM.search_query.subscribe(function () {
-    //     VM.search();
-    // });
-
 
     if (Cookies.get('token') != null && Cookies.get('login'))
         VM.setAccountON(Cookies.get('token'), Cookies.get('login'));
@@ -268,4 +372,3 @@ $(document).ready(function () {
 
     ko.applyBindings(VM);    
 });
-

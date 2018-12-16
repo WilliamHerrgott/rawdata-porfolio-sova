@@ -16,6 +16,18 @@ namespace WebService.Controllers {
         public MarkController(IDataService dataService) {
             _dataService = dataService;
         }
+     
+        [Authorize]
+        [HttpGet("{postId}")]
+        public IActionResult IsMarked(int postId) {
+            int.TryParse(HttpContext.User.Identity.Name, out var userId);
+            var marked = _dataService.IsMarked(postId, userId);
+
+            if (marked) {
+                return Json(true);
+            }
+            return Json(false);
+        }
 
         [Authorize]
         [HttpPost("{postId}", Name = nameof(Mark))]
@@ -23,9 +35,7 @@ namespace WebService.Controllers {
             int.TryParse(HttpContext.User.Identity.Name, out var userId);
             var marked = _dataService.CreateMark(userId, postId);
 
-            if (marked == false) {
-                return BadRequest();
-            }
+            if (marked == false) return BadRequest();
 
             return Created("", new {userId, postId});
         }
@@ -36,9 +46,7 @@ namespace WebService.Controllers {
             int.TryParse(HttpContext.User.Identity.Name, out var userId);
             var deleted = _dataService.DeleteMark(userId);
 
-            if (deleted == false) {
-                return NotFound();
-            }
+            if (deleted == false) return NotFound();
 
             return Ok();
         }
@@ -49,9 +57,7 @@ namespace WebService.Controllers {
             int.TryParse(HttpContext.User.Identity.Name, out var userId);
             var deleted = _dataService.DeleteMark(userId, postId);
 
-            if (deleted == false) {
-                return NotFound();
-            }
+            if (deleted == false) return NotFound();
 
             return Ok();
         }
@@ -62,9 +68,7 @@ namespace WebService.Controllers {
             int.TryParse(HttpContext.User.Identity.Name, out var userId);
             var successful = _dataService.MakeOrUpdateAnnotation(userId, postId, text);
 
-            if (successful == false) {
-                return NotFound();
-            }
+            if (successful == false) return NotFound();
 
             return Ok();
         }
@@ -75,9 +79,7 @@ namespace WebService.Controllers {
             int.TryParse(HttpContext.User.Identity.Name, out var userId);
             var deleted = _dataService.DeleteAnnotation(userId, postId);
 
-            if (deleted == false) {
-                return NotFound();
-            }
+            if (deleted == false) return NotFound();
 
             return Ok();
         }
@@ -104,6 +106,7 @@ namespace WebService.Controllers {
 
             return Ok(result);
         }
+        
 
         private MarkModel CreateMarkModel(GetMarkedResult marks) {
             var model = Mapper.Map<MarkModel>(marks);
