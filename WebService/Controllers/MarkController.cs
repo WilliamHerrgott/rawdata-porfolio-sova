@@ -16,6 +16,18 @@ namespace WebService.Controllers {
         public MarkController(IDataService dataService) {
             _dataService = dataService;
         }
+     
+        [Authorize]
+        [HttpGet("{postId}")]
+        public IActionResult IsMarked(int postId) {
+            int.TryParse(HttpContext.User.Identity.Name, out var userId);
+            var marked = _dataService.IsMarked(postId, userId);
+
+            if (marked) {
+                return Json(true);
+            }
+            return Json(false);
+        }
 
         [Authorize]
         [HttpPost("{postId}", Name = nameof(Mark))]
