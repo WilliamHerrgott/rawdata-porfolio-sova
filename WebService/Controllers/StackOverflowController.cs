@@ -77,9 +77,7 @@ namespace WebService.Controllers {
         public IActionResult GetPost(int id) {
             var post = _dataService.GetPost(id);
 
-            if (post == null) {
-                return NotFound();
-            }
+            if (post == null) return NotFound();
 
             bool isQuestion;
             var model = Mapper.Map<PostModel>(post);
@@ -100,9 +98,7 @@ namespace WebService.Controllers {
         [HttpGet("author/post/{postId}", Name = nameof(GetAuthorOfPost))]
         public IActionResult GetAuthorOfPost(int postId) {
             var author = _dataService.GetAuthorOfPost(postId);
-            if (author == null) {
-                return NotFound();
-            }
+            if (author == null) return NotFound();
 
             var model = Mapper.Map<AuthorModel>(author);
             return Ok(model);
@@ -111,9 +107,7 @@ namespace WebService.Controllers {
         [HttpGet("author/comment/{commentId}", Name = nameof(GetAuthorOfComment))]
         public IActionResult GetAuthorOfComment(int commentId) {
             var author = _dataService.GetAuthorOfComment(commentId);
-            if (author == null) {
-                return NotFound();
-            }
+            if (author == null) return NotFound();
 
             var model = Mapper.Map<AuthorModel>(author);
             return Ok(model);
@@ -146,8 +140,8 @@ namespace WebService.Controllers {
         public JsonResult SearchExactMatch(string text, int page = 0, int pageSize = 10) {
             int.TryParse(HttpContext.User.Identity.Name, out var userId);
             var searchResult = _dataService.SearchExactMatch(text, userId, page, pageSize)
-                                           .Select(CreateSearchModel);
-            
+                .Select(CreateSearchModel);
+
             var numberOfItems = _dataService.GetExactSearchedCount(text);
             var numberOfPages = ComputeNumberOfPages(pageSize, numberOfItems);
 
@@ -168,7 +162,7 @@ namespace WebService.Controllers {
         public IActionResult SearchBestMatch(string text, int page = 0, int pageSize = 10) {
             int.TryParse(HttpContext.User.Identity.Name, out var userId);
             var searchResult = _dataService.SearchBestMatch(text, userId, page, pageSize)
-                                           .Select(CreateSearchModel);
+                .Select(CreateSearchModel);
 
             var numberOfItems = _dataService.GetBestSearchedCount(text);
             var numberOfPages = ComputeNumberOfPages(pageSize, numberOfItems);

@@ -23,6 +23,7 @@ namespace StackOverflowData {
         bool DeleteMark(int userId);
         bool MakeOrUpdateAnnotation(int userId, int postId, string text);
         bool DeleteAnnotation(int userId, int postId);
+        bool IsMarked(int postId, int userId);
         bool DeleteHistory(int userId);
 
         List<SearchResult> Search(string text, int userId, int page, int pageSize);
@@ -218,6 +219,16 @@ namespace StackOverflowData {
                     .First().Successful;
                 db.SaveChanges();
                 return deleted;
+            }
+        }
+
+        public bool IsMarked(int postId, int userId) {
+            using (var db = new StackOverflowContext()) {
+                var marked = db.BooleanResult
+                    .FromSql("SELECT * FROM is_marked({0},{1}) AS successful", postId, userId)
+                    .First().Successful;
+                db.SaveChanges();
+                return marked;
             }
         }
 

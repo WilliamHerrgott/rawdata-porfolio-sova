@@ -9,10 +9,13 @@
             </div>
             <div class="modal-body">
                 <!-- ko foreach: history -->
-                    <span data-bind="text: searchedText"></span>
-                    <span> - </span>
-                    <span data-bind="text: moment(date).format('MMM Do YYYY, h:mm a')"></span>
-                    <hr/>
+                <div class="card">
+                    <div class="card-body">
+                        <span data-bind="text: searchedText"></span>
+                        <span> - </span>
+                        <span data-bind="text: moment(date).format('MMM Do YYYY, h:mm a')"></span>
+                    </div>
+                </div>
                 <!-- /ko -->
             </div>
             <div class="modal-footer"></div>
