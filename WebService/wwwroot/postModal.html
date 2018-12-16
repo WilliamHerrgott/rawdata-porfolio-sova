@@ -13,8 +13,20 @@
                 <div class="card">
                     <div class="card-body">
                         <!--<h5 class="card-title text-truncate" data-bind="text: title"></h5>-->
-                        <p class="card-text text-truncate" data-bind="text: $root.strip(body)"></p>
+                        <p class="card-text" data-bind="text: $root.strip(body)"></p>
+                        <h6 class="cart-text text-right" data-bind="text: moment(date).format('MMM Do YYYY, h:mm a')"></h6>
+                        <h6 class="text-right">
+                            <span data-bind="text: author"></span>
+                        </h6>
                     </div>
+                    <footer>
+                        <p class="text-right" data-bind="visible: nbComments != 0"><u>
+                            <a data-bind="attr: {'data-url': commentsUrl}, click: $root.updateComments"
+                               data-toggle="modal" data-target="#commentsModal">
+                                <span data-bind="text: nbComments"></span><span> comments</span>
+                            </a>
+                        </u></p>
+                    </footer>
                 </div>
                 <!-- /ko -->
 

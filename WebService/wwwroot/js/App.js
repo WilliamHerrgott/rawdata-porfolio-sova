@@ -47,7 +47,6 @@ var viewModel = function() {
     self.history = ko.observableArray();
 
     self.tryRegister = function() {
-        console.log("TE");
         var url = "https://localhost:5001/api/users/";
         $.post(url, ko.toJSON({Username:self.registerLogin, Password: self.registerPassword, Email: self.registerEmail, Location: self.registerLocation}),
             function() {
@@ -155,7 +154,6 @@ var viewModel = function() {
             });
             ko.utils.arrayPushAll(self.history, hist);
             self.history.valueHasMutated();
-            console.log(self.history());
         }, 'GET', function (){});
     };
     
@@ -175,20 +173,30 @@ var viewModel = function() {
         $('#markButton').removeClass('btn-success').attr("disabled", false);
 
         var dataUrl = event.target.getAttribute('data-url');
-        dataUrl = dataUrl.substring(dataUrl.indexOf('api/')+4);
         
-        self.request(dataUrl, null, function (data, status) {
-            console.log(data);
+        self.request(getAPIUrl(dataUrl), null, function (data, status) {
             self.postBody(self.strip(data.body));
             self.postDate(data.creationDate);
             self.postLinkMark(getAPIUrl(data.clickHereToMark));
             
             self.request(getAPIUrl(data.answers), null, function (data1, status) {
-                console.log(data1);
                 self.answers.removeAll();
                 var news = [];
+                console.log(data1);
                 $.each(data1.items, function (i, item) {
-                    news.push(item);
+                    var nbOfComment = 0;
+                    self.request(getAPIUrl(item.comments), null, function(data2, success){
+                        nbOfComment = data2.numberOfItems;
+                    }, 'GET', function(){});
+                    self.request(getAPIUrl(item.author), null, function(data2, success) {
+                        news.push({
+                            body: item.body,
+                            nbComments: nbOfComment,
+                            commentsUrl: item.comments,
+                            date: item.creationDate,
+                            author: data2.name
+                        });
+                    }, 'GET', function() {});
                 });
                 ko.utils.arrayPushAll(self.answers, news);
                 self.answers.valueHasMutated();
@@ -196,9 +204,28 @@ var viewModel = function() {
         }, 'GET', function(){})
     };
     
+    self.updateComments = function(data, event){
+        var dataUrl = event.target.closest('a').getAttribute('data-url');
+        self.request(getAPIUrl(dataUrl), null, function (data, status) {
+            self.comments.removeAll();
+            var news = [];
+            $.each(data.items, function (i, item) {
+                self.request(getAPIUrl(item.author), null, function(data1, success) {
+                    news.push({
+                        body: item.body,
+                        date: item.creationDate,
+                        author: data1.name,
+                        authorUrl: item.author
+                    });
+                }, 'GET', function(){});
+            });
+            ko.utils.arrayPushAll(self.comments, news);
+            self.comments.valueHasMutated();
+        }, 'GET', function(){})
+    };
+    
     self.markPost = function() {
         self.request(self.postLinkMark(), null, function(data, status){
-            console.log('OK');
             $('#markButton').addClass('btn-success').attr("disabled", true);
         }, 'POST', function(){$('#markButton').addClass('btn-success').attr("disabled", true);});
     };
@@ -207,9 +234,10 @@ var viewModel = function() {
         self.request('marks', null, function (data, status) {
             self.marks.removeAll();
             var news = [];
-            console.log(data);
             $.each(data.items, function (i, item) {
-                news.push(item);
+                self.request(getAPIUrl(item.post), null, function(data1, status){
+                    news.push({body: data1.body, date: data1.creationDate, annotation: data1.annotation, url: item.post});
+                }, 'GET', function(){});
             });
             ko.utils.arrayPushAll(self.marks, news);
             self.marks.valueHasMutated();
@@ -226,7 +254,7 @@ var viewModel = function() {
             error: function(jqXHR, status, error){callback_error(jqXHR, status, error)},
             beforeSend: function(xhr, settings) { xhr.setRequestHeader('Authorization','Bearer ' + self.loggedToken() ); }
         });
-    }
+    };
     
     self.strip = function (html) {
         var tmp = document.createElement("DIV");
@@ -268,7 +296,8 @@ function init() {
         }
     }
     $.ajaxSetup({
-        contentType: "application/json; charset=utf-8"
+        contentType: "application/json; charset=utf-8",
+        async: false
     });
 
     var VM = new viewModel();
