@@ -50,7 +50,7 @@ var viewModel = function() {
         { text: "A", weight: 13 },
         { text: "B", weight: 10.5 }]);
 
-    self.getRelatedWords = function () {
+    /*self.getRelatedWords = function () {
         self.request('StackOverflow/search/words/' + self.search_query(), null, function (data, status) {
             self.words.removeAll();
             var newWords = [];
@@ -60,7 +60,30 @@ var viewModel = function() {
             ko.utils.arrayPushAll(self.words, newWords);
             self.words.valueHasMutated();
         }, 'GET', function () { });
-    };
+    };*/
+
+    self.getRelatedWords = function () {
+        $.ajax({
+            url: "https://localhost:5001/api/StackOverflow/search/words/" + self.search_query,
+            type: "get",
+            async: false,
+            success: function (data) {
+                self.words.removeAll();
+                var newWords = [];
+                $.each(data.items, function (i, item) {
+                    newWords.push(item);
+                });
+                ko.utils.arrayPushAll(self.words, newWords);
+                self.words.valueHasMutated();
+                $("#wordcloud").jQCloud(JSON.parse(self.words));
+            },
+            dataType: 'json',                
+            error: function(jqXHR, status, error) { callback_error(jqXHR, status, error) },
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader('Authorization', 'Bearer ' + self.loggedToken());
+            }
+        });
+    }; 
 
     // History array
     self.history = ko.observableArray();
@@ -321,6 +344,8 @@ function init() {
 
     var VM = new viewModel();
 
+    //$('#wordcloud').jQCloud(VM.words);
+
     if (Cookies.get('token') != null && Cookies.get('login'))
         VM.setAccountON(Cookies.get('token'), Cookies.get('login'));
 
@@ -330,45 +355,5 @@ function init() {
 
 // Activates knockout.js
 $(document).ready(function () {
-    var z, i, elmnt, file, xhttp;
-    /* Loop through a collection of all HTML elements: */
-    z = document.getElementsByTagName("*");
-    for (i = 0; i < z.length; i++) {
-        elmnt = z[i];
-        /*search for elements with a certain atrribute:*/
-        file = elmnt.getAttribute("w3-include-html");
-        if (file) {
-            /* Make an HTTP request using the attribute value as the file name: */
-            xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function () {
-                if (this.readyState === 4) {
-                    if (this.status === 200) { elmnt.innerHTML = this.responseText; }
-                    if (this.status === 404) { elmnt.innerHTML = "Page not found."; }
-                    /* Remove the attribute, and call this function once more: */
-                    elmnt.removeAttribute("w3-include-html");
-                    init();
-                }
-            };
-            xhttp.open("GET", file, true);
-            xhttp.send();
-            /* Exit the function: */
-            return;
-        }
-    }
-    $.ajaxSetup({
-        contentType: "application/json; charset=utf-8"
-    });
-
-    var VM = new viewModel();
-
-
-    // VM.search_query.subscribe(function () {
-    //     VM.search();
-    // });
-    $('#wordcloud').jQCloud(VM.words);
-
-    if (Cookies.get('token') != null && Cookies.get('login'))
-        VM.setAccountON(Cookies.get('token'), Cookies.get('login'));
-
-    ko.applyBindings(VM);    
+    init();   
 });
