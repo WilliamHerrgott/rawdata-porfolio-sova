@@ -12,7 +12,7 @@
                     <div class="form-group">
                         <label for="modifyLogin">Login</label>
                         <input type="text" class="form-control" id="modifyLogin" aria-describedby="emailHelp" placeholder="Choose login"
-                               data-bind="textInput: modifyLogin, hasFocus: modifyLogin.focused">
+                               data-bind="textInput: modifyLogin">
                         <div class="invalid-feedback">Non</div>
                         <label for="modifyLocation">Location</label>
                         <input type="text" class="form-control" id="modifyLocation" placeholder="Location"
@@ -43,6 +43,8 @@
                         </div>
                     </div>
                 </form>
+                <button type="button" data-bind="click: changeInformations"
+                        class="btn btn-primary btn-success">Save Informations</button>
             </div>
             <div class="modal-footer"></div>
         </div>

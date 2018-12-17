@@ -77,13 +77,24 @@ var viewModel = function() {
         self.fullModifyPassword(true);
     };
     
-    self.modifyLogin.focused.subscribe(function(on) {
-        if (!on && self.modifyLogin() !== self.loggedLogin()) {
-            self.request("users/update/username/" + self.modifyLogin, null, function(data, status) {
+    self.changeInformations = function() {
+        if (self.loggedLogin() !== self.modifyLogin()) {
+            self.request("users/update/username/" + self.modifyLogin(), null, function(data, status) {
             }, 'PUT', function(){});
+            self.loggedLogin(self.modifyLogin());
         }
-    });
-    
+        if (self.loggedLocation() !== self.modifyLocation()) {
+            self.request("users/update/location/" + self.modifyLocation(), null, function(data, status) {
+            }, 'PUT', function(){});
+            self.loggedLocation(self.modifyLocation());
+        }
+        if (self.loggedEmail() !== self.modifyEmail()) {
+            self.request("users/update/email/" + self.modifyEmail(), null, function(data, status) {
+            }, 'PUT', function(){});
+            self.loggedEmail(self.modifyEmail());
+        }
+    };
+
     self.cancelModifyPassword = function() {
     };
     
