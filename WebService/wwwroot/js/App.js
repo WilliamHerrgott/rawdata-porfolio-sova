@@ -184,10 +184,23 @@ var viewModel = function() {
             self.wordCloud.valueHasMutated();
         }, 'GET', function (){});
     };
+    
+    self.isPostMarked = function() {
+        var isMarked;
 
+        self.request(self.postLinkMark(), null, function(data, status) {
+            isMarked = data;
+            console.log(isMarked, typeof isMarked)
+        }, 'GET', function (){});
+
+        if (isMarked === true) {
+            $('#markButton').addClass('btn-success').attr("disabled", true);
+        } else {
+            $('#markButton').removeClass('btn-success').attr("disabled", false);
+        }
+    };
+    
     self.loadFullPost = function(data, event) {
-        $('#markButton').removeClass('btn-success').attr("disabled", false);
-
         var dataUrl = event.target.getAttribute('data-url');
         
         self.request(getAPIUrl(dataUrl), null, function (data, status) {
@@ -217,6 +230,9 @@ var viewModel = function() {
                 self.answers.valueHasMutated();
             }, 'GET', function(){});
         }, 'GET', function(){})
+        
+        // Mark the post
+        self.isPostMarked();
     };
     
     self.updateComments = function(data, event){
