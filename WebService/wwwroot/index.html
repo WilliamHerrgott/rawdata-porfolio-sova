@@ -2,9 +2,10 @@
 <html>
 <head>
     <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.css">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.css" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous" />
+    <link rel="stylesheet" type="text/css" href="js/lib/jqcloud2/dist/jqcloud.min.css"/>
 
     <!-- Optional theme -->
     <!-- Latest compiled and minified JavaScript -->
@@ -16,13 +17,13 @@
     <script src="https://unpkg.com/moment"></script>
     <script type='text/javascript' src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.4.2/knockout-min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.0/jquery-confirm.min.js"></script>
+    <script src="js/lib/jqcloud2/dist/jqcloud.js"></script>
 
-    
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <title>SOVA</title>
-
 </head>
+
 <body>
 <div w3-include-html="nav.html"></div>
 
@@ -36,7 +37,9 @@
                         data-bind="click: search">
                     Search !
                 </button>
-                <button class="btn btn-outline-secondary" type="button" data-bind="click: getRelatedWords">
+                <button class="btn btn-outline-secondary" type="button"
+                        data-bind="click: getRelatedWords" data-toggle="modal"
+                        data-target="#wordCloudModal">
                     Word Cloud
                 </button>
             </div>
@@ -46,7 +49,6 @@
         <!-- ko foreach: posts -->
         <div class="card">
             <div class="card-body">
-                <!--<h5 class="card-title text-truncate" data-bind="text: title"></h5>-->
                 <p class="card-text text-truncate" data-bind="text: $root.strip(body)"></p>
                 <button class="btn btn-primary" data-bind="attr: {'data-url': url}, click: $root.loadFullPost"
                         data-toggle="modal" data-target="#postModal">
@@ -56,7 +58,8 @@
         </div>
         <!-- /ko -->
     </div>
-    <div id="wordcloud" style="width: 550px; height: 350px; border: 1px solid #f00;"></div>
+    
+    <div id="wordcloud" style="width: 550px; height: 350px;"></div>
 
     <div w3-include-html="registerModal.html"></div>
     <div w3-include-html="profileModal.html"></div>
@@ -64,7 +67,8 @@
     <div w3-include-html="marksModal.html"></div>
     <div w3-include-html="postModal.html"></div>
     <div w3-include-html="commentsModal.html"></div>
+    <div w3-include-html="wordCloud.html"></div>
 </div>
 </body>
-<script type='text/javascript' src="js/App.js"></script>
+    <script type='text/javascript' src="js/App.js"></script>
 </html>

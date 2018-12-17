@@ -181,12 +181,15 @@ namespace WebService.Controllers {
 
         [Authorize]
         [HttpGet("search/words/{text}", Name = nameof(SearchRelatedWords))]
-        public IActionResult SearchRelatedWords(string text)
-        {
+        public IActionResult SearchRelatedWords(string text, int page = 0, int pageSize = 10) {
             int.TryParse(HttpContext.User.Identity.Name, out var userId);
-            var words = _dataService.SearchRelatedTerm(text, userId, true)
+            var words = _dataService.SearchRelatedTerm(text, userId, true, page, pageSize)
                 .Select(CreateSearchWordsModel);
-            return Ok(words);
+            
+            var result = new {
+                Items = words
+            };
+            return Ok(result);
         }
 
         private SearchModel CreateSearchModel(SearchResult search) {
@@ -195,8 +198,7 @@ namespace WebService.Controllers {
             return model;
         }
 
-        private SearchWordsModel CreateSearchWordsModel(SearchResultWords search)
-        {
+        private SearchWordsModel CreateSearchWordsModel(SearchResultWords search) {
             var model = Mapper.Map<SearchWordsModel>(search);
             return model;
         }

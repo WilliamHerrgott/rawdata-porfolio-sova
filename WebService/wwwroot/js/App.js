@@ -43,51 +43,12 @@ var viewModel = function() {
     // See if user is connected
     self.isConnected = ko.observable(false);
 
-    // For the cloud
-    // just added some elements to the array so we can
-    // get the binding to work
-    self.words = ko.observableArray([
-        { text: "A", weight: 13 },
-        { text: "B", weight: 10.5 }]);
-
-    /*self.getRelatedWords = function () {
-        self.request('StackOverflow/search/words/' + self.search_query(), null, function (data, status) {
-            self.words.removeAll();
-            var newWords = [];
-            $.each(data.items, function (i, item) {
-                newWords.push(item);
-            });
-            ko.utils.arrayPushAll(self.words, newWords);
-            self.words.valueHasMutated();
-        }, 'GET', function () { });
-    };*/
-
-    self.getRelatedWords = function () {
-        $.ajax({
-            url: "https://localhost:5001/api/StackOverflow/search/words/" + self.search_query,
-            type: "get",
-            async: false,
-            success: function (data) {
-                self.words.removeAll();
-                var newWords = [];
-                $.each(data.items, function (i, item) {
-                    newWords.push(item);
-                });
-                ko.utils.arrayPushAll(self.words, newWords);
-                self.words.valueHasMutated();
-                $("#wordcloud").jQCloud(self.words);
-            },
-            dataType: 'json',                
-            error: function(jqXHR, status, error) { callback_error(jqXHR, status, error) },
-            beforeSend: function(xhr, settings) {
-                xhr.setRequestHeader('Authorization', 'Bearer ' + self.loggedToken());
-            }
-        });
-    }; 
-
     // History array
     self.history = ko.observableArray();
-
+    
+    // Word cloud array
+    self.wordCloud = ko.observableArray();
+    
     self.tryRegister = function() {
         var url = "https://localhost:5001/api/users/";
         $.post(url, ko.toJSON({Username:self.registerLogin, Password: self.registerPassword, Email: self.registerEmail, Location: self.registerLocation}),
@@ -187,7 +148,6 @@ var viewModel = function() {
     };
 
     self.getHistory = function() {
-        // self.history().destr
         self.request('history', null, function (data, status) {
             self.history.removeAll();
             var hist = [];
@@ -211,6 +171,18 @@ var viewModel = function() {
         }, 'GET', function () {});
     };
 
+    self.getRelatedWords = function () {
+        self.request('StackOverflow/search/words/' + self.search_query(), null, function (data, status) {
+            self.wordCloud.removeAll();
+            var newWords = [];
+            $.each(data.items, function (i, item) {
+                newWords.push(item);
+            });
+            ko.utils.arrayPushAll(self.wordCloud, newWords);
+            self.wordCloud.valueHasMutated();
+        }, 'GET', function (){});
+    };
+
     self.loadFullPost = function(data, event) {
         $('#markButton').removeClass('btn-success').attr("disabled", false);
 
@@ -224,7 +196,6 @@ var viewModel = function() {
             self.request(getAPIUrl(data.answers), null, function (data1, status) {
                 self.answers.removeAll();
                 var news = [];
-                console.log(data1);
                 $.each(data1.items, function (i, item) {
                     var nbOfComment = 0;
                     self.request(getAPIUrl(item.comments), null, function(data2, success){
@@ -305,8 +276,6 @@ var viewModel = function() {
     }
 };
 
-
-
 function getAPIUrl(url){
     return url.substring(url.indexOf('api/')+4);
 }
@@ -343,15 +312,17 @@ function init() {
     });
 
     var VM = new viewModel();
-
-    //$('#wordcloud').jQCloud(VM.words);
-
+    
     if (Cookies.get('token') != null && Cookies.get('login'))
         VM.setAccountON(Cookies.get('token'), Cookies.get('login'));
 
     ko.applyBindings(VM);
+    
+    // Wordcloud with jqcloud
+    VM.wordCloud.subscribe(function () {
+        $('#wordcloud').jQCloud(VM.wordCloud());
+    });
 }
-
 
 // Activates knockout.js
 $(document).ready(function () {

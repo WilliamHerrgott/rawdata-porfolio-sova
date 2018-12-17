@@ -29,7 +29,7 @@ namespace StackOverflowData {
         List<SearchResult> Search(string text, int userId, int page, int pageSize);
         List<SearchResult> SearchExactMatch(string text, int userId, int page, int pageSize);
         List<SearchResult> SearchBestMatch(string text, int userId, int page, int pageSize);
-        List<SearchResultWords> SearchRelatedTerm(string text, int userId, bool weighted);
+        List<SearchResultWords> SearchRelatedTerm(string text, int userId, bool weighted, int page, int pageSize);
         List<SearchResult> SearchExpandedQuery(string text, int userId, int page, int pageSize);
         List<SearchResultWords> SearchCoWordQuery(string text, int userId, int page, int pageSize);
 
@@ -276,10 +276,12 @@ namespace StackOverflowData {
             }
         }
 
-        public List<SearchResultWords> SearchRelatedTerm(string text, int userId, bool weighted) {
+        public List<SearchResultWords> SearchRelatedTerm(string text, int userId, bool weighted, int page = 0, int pageSize = 10) {
             using (var db = new StackOverflowContext()) {
                 var result = db.SearchResultWords
                     .FromSql("SELECT * FROM dynamic_keyword_list" + (weighted ? "_weighted" : "") + "({0}, {1})", text, userId)
+                    .Skip(page * pageSize)
+                    .Take(pageSize)
                     .ToList();
                 db.SaveChanges();
                 return result;
