@@ -161,6 +161,7 @@ var viewModel = function() {
     
     self.search = function () {
         self.request('StackOverflow/search/best/' + self.search_query(), null, function (data, status) {
+            $('#wordcloud').jQCloud('destroy');
             self.posts.removeAll();
             var news = [];
             $.each(data.items, function (i, item) {
@@ -173,6 +174,7 @@ var viewModel = function() {
 
     self.getRelatedWords = function () {
         self.request('StackOverflow/search/words/' + self.search_query(), null, function (data, status) {
+            self.posts.removeAll();
             self.wordCloud.removeAll();
             var newWords = [];
             $.each(data.items, function (i, item) {
@@ -320,7 +322,10 @@ function init() {
     
     // Wordcloud with jqcloud
     VM.wordCloud.subscribe(function () {
-        $('#wordcloud').jQCloud(VM.wordCloud());
+        $('#wordcloud').jQCloud('update', VM.wordCloud(), {
+            width: 500,
+            height: 350
+        });
     });
 }
 
