@@ -118,6 +118,8 @@ var viewModel = function() {
         self.modifiedEmail(self.loggedEmail());
         self.modifiedLogin(self.loggedLogin());
         self.modifiedLocation(self.loggedLocation());
+        self.modifiedPassword(self.password());
+        self.modifiedPasswordBis('');
     };
     
     self.modifyPassword = function() {
