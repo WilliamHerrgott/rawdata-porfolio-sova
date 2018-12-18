@@ -3,48 +3,56 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="profileModalLabel">Modify Profile</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                        data-bind="click: resetInfos">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form class="needs-validation" novalidate>
-                    <div class="form-group">
-                        <label for="modifyLogin">Login</label>
-                        <input type="text" class="form-control" id="modifyLogin" aria-describedby="emailHelp" placeholder="Choose login"
-                               data-bind="textInput: modifyLogin">
-                        <div class="invalid-feedback">Non</div>
-                        <label for="modifyLocation">Location</label>
-                        <input type="text" class="form-control" id="modifyLocation" placeholder="Location"
-                               data-bind="textInput: modifyLocation">
-                    </div>
-                    <div class="form-group">
-                        <label for="modifyEmail">Email address</label>
-                        <input type="email" class="form-control" id="modifyEmail" aria-describedby="emailHelp" placeholder="Enter email"
-                               data-bind="textInput: modifyEmail">
-                    </div>
-                    <label for="modifyPassword">Modify Password</label>
-                    <div class="form-row">
-                        <div class="form-group col-md-4">
-                            <input type="password" class="form-control" id="modifyPassword" placeholder="Password" autocomplete="off"
-                                   data-bind="textInput: modifyPassword, click: showFullModifyPassword">
+                <div class="modifyCommonInfos">
+                    <form class="needs-validation" novalidate>
+                        <div class="form-group">
+                            <label for="modifyLogin">Login</label>
+                            <input type="text" class="form-control" id="modifyLogin" aria-describedby="emailHelp"
+                                   placeholder="Login:" data-bind="textInput: modifyLogin">
+                            
+                            <label for="modifyLocation">Location</label>
+                            <input type="text" class="form-control" id="modifyLocation"
+                                   placeholder="Location:" data-bind="textInput: modifyLocation">
+                            
+                            <label for="modifyEmail">Email address</label>
+                            <input type="email" class="form-control" id="modifyEmail" aria-describedby="emailHelp"
+                                   placeholder="Email:" data-bind="textInput: modifyEmail">
                         </div>
-                        <div class="form-group col-md-4">
-                            <input type="password" class="form-control" id="modifyPasswordBis" placeholder="Repeat password" autocomplete="off"
-                                   data-bind="textInput: modifyPasswordBis, visible: fullModifyPassword">
+                    </form>
+                    <button type="button" data-bind="click: changeInformations"
+                            class="btn btn-primary btn-success"
+                            data-dismiss="modal">Save Informations</button>
+                </div>
+
+                <div class="modifyPasswd">
+                    <form class="needs-validation" novalidate>
+                        <label for="modifyPassword">Modify Password</label>
+                        <div class="form-row">
+                            <div class="form-group col-md-4">
+                                <input type="password" class="form-control" id="modifyPassword" placeholder="Password" autocomplete="off"
+                                       data-bind="textInput: modifyPassword, click: showFullModifyPassword">
+                            </div>
+                            <div class="form-group col-md-4">
+                                <input type="password" class="form-control" id="modifyPasswordBis" placeholder="Repeat password" autocomplete="off"
+                                       data-bind="textInput: modifyPasswordBis, visible: fullModifyPassword">
+                            </div>
+                            <div class="form-group col-md-2">
+                                <button type="button" class="btn btn-primary btn-success" id="saveButtonModifyPassword"
+                                        data-bind="click: modifyPassword, visible: fullModifyPassword">Confirm</button>
+                            </div>
+                            <div class="form-group col-md-2">
+                                <button type="button" class="btn btn-primary btn-danger" id="cancelButtonModifyPassword"
+                                        data-bind="click: cancelModifyPassword, visible: fullModifyPassword">Cancel</button>
+                            </div>
                         </div>
-                        <div class="form-group col-md-2">
-                            <button type="button" class="btn btn-primary btn-success" id="saveButtonModifyPassword"
-                                    data-bind="click: modifyPassword, visible: fullModifyPassword">Confirm</button>
-                        </div>
-                        <div class="form-group col-md-2">
-                            <button type="button" class="btn btn-primary btn-danger" id="cancelButtonModifyPassword"
-                                    data-bind="click: cancelModifyPassword, visible: fullModifyPassword">Cancel</button>
-                        </div>
-                    </div>
-                </form>
-                <button type="button" data-bind="click: changeInformations"
-                        class="btn btn-primary btn-success">Save Informations</button>
+                    </form>
+                </div>
             </div>
             <div class="modal-footer"></div>
         </div>

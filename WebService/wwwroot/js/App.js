@@ -94,6 +94,12 @@ var viewModel = function() {
             self.loggedEmail(self.modifyEmail());
         }
     };
+    
+    self.resetInfos = function() {
+        self.modifyEmail(self.loggedEmail());
+        self.modifyLogin(self.loggedLogin());
+        self.modifyLocation(self.loggedLocation());
+    };
 
     self.cancelModifyPassword = function() {
     };
