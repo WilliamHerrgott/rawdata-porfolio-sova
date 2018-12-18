@@ -8,48 +8,47 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
+
             <div class="modal-body">
                 <div class="modifyCommonInfos">
                     <form class="needs-validation" novalidate>
                         <div class="form-group">
-                            <label for="modifyLogin">Login</label>
-                            <input type="text" class="form-control" id="modifyLogin" aria-describedby="emailHelp"
-                                   placeholder="Login:" data-bind="textInput: modifyLogin">
+                            <label for="modifiedLogin">Login</label>
+                            <input type="text" class="form-control" id="modifiedLogin" aria-describedby="emailHelp"
+                                   placeholder="Login:" data-bind="textInput: modifiedLogin">
                             
-                            <label for="modifyLocation">Location</label>
-                            <input type="text" class="form-control" id="modifyLocation"
-                                   placeholder="Location:" data-bind="textInput: modifyLocation">
+                            <label for="modifiedLocation">Location</label>
+                            <input type="text" class="form-control" id="modifiedLocation"
+                                   placeholder="Location:" data-bind="textInput: modifiedLocation">
                             
-                            <label for="modifyEmail">Email address</label>
-                            <input type="email" class="form-control" id="modifyEmail" aria-describedby="emailHelp"
-                                   placeholder="Email:" data-bind="textInput: modifyEmail">
+                            <label for="modifiedEmail">Email address</label>
+                            <input type="email" class="form-control" id="modifiedEmail" aria-describedby="emailHelp"
+                                   placeholder="Email:" data-bind="textInput: modifiedEmail">
                         </div>
                     </form>
                     <button type="button" data-bind="click: changeInformations"
                             class="btn btn-primary btn-success"
                             data-dismiss="modal">Save Informations</button>
                 </div>
+                
+                <hr/>
 
                 <div class="modifyPasswd">
                     <form class="needs-validation" novalidate>
-                        <label for="modifyPassword">Modify Password</label>
+                        <label for="modifiedPassword">Modify Password</label>
                         <div class="form-row">
-                            <div class="form-group col-md-4">
-                                <input type="password" class="form-control" id="modifyPassword" placeholder="Password" autocomplete="off"
-                                       data-bind="textInput: modifyPassword, click: showFullModifyPassword">
+                            <div class="form-group col-md-6">
+                                <input type="password" class="form-control" id="modifiedPassword" placeholder="Password" autocomplete="off"
+                                       data-bind="textInput: modifiedPassword, click: showFullModifyPassword">
                             </div>
-                            <div class="form-group col-md-4">
-                                <input type="password" class="form-control" id="modifyPasswordBis" placeholder="Repeat password" autocomplete="off"
-                                       data-bind="textInput: modifyPasswordBis, visible: fullModifyPassword">
+                            <div class="form-group col-md-6">
+                                <input type="password" class="form-control" id="modifiedPasswordBis" placeholder="Repeat password" autocomplete="off"
+                                       data-bind="textInput: modifiedPasswordBis, visible: fullModifyPassword">
                             </div>
-                            <div class="form-group col-md-2">
-                                <button type="button" class="btn btn-primary btn-success" id="saveButtonModifyPassword"
-                                        data-bind="click: modifyPassword, visible: fullModifyPassword">Confirm</button>
-                            </div>
-                            <div class="form-group col-md-2">
-                                <button type="button" class="btn btn-primary btn-danger" id="cancelButtonModifyPassword"
-                                        data-bind="click: cancelModifyPassword, visible: fullModifyPassword">Cancel</button>
-                            </div>
+                        </div>
+                        <button type="button" data-bind="click: modifyPassword, visible: fullModifyPassword"
+                                class="btn btn-primary btn-success"
+                                data-dismiss="modal">Confirm</button>
                         </div>
                     </form>
                 </div>

@@ -23,12 +23,11 @@ var viewModel = function() {
     self.fullModifyPassword = ko.observable(false);
     
     // Modifying infos
-    self.modifyLogin = ko.observable('');
-    self.modifyLogin.focused = ko.observable('');
-    self.modifyEmail = ko.observable('');
-    self.modifyLocation = ko.observable('');
-    self.modifyPassword = ko.observable('');
-    self.modifyPasswordBis = ko.observable('');
+    self.modifiedLogin = ko.observable('');
+    self.modifiedEmail = ko.observable('');
+    self.modifiedLocation = ko.observable('');
+    self.modifiedPassword = ko.observable('');
+    self.modifiedPasswordBis = ko.observable('');
 
     // Creating user
     self.registerLogin = ko.observable('');
@@ -48,6 +47,19 @@ var viewModel = function() {
     
     // Word cloud array
     self.wordCloud = ko.observableArray();
+
+    // Generic alert box function
+    self.alertBox = function(title, content, type) {
+        $.alert({
+            title: title,
+            content: content,
+            type: type,
+            typeAnimated: true,
+            backgroundDismiss: true,
+            closeIcon: true,
+            closeIconClass: 'fa fa-close'
+        });
+    };
     
     self.tryRegister = function() {
         var url = "https://localhost:5001/api/users/";
@@ -55,17 +67,14 @@ var viewModel = function() {
             function() {
                 self.loginToSOVA(self.registerLogin, self.registerPassword);
             }, "json")
+            .done(function() {
+                self.registerLogin('');
+                self.registerLocation('');
+                self.registerEmail('');
+                self.registerPassword('');
+            })
             .fail(function() {
-                $.alert({
-                    title: 'Encountered an error!',
-                    content: 'This user already exists',
-                    type: 'red',
-                    typeAnimated: true,
-                    backgroundDismiss: true,
-                    icon: 'fa fa-warning',
-                    closeIcon: true,
-                    closeIconClass: 'fa fa-close'
-                });
+                self.alertBox('Encountered an error!', 'This user already exists', 'red');
             });
     };
         
@@ -78,33 +87,52 @@ var viewModel = function() {
     };
     
     self.changeInformations = function() {
-        if (self.loggedLogin() !== self.modifyLogin()) {
-            self.request("users/update/username/" + self.modifyLogin(), null, function(data, status) {
+        var loginChanged = false;
+        var locationChanged = false;
+        var emailChanged = false;
+        
+        if (self.loggedLogin() !== self.modifiedLogin()) {
+            self.request("users/update/username/" + self.modifiedLogin(), null, function(data, status) {
             }, 'PUT', function(){});
-            self.loggedLogin(self.modifyLogin());
+            self.loggedLogin(self.modifiedLogin());
+            loginChanged = true;
         }
-        if (self.loggedLocation() !== self.modifyLocation()) {
-            self.request("users/update/location/" + self.modifyLocation(), null, function(data, status) {
+        if (self.loggedLocation() !== self.modifiedLocation()) {
+            self.request("users/update/location/" + self.modifiedLocation(), null, function(data, status) {
             }, 'PUT', function(){});
-            self.loggedLocation(self.modifyLocation());
+            self.loggedLocation(self.modifiedLocation());
+            locationChanged = true;
         }
-        if (self.loggedEmail() !== self.modifyEmail()) {
-            self.request("users/update/email/" + self.modifyEmail(), null, function(data, status) {
+        if (self.loggedEmail() !== self.modifiedEmail()) {
+            self.request("users/update/email/" + self.modifiedEmail(), null, function(data, status) {
             }, 'PUT', function(){});
-            self.loggedEmail(self.modifyEmail());
+            self.loggedEmail(self.modifiedEmail());
+            emailChanged = true;
+        }
+        if (loginChanged !== false || locationChanged !== false || emailChanged !== false) {
+            self.alertBox('Changes applied', 'Changes applied', 'green');
         }
     };
     
     self.resetInfos = function() {
-        self.modifyEmail(self.loggedEmail());
-        self.modifyLogin(self.loggedLogin());
-        self.modifyLocation(self.loggedLocation());
-    };
-
-    self.cancelModifyPassword = function() {
+        self.modifiedEmail(self.loggedEmail());
+        self.modifiedLogin(self.loggedLogin());
+        self.modifiedLocation(self.loggedLocation());
     };
     
     self.modifyPassword = function() {
+        if (self.modifiedPassword() === self.modifiedPasswordBis()) {
+            if (self.modifiedPassword() !== self.password()) {
+                self.request("users/update/password", ko.toJSON({Password: self.modifiedPassword()}), function(){
+                }, 'PUT', function(){});
+                self.password(self.modifiedPassword());
+                self.alertBox('Changes applied', 'Password changed', 'green');
+            } else {
+                self.alertBox('Encountered an error!', 'New password and old password are the same', 'red');
+            }
+        } else {
+            self.alertBox('Encountered an error!', 'The confirmation does not match', 'red');
+        }
     };
 
     self.loginToSOVA = function(login, password) {
@@ -116,16 +144,7 @@ var viewModel = function() {
                 self.setAccountON(data.token, data.username);
             }, "json")
             .fail(function() {
-                $.alert({
-                    title: 'Encountered an error!',
-                    content: 'Bad login or password',
-                    type: 'red',
-                    typeAnimated: true,
-                    backgroundDismiss: true,
-                    icon: 'fa fa-warning',
-                    closeIcon: true,
-                    closeIconClass: 'fa fa-close'
-                });
+                self.alertBox('Encountered an error!', 'Bad login or password', 'red');
             });
     };
 
@@ -133,12 +152,12 @@ var viewModel = function() {
         self.isConnected(true);
         self.loggedToken(token);
         self.loggedLogin(login);
-        self.modifyLogin(login);
+        self.modifiedLogin(login);
         self.request("users", null, function(data, status) {
             self.loggedLocation(data.location);
-            self.modifyLocation(data.location);
+            self.modifiedLocation(data.location);
             self.loggedEmail(data.email);
-            self.modifyEmail(data.email);
+            self.modifiedEmail(data.email);
             self.loggedID(data.id);
         }, 'GET', function(){self.setAccountOFF()});
         $('#registerModal').modal('hide');
@@ -207,7 +226,6 @@ var viewModel = function() {
 
         self.request(self.postLinkMark(), null, function(data, status) {
             isMarked = data;
-            console.log(isMarked, typeof isMarked)
         }, 'GET', function (){});
 
         if (isMarked === true) {
