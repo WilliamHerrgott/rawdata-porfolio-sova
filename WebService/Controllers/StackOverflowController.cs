@@ -170,8 +170,8 @@ namespace WebService.Controllers {
             var result = new {
                 NumberOfItems = numberOfItems,
                 NumberOfPages = numberOfPages,
-                First = CreateCommentsLink(0, pageSize),
-                Prev = page == 0 ? null : CreateCommentsLink(page - 1, pageSize),
+                First = CreateSearchedLink(0, pageSize), 
+                Prev = page == 0 ? null : CreateSearchedLink(page - 1, pageSize),
                 Next = page >= numberOfPages - 1 ? null : CreateSearchedLink(page + 1, pageSize),
                 Last = numberOfPages == 0 ? null : CreateSearchedLink(numberOfPages - 1, pageSize),
                 Items = searchResult
@@ -217,7 +217,7 @@ namespace WebService.Controllers {
         }
 
         private string CreateSearchedLink(int page, int pageSize) {
-            return Url.Link(nameof(Search), new {page, pageSize});
+            return Url.Link(nameof(SearchBestMatch), new {page, pageSize});
         }
     }
 }

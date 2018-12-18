@@ -8,6 +8,7 @@ var viewModel = function() {
     self.comments = ko.observableArray([]);
     self.marks = ko.observableArray([]);
     
+    // Next and prev
     self.nextAnswers = ko.observable(null);
     self.prevAnswers = ko.observable(null);
     
@@ -20,6 +21,10 @@ var viewModel = function() {
     self.nextPosts = ko.observable(null);
     self.prevPosts = ko.observable(null);
     
+    self.nextHistory = ko.observable(null);
+    self.prevHistory = ko.observable(null);
+    
+    // Posts informations
     self.postBody = ko.observable();
     self.postDate = ko.observable();
     self.postLinkMark = ko.observable();
@@ -202,20 +207,32 @@ var viewModel = function() {
         $('#loggedInMenu').addClass('d-none');
     };
 
-    self.getHistory = function() {
-        self.request('history', null, function (data, status) {
+    self.updateHistory = function() {
+        self.loadHistory('history');
+    };
+    
+    self.loadHistory = function(url) {
+        self.request(getAPIUrl(url), null, function (data, status) {
             self.history.removeAll();
             var hist = [];
             $.each(data.items, function (i, item) {
                 hist.push(item);
             });
+            self.nextHistory(data.next);
+            self.prevHistory(data.prev);
+
             ko.utils.arrayPushAll(self.history, hist);
             self.history.valueHasMutated();
         }, 'GET', function (){});
     };
     
+    self.reLoadHistory = function(data, event) {
+        var dataUrl = event.target.getAttribute('data-url');
+        self.loadHistory(dataUrl);
+    };
+    
     self.search = function () {
-        self.updatePosts('StackOverflow/search/best/' + self.search_query() + "?pageSize=30")
+        self.updatePosts('StackOverflow/search/best/' + self.search_query())
     };
     
     self.updatePosts = function(url) {
@@ -226,10 +243,8 @@ var viewModel = function() {
             $.each(data.items, function (i, item) {
                 news.push(item);
             });
-            console.log(data);
             self.nextPosts(data.next);
             self.prevPosts(data.prev);
-            
             ko.utils.arrayPushAll(self.posts, news);
             self.posts.valueHasMutated();
         }, 'GET', function () {});
@@ -280,11 +295,10 @@ var viewModel = function() {
         }, 'GET', function(){});
         
         // Mark the post
-        // self.isPostMarked();
+        self.isPostMarked();
     };
     
-    self.updateAnswers = function(url)
-    {
+    self.updateAnswers = function(url) {
         self.request(getAPIUrl(url), null, function (data, status) {
             self.answers.removeAll();
             var news = [];
@@ -310,12 +324,12 @@ var viewModel = function() {
         }, 'GET', function(){});
     };
     
-    self.reLoadAnswers = function(data, event){
+    self.reLoadAnswers = function(data, event) {
         var dataUrl = event.target.getAttribute('data-url');
         self.updateAnswers(dataUrl);
     };
     
-    self.updateComments = function(data, event){
+    self.updateComments = function(data, event) {
         var dataUrl = event.target.closest('[data-url]').getAttribute('data-url');
         self.request(getAPIUrl(dataUrl), null, function (data, status) {
             self.comments.removeAll();
@@ -333,7 +347,6 @@ var viewModel = function() {
             self.nextComments(data.next);
             self.prevComments(data.prev);
 
-
             ko.utils.arrayPushAll(self.comments, news);
             self.comments.valueHasMutated();
         }, 'GET', function(){})
@@ -345,11 +358,11 @@ var viewModel = function() {
         }, 'POST', function(){$('#markButton').addClass('btn-success').attr("disabled", true);});
     };
     
-    self.updateMarks = function(){
+    self.updateMarks = function() {
         self.loadMarks('marks')
     };
     
-    self.loadMarks = function(url){
+    self.loadMarks = function(url) {
         self.request(getAPIUrl(url), null, function (data, status) {
             self.marks.removeAll();
             var news = [];
@@ -360,7 +373,6 @@ var viewModel = function() {
             });
             self.nextMarks(data.next);
             self.prevMarks(data.prev);
-
 
             ko.utils.arrayPushAll(self.marks, news);
             self.marks.valueHasMutated();
@@ -392,8 +404,9 @@ var viewModel = function() {
 };
 
 function getAPIUrl(url){
-    if (url.indexOf('api/') === -1)
+    if (url.indexOf('api/') === -1) {
         return url;
+    }
     return url.substring(url.indexOf('api/')+4);
 }
 
