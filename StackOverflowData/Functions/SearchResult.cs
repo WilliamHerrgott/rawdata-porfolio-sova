@@ -14,15 +14,4 @@ namespace StackOverflowData.Functions {
         }
     }
 
-    public class SearchResultWords {
-        public int word { get; set; }
-        public string grade { get; set; }
-    }
-
-    class SearchResultWordsConfiguration : IQueryTypeConfiguration<SearchResultWords> {
-        public void Configure(QueryTypeBuilder<SearchResultWords> builder) {
-            builder.Property(x => x.grade).HasColumnName("grade");
-            builder.Property(x => x.word).HasColumnName("word");
-        }
-    }
 }

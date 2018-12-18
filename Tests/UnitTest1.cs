@@ -102,23 +102,23 @@ namespace Tests {
         [Fact]
         public void RelatedTermsSearch_User_Count() {
             var user = service.CreateUser("test@test.te", "test", "Roskilde", "testpwd", "salt");
-            var resultList = service.SearchRelatedTerm("python", user.Id, 0, 15);
+            var resultList = service.SearchRelatedTerm("python", user.Id, true);
             Assert.Equal(15, resultList.Count);
-            var resultList2 = service.SearchRelatedTerm("python", user.Id, 0, 15, false);
+            var resultList2 = service.SearchRelatedTerm("python", user.Id, true);
             Assert.Equal(15, resultList2.Count);
         }
 
         [Fact]
         public void ExpandedQuerySearch_User_Count() {
             var user = service.CreateUser("test@test.te", "test", "Roskilde", "testpwd", "salt");
-            var resultList = service.SearchRelatedTerm("python user variable", user.Id, 0, 15);
+            var resultList = service.SearchRelatedTerm("python user variable", user.Id, true);
             Assert.Equal(15, resultList.Count);
         }
 
         [Fact]
         public void GetCoOccurrentWordSearch_User_Count() {
             var user = service.CreateUser("test@test.te", "test", "Roskilde", "testpwd", "salt");
-            var resultList = service.SearchRelatedTerm("python", user.Id, 0, 15);
+            var resultList = service.SearchRelatedTerm("python", user.Id, true);
             Assert.Equal(15, resultList.Count);
         }
 

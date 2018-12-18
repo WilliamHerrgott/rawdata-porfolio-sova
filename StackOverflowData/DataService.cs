@@ -29,9 +29,9 @@ namespace StackOverflowData {
         List<SearchResult> Search(string text, int userId, int page, int pageSize);
         List<SearchResult> SearchExactMatch(string text, int userId, int page, int pageSize);
         List<SearchResult> SearchBestMatch(string text, int userId, int page, int pageSize);
-        List<SearchResult> SearchRelatedTerm(string text, int userId, int page, int pageSize, bool weighted);
+        List<SearchResultWords> SearchRelatedTerm(string text, int userId, bool weighted, int page, int pageSize);
         List<SearchResult> SearchExpandedQuery(string text, int userId, int page, int pageSize);
-        List<SearchResult> SearchCoWordQuery(string text, int userId, int page, int pageSize);
+        List<SearchResultWords> SearchCoWordQuery(string text, int userId, int page, int pageSize);
 
         List<GetHistoryResult> GetHistory(int userId, int page, int pageSize);
         List<GetMarkedResult> GetMarked(int userId, int page, int pageSize);
@@ -276,12 +276,10 @@ namespace StackOverflowData {
             }
         }
 
-        public List<SearchResult> SearchRelatedTerm(string text, int userId, int page = 0, int pageSize = 10,
-            bool weighted = true) {
-            text = text.Split(' ').Join("', '");
+        public List<SearchResultWords> SearchRelatedTerm(string text, int userId, bool weighted, int page = 0, int pageSize = 10) {
             using (var db = new StackOverflowContext()) {
-                var result = db.SearchResults
-                    .FromSql("SELECT * FROM keyword_list" + (weighted ? "_weighted" : "") + "({0})", text.Split(' '))
+                var result = db.SearchResultWords
+                    .FromSql("SELECT * FROM dynamic_keyword_list" + (weighted ? "_weighted" : "") + "({0}, {1})", text, userId)
                     .Skip(page * pageSize)
                     .Take(pageSize)
                     .ToList();
@@ -290,9 +288,9 @@ namespace StackOverflowData {
             }
         }
 
-        public List<SearchResult> SearchCoWordQuery(string text, int userId, int page = 0, int pageSize = 10) {
+        public List<SearchResultWords> SearchCoWordQuery(string text, int userId, int page = 0, int pageSize = 10) {
             using (var db = new StackOverflowContext()) {
-                var result = db.SearchResultsWords
+                var result = db.SearchResultWords
                     .FromSql("SELECT * FROM get_co_occurrent_words({0}) order by grade desc", text)
                     .Skip(page * pageSize)
                     .Take(pageSize)

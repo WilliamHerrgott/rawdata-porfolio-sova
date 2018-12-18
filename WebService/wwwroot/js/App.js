@@ -23,12 +23,11 @@ var viewModel = function() {
     self.fullModifyPassword = ko.observable(false);
     
     // Modifying infos
-    self.modifyLogin = ko.observable('');
-    self.modifyLogin.focused = ko.observable('');
-    self.modifyEmail = ko.observable('');
-    self.modifyLocation = ko.observable('');
-    self.modifyPassword = ko.observable('');
-    self.modifyPasswordBis = ko.observable('');
+    self.modifiedLogin = ko.observable('');
+    self.modifiedEmail = ko.observable('');
+    self.modifiedLocation = ko.observable('');
+    self.modifiedPassword = ko.observable('');
+    self.modifiedPasswordBis = ko.observable('');
 
     // Creating user
     self.registerLogin = ko.observable('');
@@ -42,27 +41,40 @@ var viewModel = function() {
 
     // See if user is connected
     self.isConnected = ko.observable(false);
-    
+
     // History array
     self.history = ko.observableArray();
+    
+    // Word cloud array
+    self.wordCloud = ko.observableArray();
 
+    // Generic alert box function
+    self.alertBox = function(title, content, type) {
+        $.alert({
+            title: title,
+            content: content,
+            type: type,
+            typeAnimated: true,
+            backgroundDismiss: true,
+            closeIcon: true,
+            closeIconClass: 'fa fa-close'
+        });
+    };
+    
     self.tryRegister = function() {
         var url = "https://localhost:5001/api/users/";
         $.post(url, ko.toJSON({Username:self.registerLogin, Password: self.registerPassword, Email: self.registerEmail, Location: self.registerLocation}),
             function() {
                 self.loginToSOVA(self.registerLogin, self.registerPassword);
             }, "json")
+            .done(function() {
+                self.registerLogin('');
+                self.registerLocation('');
+                self.registerEmail('');
+                self.registerPassword('');
+            })
             .fail(function() {
-                $.alert({
-                    title: 'Encountered an error!',
-                    content: 'This user already exists',
-                    type: 'red',
-                    typeAnimated: true,
-                    backgroundDismiss: true,
-                    icon: 'fa fa-warning',
-                    closeIcon: true,
-                    closeIconClass: 'fa fa-close'
-                });
+                self.alertBox('Encountered an error!', 'This user already exists', 'red');
             });
     };
         
@@ -74,17 +86,61 @@ var viewModel = function() {
         self.fullModifyPassword(true);
     };
     
-    self.modifyLogin.focused.subscribe(function(on) {
-        if (!on && self.modifyLogin() !== self.loggedLogin()) {
-            self.request("users/update/username/" + self.modifyLogin, null, function(data, status) {
+    self.changeInformations = function() {
+        var loginChanged = false;
+        var locationChanged = false;
+        var emailChanged = false;
+        
+        if (self.loggedLogin() !== self.modifiedLogin()) {
+            self.request("users/update/username/" + self.modifiedLogin(), null, function(data, status) {
             }, 'PUT', function(){});
+            self.loggedLogin(self.modifiedLogin());
+            loginChanged = true;
         }
-    });
+        if (self.loggedLocation() !== self.modifiedLocation()) {
+            self.request("users/update/location/" + self.modifiedLocation(), null, function(data, status) {
+            }, 'PUT', function(){});
+            self.loggedLocation(self.modifiedLocation());
+            locationChanged = true;
+        }
+        if (self.loggedEmail() !== self.modifiedEmail()) {
+            self.request("users/update/email/" + self.modifiedEmail(), null, function(data, status) {
+            }, 'PUT', function(){});
+            self.loggedEmail(self.modifiedEmail());
+            emailChanged = true;
+        }
+        if (loginChanged !== false || locationChanged !== false || emailChanged !== false) {
+            self.alertBox('Changes applied', 'Changes applied', 'green');
+        }
+    };
     
-    self.cancelModifyPassword = function() {
+    self.resetCommonInfos = function() {
+        self.modifiedEmail(self.loggedEmail());
+        self.modifiedLogin(self.loggedLogin());
+        self.modifiedLocation(self.loggedLocation());
+    };
+    
+    self.resetPasswordInfos = function() {
+        self.modifiedPassword(self.password());
+        self.modifiedPasswordBis('');
     };
     
     self.modifyPassword = function() {
+        if (self.modifiedPassword() === self.modifiedPasswordBis()) {
+            if (self.modifiedPassword() !== self.password()) {
+                self.request("users/update/password", ko.toJSON({Password: self.modifiedPassword()}), function(){
+                }, 'PUT', function(){});
+                self.password(self.modifiedPassword());
+                self.resetPasswordInfos();
+                self.alertBox('Changes applied', 'Password changed', 'green');
+            } else {
+                self.resetPasswordInfos();
+                self.alertBox('Encountered an error!', 'New password and old password are the same', 'red');
+            }
+        } else {
+            self.resetPasswordInfos();
+            self.alertBox('Encountered an error!', 'The confirmation does not match', 'red');
+        }
     };
 
     self.loginToSOVA = function(login, password) {
@@ -96,16 +152,7 @@ var viewModel = function() {
                 self.setAccountON(data.token, data.username);
             }, "json")
             .fail(function() {
-                $.alert({
-                    title: 'Encountered an error!',
-                    content: 'Bad login or password',
-                    type: 'red',
-                    typeAnimated: true,
-                    backgroundDismiss: true,
-                    icon: 'fa fa-warning',
-                    closeIcon: true,
-                    closeIconClass: 'fa fa-close'
-                });
+                self.alertBox('Encountered an error!', 'Bad login or password', 'red');
             });
     };
 
@@ -113,12 +160,12 @@ var viewModel = function() {
         self.isConnected(true);
         self.loggedToken(token);
         self.loggedLogin(login);
-        self.modifyLogin(login);
+        self.modifiedLogin(login);
         self.request("users", null, function(data, status) {
             self.loggedLocation(data.location);
-            self.modifyLocation(data.location);
+            self.modifiedLocation(data.location);
             self.loggedEmail(data.email);
-            self.modifyEmail(data.email);
+            self.modifiedEmail(data.email);
             self.loggedID(data.id);
         }, 'GET', function(){self.setAccountOFF()});
         $('#registerModal').modal('hide');
@@ -145,7 +192,6 @@ var viewModel = function() {
     };
 
     self.getHistory = function() {
-        // self.history().destr
         self.request('history', null, function (data, status) {
             self.history.removeAll();
             var hist = [];
@@ -159,6 +205,7 @@ var viewModel = function() {
     
     self.search = function () {
         self.request('StackOverflow/search/best/' + self.search_query(), null, function (data, status) {
+            $('#wordcloud').jQCloud('destroy');
             self.posts.removeAll();
             var news = [];
             $.each(data.items, function (i, item) {
@@ -169,9 +216,34 @@ var viewModel = function() {
         }, 'GET', function () {});
     };
 
-    self.loadFullPost = function(data, event) {
-        $('#markButton').removeClass('btn-success').attr("disabled", false);
+    self.getRelatedWords = function () {
+        self.request('StackOverflow/search/words/' + self.search_query(), null, function (data, status) {
+            self.posts.removeAll();
+            self.wordCloud.removeAll();
+            var newWords = [];
+            $.each(data.items, function (i, item) {
+                newWords.push(item);
+            });
+            ko.utils.arrayPushAll(self.wordCloud, newWords);
+            self.wordCloud.valueHasMutated();
+        }, 'GET', function (){});
+    };
+    
+    self.isPostMarked = function() {
+        var isMarked;
 
+        self.request(self.postLinkMark(), null, function(data, status) {
+            isMarked = data;
+        }, 'GET', function (){});
+
+        if (isMarked === true) {
+            $('#markButton').addClass('btn-success').attr("disabled", true);
+        } else {
+            $('#markButton').removeClass('btn-success').attr("disabled", false);
+        }
+    };
+    
+    self.loadFullPost = function(data, event) {
         var dataUrl = event.target.getAttribute('data-url');
         
         self.request(getAPIUrl(dataUrl), null, function (data, status) {
@@ -182,7 +254,6 @@ var viewModel = function() {
             self.request(getAPIUrl(data.answers), null, function (data1, status) {
                 self.answers.removeAll();
                 var news = [];
-                console.log(data1);
                 $.each(data1.items, function (i, item) {
                     var nbOfComment = 0;
                     self.request(getAPIUrl(item.comments), null, function(data2, success){
@@ -202,6 +273,9 @@ var viewModel = function() {
                 self.answers.valueHasMutated();
             }, 'GET', function(){});
         }, 'GET', function(){})
+        
+        // Mark the post
+        self.isPostMarked();
     };
     
     self.updateComments = function(data, event){
@@ -263,8 +337,6 @@ var viewModel = function() {
     }
 };
 
-
-
 function getAPIUrl(url){
     return url.substring(url.indexOf('api/')+4);
 }
@@ -280,10 +352,10 @@ function init() {
         if (file) {
             /* Make an HTTP request using the attribute value as the file name: */
             xhttp = new XMLHttpRequest();
-            xhttp.onreadystatechange = function() {
+            xhttp.onreadystatechange = function () {
                 if (this.readyState === 4) {
-                    if (this.status === 200) {elmnt.innerHTML = this.responseText;}
-                    if (this.status === 404) {elmnt.innerHTML = "Page not found.";}
+                    if (this.status === 200) { elmnt.innerHTML = this.responseText; }
+                    if (this.status === 404) { elmnt.innerHTML = "Page not found."; }
                     /* Remove the attribute, and call this function once more: */
                     elmnt.removeAttribute("w3-include-html");
                     init();
@@ -301,15 +373,22 @@ function init() {
     });
 
     var VM = new viewModel();
-
+    
     if (Cookies.get('token') != null && Cookies.get('login'))
         VM.setAccountON(Cookies.get('token'), Cookies.get('login'));
 
     ko.applyBindings(VM);
+    
+    // Wordcloud with jqcloud
+    VM.wordCloud.subscribe(function () {
+        $('#wordcloud').jQCloud('update', VM.wordCloud(), {
+            width: 500,
+            height: 350
+        });
+    });
 }
 
-
 // Activates knockout.js
-$(document).ready(function() {
-    init();
+$(document).ready(function () {
+    init();   
 });
