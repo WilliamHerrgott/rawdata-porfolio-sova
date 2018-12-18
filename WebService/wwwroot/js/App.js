@@ -114,10 +114,13 @@ var viewModel = function() {
         }
     };
     
-    self.resetInfos = function() {
+    self.resetCommonInfos = function() {
         self.modifiedEmail(self.loggedEmail());
         self.modifiedLogin(self.loggedLogin());
         self.modifiedLocation(self.loggedLocation());
+    };
+    
+    self.resetPasswordInfos = function() {
         self.modifiedPassword(self.password());
         self.modifiedPasswordBis('');
     };
@@ -128,11 +131,14 @@ var viewModel = function() {
                 self.request("users/update/password", ko.toJSON({Password: self.modifiedPassword()}), function(){
                 }, 'PUT', function(){});
                 self.password(self.modifiedPassword());
+                self.resetPasswordInfos();
                 self.alertBox('Changes applied', 'Password changed', 'green');
             } else {
+                self.resetPasswordInfos();
                 self.alertBox('Encountered an error!', 'New password and old password are the same', 'red');
             }
         } else {
+            self.resetPasswordInfos();
             self.alertBox('Encountered an error!', 'The confirmation does not match', 'red');
         }
     };
