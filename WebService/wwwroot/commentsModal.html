@@ -14,6 +14,10 @@
                 <hr/>
                 <!-- /ko -->
             </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bind="visible: prevComments() != null, attr: {'data-url': prevComments}, click: updateComments">Prev</button>
+                <button type="button" class="btn btn-secondary" data-bind="visible: nextComments() != null, attr: {'data-url': nextComments}, click: updateComments">Next</button>
+            </div>
         </div>
     </div>  
 </div>

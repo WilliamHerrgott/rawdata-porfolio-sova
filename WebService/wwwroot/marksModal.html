@@ -19,7 +19,10 @@
                 </div>
                 <!-- /ko -->
             </div>
-            <div class="modal-footer"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bind="visible: prevMarks() != null, attr: {'data-url': prevMarks}, click: reLoadMarks">Prev</button>
+                <button type="button" class="btn btn-secondary" data-bind="visible: nextMarks() != null, attr: {'data-url': nextMarks}, click: reLoadMarks">Next</button>
+            </div>
         </div>
     </div>
 </div>

@@ -58,6 +58,11 @@
                 <!-- /ko -->
             </div>
             
+            <div class="row">
+                <button type="button" class="btn btn-secondary" data-bind="visible: prevPosts() != null, attr: {'data-url': prevPosts}, click: reLoadPosts">Prev</button>
+                <button type="button" class="btn btn-secondary" data-bind="visible: nextPosts() != null, attr: {'data-url': nextPosts}, click: reLoadPosts">Next</button>
+            </div>
+            
             <div id="wordcloud" style="width: 750px; height: 500px;"></div>
         
             <div w3-include-html="registerModal.html"></div>

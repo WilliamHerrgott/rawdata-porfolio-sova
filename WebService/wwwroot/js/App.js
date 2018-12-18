@@ -8,6 +8,17 @@ var viewModel = function() {
     self.comments = ko.observableArray([]);
     self.marks = ko.observableArray([]);
     
+    self.nextAnswers = ko.observable(null);
+    self.prevAnswers = ko.observable(null);
+    
+    self.nextMarks = ko.observable(null);
+    self.prevMarks = ko.observable(null);
+    
+    self.nextComments = ko.observable(null);
+    self.prevComments = ko.observable(null);
+
+    self.nextPosts = ko.observable(null);
+    self.prevPosts = ko.observable(null);
     
     self.postBody = ko.observable();
     self.postDate = ko.observable();
@@ -204,16 +215,29 @@ var viewModel = function() {
     };
     
     self.search = function () {
-        self.request('StackOverflow/search/best/' + self.search_query(), null, function (data, status) {
+        self.updatePosts('StackOverflow/search/best/' + self.search_query() + "?pageSize=30")
+    };
+    
+    self.updatePosts = function(url) {
+        self.request(getAPIUrl(url), null, function (data, status) {
             $('#wordcloud').jQCloud('destroy');
             self.posts.removeAll();
             var news = [];
             $.each(data.items, function (i, item) {
                 news.push(item);
             });
+            console.log(data);
+            self.nextPosts(data.next);
+            self.prevPosts(data.prev);
+            
             ko.utils.arrayPushAll(self.posts, news);
             self.posts.valueHasMutated();
         }, 'GET', function () {});
+    };
+
+    self.reLoadPosts = function(data, event){
+        var dataUrl = event.target.getAttribute('data-url');
+        self.updatePosts(dataUrl);
     };
 
     self.getRelatedWords = function () {
@@ -251,35 +275,48 @@ var viewModel = function() {
             self.postDate(data.creationDate);
             self.postLinkMark(getAPIUrl(data.clickHereToMark));
             
-            self.request(getAPIUrl(data.answers), null, function (data1, status) {
-                self.answers.removeAll();
-                var news = [];
-                $.each(data1.items, function (i, item) {
-                    var nbOfComment = 0;
-                    self.request(getAPIUrl(item.comments), null, function(data2, success){
-                        nbOfComment = data2.numberOfItems;
-                    }, 'GET', function(){});
-                    self.request(getAPIUrl(item.author), null, function(data2, success) {
-                        news.push({
-                            body: item.body,
-                            nbComments: nbOfComment,
-                            commentsUrl: item.comments,
-                            date: item.creationDate,
-                            author: data2.name
-                        });
-                    }, 'GET', function() {});
-                });
-                ko.utils.arrayPushAll(self.answers, news);
-                self.answers.valueHasMutated();
-            }, 'GET', function(){});
-        }, 'GET', function(){})
+            self.updateAnswers(data.answers);
+            
+        }, 'GET', function(){});
         
         // Mark the post
-        self.isPostMarked();
+        // self.isPostMarked();
+    };
+    
+    self.updateAnswers = function(url)
+    {
+        self.request(getAPIUrl(url), null, function (data, status) {
+            self.answers.removeAll();
+            var news = [];
+            $.each(data.items, function (i, item) {
+                var nbOfComment = 0;
+                self.request(getAPIUrl(item.comments), null, function(data1, success){
+                    nbOfComment = data1.numberOfItems;
+                }, 'GET', function(){});
+                self.request(getAPIUrl(item.author), null, function(data1, success) {
+                    news.push({
+                        body: item.body,
+                        nbComments: nbOfComment,
+                        commentsUrl: item.comments,
+                        date: item.creationDate,
+                        author: data1.name
+                    });
+                }, 'GET', function() {});
+            });
+            self.nextAnswers(data.next);
+            self.prevAnswers(data.prev);
+            ko.utils.arrayPushAll(self.answers, news);
+            self.answers.valueHasMutated();
+        }, 'GET', function(){});
+    };
+    
+    self.reLoadAnswers = function(data, event){
+        var dataUrl = event.target.getAttribute('data-url');
+        self.updateAnswers(dataUrl);
     };
     
     self.updateComments = function(data, event){
-        var dataUrl = event.target.closest('a').getAttribute('data-url');
+        var dataUrl = event.target.closest('[data-url]').getAttribute('data-url');
         self.request(getAPIUrl(dataUrl), null, function (data, status) {
             self.comments.removeAll();
             var news = [];
@@ -293,6 +330,10 @@ var viewModel = function() {
                     });
                 }, 'GET', function(){});
             });
+            self.nextComments(data.next);
+            self.prevComments(data.prev);
+
+
             ko.utils.arrayPushAll(self.comments, news);
             self.comments.valueHasMutated();
         }, 'GET', function(){})
@@ -305,7 +346,11 @@ var viewModel = function() {
     };
     
     self.updateMarks = function(){
-        self.request('marks', null, function (data, status) {
+        self.loadMarks('marks')
+    };
+    
+    self.loadMarks = function(url){
+        self.request(getAPIUrl(url), null, function (data, status) {
             self.marks.removeAll();
             var news = [];
             $.each(data.items, function (i, item) {
@@ -313,9 +358,18 @@ var viewModel = function() {
                     news.push({body: data1.body, date: data1.creationDate, annotation: data1.annotation, url: item.post});
                 }, 'GET', function(){});
             });
+            self.nextMarks(data.next);
+            self.prevMarks(data.prev);
+
+
             ko.utils.arrayPushAll(self.marks, news);
             self.marks.valueHasMutated();
         }, 'GET', function(){})
+    };
+
+    self.reLoadMarks = function(data, event){
+        var dataUrl = event.target.getAttribute('data-url');
+        self.loadMarks(dataUrl);
     };
     
     self.request = function(path, dataJSON, callback, type, callback_error) {
@@ -338,6 +392,8 @@ var viewModel = function() {
 };
 
 function getAPIUrl(url){
+    if (url.indexOf('api/') === -1)
+        return url;
     return url.substring(url.indexOf('api/')+4);
 }
 
