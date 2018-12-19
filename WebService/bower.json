@@ -1,0 +1,28 @@
+{
+  "name": "wwwroot",
+  "homepage": "https://github.com/WilliamHerrgott/rawdata-porfolio-sova",
+  "authors": [
+    "Boris Le Meec <boris.le-meec@epitech.eu>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "3.3.1",
+    "knockout": "v3.4.2",
+    "requirejs": "2.3.6",
+    "text": "2.0.15",
+    "jQuery": "3.2.0",
+    "jqcloud2": "v2.0.3"
+  },
+  "resolutions": {
+    "jQuery": "3.3.1"
+  }
+}

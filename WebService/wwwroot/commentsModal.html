@@ -1,0 +1,23 @@
+<div class="modal fade" id="commentsModal" tabindex="-1" role="dialog" aria-labelledby="commentsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="commentsModalLabel">Comments</h5>
+            </div>
+            <div class="modal-body">
+                <!--ko foreach: comments -->
+                <p class="card-text" data-bind="text: $root.strip(body)"></p>
+                <h6 class="cart-text text-right" data-bind="text: moment(date).format('MMM Do YYYY, h:mm a')"></h6>
+                <h6 class="text-right">
+                    <span data-bind="text: author"></span>
+                </h6>
+                <hr/>
+                <!-- /ko -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bind="visible: prevComments() != null, attr: {'data-url': prevComments}, click: updateComments">Prev</button>
+                <button type="button" class="btn btn-secondary" data-bind="visible: nextComments() != null, attr: {'data-url': nextComments}, click: updateComments">Next</button>
+            </div>
+        </div>
+    </div>  
+</div>

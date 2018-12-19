@@ -13,4 +13,5 @@ namespace StackOverflowData.Functions {
             builder.Property(x => x.Body).HasColumnName("body");
         }
     }
+
 }
