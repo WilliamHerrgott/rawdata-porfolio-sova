@@ -1,7 +1,5 @@
 # Project portfolio gitignore
 
-*Context.cs*
-
 # User-specific files
 *.suo
 *.user
