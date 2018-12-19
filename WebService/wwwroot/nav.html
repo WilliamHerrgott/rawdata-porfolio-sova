@@ -1,0 +1,38 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">StackOverflow Viewer and Annotator</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ml-auto">
+            <div id="loggedInMenu" class="d-none" style="min-width: 150px; text-align: right">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                       data-bind="text: loggedLogin">
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#marksModal" 
+                           data-bind="click: updateMarks">Marked Posts</a>
+                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#historyModal"
+                           data-bind="click: updateHistory">History</a>
+                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#profileModal">Profile</a>
+                        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#passwordModal">Change password</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#"
+                           data-bind="click: tryLogout">Log out</a>
+                    </div>
+                </li>
+            </div>
+        </ul>
+        <form class="form-inline" id="loginForm" novalidate>
+            <input class="form-control mr-sm-2" type="text" placeholder="Login" aria-label="Login"
+                   data-error-msg="Incorrect password and/or Login"
+                   data-bind="textInput: login">
+            <input class="form-control mr-sm-2" type="password" placeholder="Password" aria-label="Password"
+                   data-bind="textInput: password">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit"
+                    data-bind="click: tryLogin">Login</button>
+        </form>
+        <a href="#" id="registerLink" data-toggle="modal" data-target="#registerModal"> Register</a>
+    </div>
+</nav>

@@ -70,7 +70,7 @@ SELECT * FROM exact_match('table', 'width', 'layout');
 --Best-match querying
 DROP FUNCTION IF EXISTS bestmatch(text[]);
 CREATE FUNCTION bestmatch(VARIADIC w text[])
-RETURNS TABLE(id integer, creation_date timestamp, body text, score integer, author_id integer, rank numeric) AS $$
+RETURNS TABLE(id integer, rank numeric, body text) AS $$
 DECLARE
 	w_elem text;
 BEGIN
@@ -88,7 +88,7 @@ BEGIN
 	END LOOP;
 	
 	RETURN QUERY
-	SELECT p.id, p.creation_date, p.body, p.score, p.author_id, sum(t.score) rank 
+	SELECT p.id, sum(t.score) rank, p.body
 	FROM posts p, best_match_table t
 	WHERE p.id = t.postid
 	GROUP BY p.id
@@ -97,6 +97,60 @@ END $$
 LANGUAGE plpgsql;
 
 SELECT * FROM bestmatch('table', 'width', 'layout');
+
+--This function takes a string as a parameter and generates a dynamic SQL- expression that executes
+--the function bestmatchweighted.
+
+DROP FUNCTION IF EXISTS dynamic_search_without_history(text);
+CREATE FUNCTION dynamic_search_without_history(searched_text text)
+RETURNS TABLE (id integer, rank real, body text) AS $$
+DECLARE
+	q text :='';
+	tokens text[] := regexp_split_to_array(searched_text, ' ');
+	a_elem text;
+BEGIN
+	q:= 'SELECT * FROM bestmatchweighted(''';
+	FOREACH a_elem IN ARRAY tokens
+	LOOP
+		q := q || a_elem || ''',''';
+	END LOOP;
+	q := substring(q from 0 for (char_length(q)-2));
+	q := q ||''');';
+	RAISE NOTICE '%', q;
+	RETURN QUERY EXECUTE q;
+END$$
+LANGUAGE plpgsql;
+
+-- SELECT * FROM dynamic_search_without_history('initialize constructor');
+
+DROP FUNCTION IF EXISTS dynamic_search();
+
+DROP FUNCTION IF EXISTS dynamic_search_with_history(text, integer);
+CREATE FUNCTION dynamic_search_with_history(searched_text text, this_user_id integer)
+RETURNS TABLE (id integer, rank real, body text) AS $$
+DECLARE
+	q text :='';
+	tokens text[] := regexp_split_to_array(searched_text, ' ');
+	a_elem text;
+BEGIN
+	q:= 'SELECT * FROM bestmatchweighted(''';
+	FOREACH a_elem IN ARRAY tokens
+	LOOP
+		q := q || a_elem || ''',''';
+	END LOOP;
+	q := substring(q from 0 for (char_length(q)-2));
+	q := q ||''');';
+	RAISE NOTICE '%', q;
+	RETURN QUERY EXECUTE q;
+	
+	IF ( this_user_id IN (SELECT u.id FROM "SOVA_users" u) ) THEN
+		INSERT INTO history (search_text, date, user_id)
+		VALUES(searched_text, date_trunc('second', LOCALTIMESTAMP), this_user_id);
+	END IF;
+END$$
+LANGUAGE plpgsql;
+
+-- SELECT * FROM dynamic_search_with_history('initialize constructor', 3);
 
 --B.3
 --Weighted indexing
@@ -136,10 +190,11 @@ SET weight = weight / (WITH max_weight AS (SELECT max(weight) FROM wiq) SELECT m
 
 select * from wiq;
 
---B.4--Ranked weighted querying
+--B.4
+--Ranked weighted querying
 DROP FUNCTION IF EXISTS bestmatchweighted(text[]);
 CREATE FUNCTION bestmatchweighted(VARIADIC w text[])
-RETURNS TABLE(id integer, creation_date timestamp, body text, score integer, author_id integer, rank real) AS $$
+RETURNS TABLE(id integer, rank real, body text) AS $$
 DECLARE
 	w_elem text;
 BEGIN
@@ -157,7 +212,7 @@ BEGIN
 	END LOOP;
 	
 	RETURN QUERY
-	SELECT DISTINCT p.id, p.creation_date, p.body, p.score, p.author_id, sum(t.score) rank 
+	SELECT DISTINCT p.id, sum(t.score) rank, p.body
 	FROM posts p, best_match_table t
 	WHERE p.id = t.postid
 	GROUP BY p.id
@@ -167,11 +222,12 @@ LANGUAGE plpgsql;
 
 SELECT * FROM bestmatchweighted('table', 'mysql', 'select');
 
---B.5--Word-to-words querying
+--B.5
+--Word-to-words querying
 
 DROP FUNCTION IF EXISTS keyword_list(text[]);
 CREATE FUNCTION keyword_list(VARIADIC w text[])
-RETURNS TABLE(occurence numeric, word text) AS $$
+RETURNS TABLE(weight numeric, word text) AS $$
 DECLARE
 	w_elem text;
 BEGIN
@@ -197,7 +253,35 @@ BEGIN
 END $$
 LANGUAGE plpgsql;
 
-select * from keyword_list('sql') where occurence > 150;
+select * from keyword_list('sql') where weight > 150;
+
+DROP FUNCTION IF EXISTS dynamic_keyword_list(text, integer);
+CREATE FUNCTION dynamic_keyword_list(searched_text text, this_user_id integer)
+RETURNS TABLE (weight numeric, word text) AS $$
+DECLARE
+	q text :='';
+	tokens text[] := regexp_split_to_array(searched_text, ' ');
+	a_elem text;
+BEGIN
+	q:= 'SELECT * FROM keyword_list(''';
+	FOREACH a_elem IN ARRAY tokens
+	LOOP
+		q := q || a_elem || ''',''';
+	END LOOP;
+	q := substring(q from 0 for (char_length(q)-2));
+	q := q ||''');';
+	RAISE NOTICE '%', q;
+	RETURN QUERY EXECUTE q;
+	
+	IF ( this_user_id IN (SELECT u.id FROM "SOVA_users" u) ) THEN
+		INSERT INTO history (search_text, date, user_id)
+		VALUES(searched_text, date_trunc('second', LOCALTIMESTAMP), this_user_id);
+	END IF;
+
+END$$
+LANGUAGE plpgsql;
+
+-- SELECT * FROM dynamic_keyword_list('initialize constructor');
 
 --Word-to-words querying with weights
 
@@ -230,6 +314,33 @@ END $$
 LANGUAGE plpgsql;
 
 select * from keyword_list_weighted('sql');
+
+DROP FUNCTION IF EXISTS dynamic_keyword_list_weighted(text, integer);
+CREATE FUNCTION dynamic_keyword_list_weighted(searched_text text, this_user_id integer)
+RETURNS TABLE (weight real, word text) AS $$
+DECLARE
+	q text :='';
+	tokens text[] := regexp_split_to_array(searched_text, ' ');
+	a_elem text;
+BEGIN
+	q:= 'SELECT * FROM keyword_list_weighted(''';
+	FOREACH a_elem IN ARRAY tokens
+	LOOP
+		q := q || a_elem || ''',''';
+	END LOOP;
+	q := substring(q from 0 for (char_length(q)-2));
+	q := q ||''');';
+	RAISE NOTICE '%', q;
+	RETURN QUERY EXECUTE q;
+
+	IF ( this_user_id IN (SELECT u.id FROM "SOVA_users" u) ) THEN
+		INSERT INTO history (search_text, date, user_id)
+		VALUES(searched_text, date_trunc('second', LOCALTIMESTAMP), this_user_id);
+	END IF;
+END$$
+LANGUAGE plpgsql;
+
+-- SELECT * FROM dynamic_keyword_list_weighted('initialize constructor', 11);
 
 -- B.7
 -- Co-occurrence term network
@@ -266,7 +377,7 @@ LANGUAGE plpgsql;
 SELECT * FROM get_co_occurrent_words('language');
 
 --B.8. Force network visualization
-drop function if exists generate_force_graph_input;
+drop function if exists generate_force_graph_input(varchar(100), real);
 create function generate_force_graph_input(in w varchar(100), n real) 
 returns table (line text) as $$
 declare
@@ -338,7 +449,7 @@ BEGIN
 END$$
 LANGUAGE plpgsql;
 
-SELECT * FROM expanded_query_search('programming', 'language');
-SELECT * FROM expanded_query_search('c#', 'linq');
-SELECT * FROM expanded_query_search('sql');
-SELECT * FROM bestmatchweighted('sql');
+-- SELECT * FROM expanded_query_search('programming', 'language');
+-- SELECT * FROM expanded_query_search('c#', 'linq');
+-- SELECT * FROM expanded_query_search('sql');
+-- SELECT * FROM bestmatchweighted('sql');

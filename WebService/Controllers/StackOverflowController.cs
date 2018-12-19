@@ -21,7 +21,7 @@ namespace WebService.Controllers {
         public IActionResult GetAnswers(int questionId, int page = 0, int pageSize = 5) {
             var answers = _dataService.GetAnswers(questionId, page, pageSize)
                 .Select(CreateAnswersModel);
-           
+
             var numberOfItems = _dataService.GetNoOfAnswers(questionId);
             var numberOfPages = ComputeNumberOfPages(pageSize, numberOfItems);
 
@@ -42,7 +42,7 @@ namespace WebService.Controllers {
             var model = Mapper.Map<AnswerModel>(answers);
             model.Comments = Url.Link(nameof(GetComments), new {postId = answers.Id});
             model.Author = Url.Link(nameof(GetAuthorOfPost), new {postId = answers.Id});
-            model.ClickHereToMark = Url.Link(nameof(MarkController.Mark), new { postId = answers.Id });
+            model.ClickHereToMark = Url.Link(nameof(MarkController.Mark), new {postId = answers.Id});
             return model;
         }
 
@@ -77,9 +77,7 @@ namespace WebService.Controllers {
         public IActionResult GetPost(int id) {
             var post = _dataService.GetPost(id);
 
-            if (post == null) {
-                return NotFound();
-            }
+            if (post == null) return NotFound();
 
             bool isQuestion;
             var model = Mapper.Map<PostModel>(post);
@@ -91,18 +89,16 @@ namespace WebService.Controllers {
             }
 
             model.Author = Url.Link(nameof(GetAuthorOfPost), new {postId = post.Id});
-            model.Answers = (isQuestion == true)? Url.Link(nameof(GetAnswers), new { questionId = post.Id}): null;
-            model.Comments = Url.Link(nameof(GetComments), new { postId = post.Id});
-            model.ClickHereToMark = Url.Link(nameof(MarkController.Mark), new { postId = post.Id });
+            model.Answers = isQuestion == true ? Url.Link(nameof(GetAnswers), new {questionId = post.Id}) : null;
+            model.Comments = Url.Link(nameof(GetComments), new {postId = post.Id});
+            model.ClickHereToMark = Url.Link(nameof(MarkController.Mark), new {postId = post.Id});
             return Ok(model);
         }
 
         [HttpGet("author/post/{postId}", Name = nameof(GetAuthorOfPost))]
         public IActionResult GetAuthorOfPost(int postId) {
             var author = _dataService.GetAuthorOfPost(postId);
-            if (author == null) {
-                return NotFound();
-            }
+            if (author == null) return NotFound();
 
             var model = Mapper.Map<AuthorModel>(author);
             return Ok(model);
@@ -111,9 +107,7 @@ namespace WebService.Controllers {
         [HttpGet("author/comment/{commentId}", Name = nameof(GetAuthorOfComment))]
         public IActionResult GetAuthorOfComment(int commentId) {
             var author = _dataService.GetAuthorOfComment(commentId);
-            if (author == null) {
-                return NotFound();
-            }
+            if (author == null) return NotFound();
 
             var model = Mapper.Map<AuthorModel>(author);
             return Ok(model);
@@ -138,20 +132,17 @@ namespace WebService.Controllers {
                 Last = numberOfPages == 0 ? null : CreateSearchedLink(numberOfPages - 1, pageSize),
                 Items = searchResult
             };
-            return Ok(result);
+            return Json(result);
         }
 
         [Authorize]
         [HttpGet("search/exact/{text}", Name = nameof(SearchExactMatch))]
-        public IActionResult SearchExactMatch(string text, int page = 0, int pageSize = 10) {
+        public JsonResult SearchExactMatch(string text, int page = 0, int pageSize = 10) {
             int.TryParse(HttpContext.User.Identity.Name, out var userId);
             var searchResult = _dataService.SearchExactMatch(text, userId, page, pageSize)
                 .Select(CreateSearchModel);
-            //if (searchResult == null)
-            //{
-            //    return NotFound();
-            //}
-            var numberOfItems = _dataService.GetSearchedCountSpecial(text, "exact_match");
+
+            var numberOfItems = _dataService.GetExactSearchedCount(text);
             var numberOfPages = ComputeNumberOfPages(pageSize, numberOfItems);
 
             var result = new {
@@ -163,37 +154,52 @@ namespace WebService.Controllers {
                 Last = numberOfPages == 0 ? null : CreateSearchedLink(numberOfPages - 1, pageSize),
                 Items = searchResult
             };
-            return Ok(result);
+            return Json(result);
         }
-        
+
         [Authorize]
-        [HttpGet("search/best/{text}", Name = nameof(SearchExactMatch))]
+        [HttpGet("search/best/{text}", Name = nameof(SearchBestMatch))]
         public IActionResult SearchBestMatch(string text, int page = 0, int pageSize = 10) {
             int.TryParse(HttpContext.User.Identity.Name, out var userId);
-            var searchResult = _dataService.SearchExactMatch(text, userId, page, pageSize)
+            var searchResult = _dataService.SearchBestMatch(text, userId, page, pageSize)
                 .Select(CreateSearchModel);
-            //if (searchResult == null)
-            //{
-            //    return NotFound();
-            //}
-            var numberOfItems = _dataService.GetSearchedCountSpecial(text, "bestmatchweighted");
+
+            var numberOfItems = _dataService.GetBestSearchedCount(text);
             var numberOfPages = ComputeNumberOfPages(pageSize, numberOfItems);
 
             var result = new {
                 NumberOfItems = numberOfItems,
                 NumberOfPages = numberOfPages,
-                First = CreateCommentsLink(0, pageSize),
-                Prev = page == 0 ? null : CreateCommentsLink(page - 1, pageSize),
+                First = CreateSearchedLink(0, pageSize), 
+                Prev = page == 0 ? null : CreateSearchedLink(page - 1, pageSize),
                 Next = page >= numberOfPages - 1 ? null : CreateSearchedLink(page + 1, pageSize),
                 Last = numberOfPages == 0 ? null : CreateSearchedLink(numberOfPages - 1, pageSize),
                 Items = searchResult
             };
             return Ok(result);
         }
-        
+
+        [Authorize]
+        [HttpGet("search/words/{text}", Name = nameof(SearchRelatedWords))]
+        public IActionResult SearchRelatedWords(string text, int page = 0, int pageSize = 10) {
+            int.TryParse(HttpContext.User.Identity.Name, out var userId);
+            var words = _dataService.SearchRelatedTerm(text, userId, true, page, pageSize)
+                .Select(CreateSearchWordsModel);
+            
+            var result = new {
+                Items = words
+            };
+            return Ok(result);
+        }
+
         private SearchModel CreateSearchModel(SearchResult search) {
             var model = Mapper.Map<SearchModel>(search);
             model.Url = Url.Link(nameof(GetPost), new {id = search.Id});
+            return model;
+        }
+
+        private SearchWordsModel CreateSearchWordsModel(SearchResultWords search) {
+            var model = Mapper.Map<SearchWordsModel>(search);
             return model;
         }
 
@@ -211,7 +217,7 @@ namespace WebService.Controllers {
         }
 
         private string CreateSearchedLink(int page, int pageSize) {
-            return Url.Link(nameof(Search), new {page, pageSize});
+            return Url.Link(nameof(SearchBestMatch), new {page, pageSize});
         }
     }
 }
