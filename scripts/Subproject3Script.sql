@@ -101,7 +101,7 @@ SELECT * FROM bestmatch('table', 'width', 'layout');
 --This function takes a string as a parameter and generates a dynamic SQL- expression that executes
 --the function bestmatchweighted.
 
-DROP FUNCTION IF EXISTS dynamic_search_without_history;
+DROP FUNCTION IF EXISTS dynamic_search_without_history(text);
 CREATE FUNCTION dynamic_search_without_history(searched_text text)
 RETURNS TABLE (id integer, rank real, body text) AS $$
 DECLARE
@@ -123,9 +123,9 @@ LANGUAGE plpgsql;
 
 -- SELECT * FROM dynamic_search_without_history('initialize constructor');
 
-DROP FUNCTION IF EXISTS dynamic_search;
+DROP FUNCTION IF EXISTS dynamic_search();
 
-DROP FUNCTION IF EXISTS dynamic_search_with_history;
+DROP FUNCTION IF EXISTS dynamic_search_with_history(text, integer);
 CREATE FUNCTION dynamic_search_with_history(searched_text text, this_user_id integer)
 RETURNS TABLE (id integer, rank real, body text) AS $$
 DECLARE
@@ -255,7 +255,7 @@ LANGUAGE plpgsql;
 
 select * from keyword_list('sql') where weight > 150;
 
-DROP FUNCTION IF EXISTS dynamic_keyword_list;
+DROP FUNCTION IF EXISTS dynamic_keyword_list(text, integer);
 CREATE FUNCTION dynamic_keyword_list(searched_text text, this_user_id integer)
 RETURNS TABLE (weight numeric, word text) AS $$
 DECLARE
@@ -315,7 +315,7 @@ LANGUAGE plpgsql;
 
 select * from keyword_list_weighted('sql');
 
-DROP FUNCTION IF EXISTS dynamic_keyword_list_weighted;
+DROP FUNCTION IF EXISTS dynamic_keyword_list_weighted(text, integer);
 CREATE FUNCTION dynamic_keyword_list_weighted(searched_text text, this_user_id integer)
 RETURNS TABLE (weight real, word text) AS $$
 DECLARE
@@ -377,7 +377,7 @@ LANGUAGE plpgsql;
 SELECT * FROM get_co_occurrent_words('language');
 
 --B.8. Force network visualization
-drop function if exists generate_force_graph_input;
+drop function if exists generate_force_graph_input(varchar(100), real);
 create function generate_force_graph_input(in w varchar(100), n real) 
 returns table (line text) as $$
 declare
