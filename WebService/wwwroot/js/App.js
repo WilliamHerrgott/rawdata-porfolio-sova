@@ -258,8 +258,6 @@ var viewModel = function() {
     self.getRelatedWords = function () {
         self.request('StackOverflow/search/words/' + self.search_query(), null, function (data, status) {
             self.posts.removeAll();
-            self.prevPosts(null);
-            self.nextPosts(null);
             self.wordCloud.removeAll();
             var newWords = [];
             $.each(data.items, function (i, item) {
@@ -267,6 +265,9 @@ var viewModel = function() {
             });
             ko.utils.arrayPushAll(self.wordCloud, newWords);
             self.wordCloud.valueHasMutated();
+
+            self.prevPosts(null);
+            self.nextPosts(null);
         }, 'GET', function (){});
     };
     
